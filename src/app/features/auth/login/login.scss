@@ -1,0 +1,258 @@
+:host {
+  display: block;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: var(--space-16);
+
+  &__nav {
+    display: flex;
+    justify-content: flex-end;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  &__theme {
+    padding: var(--space-8) var(--space-16);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  &__box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: var(--space-16) 0;
+    gap: 4px !important;
+  }
+
+  &__card {
+    max-width: 440px;
+    width: 100%;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-32) var(--space-24);
+    gap: var(--space-20);
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-8);
+  }
+
+  &__footer {
+    text-align: center;
+  }
+
+  &__logo {
+    display: block;
+    width: 140px;
+    height: auto;
+    max-height: 125px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+    transition: transform var(--transition-base);
+
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
+
+  &__title {
+    font-size: 1.875rem;
+    color: var(--brand-strong);
+    margin: 0;
+  }
+
+  &__subtitle,
+  &__signup,
+  &__guide {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  &__alert {
+    padding: var(--space-12);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    background: color-mix(in srgb, var(--success) 15%, transparent);
+    color: var(--success);
+  }
+
+  &__tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--surface-subtle);
+    padding: 3px;
+    border-radius: var(--radius-md);
+    gap: 4px;
+  }
+
+  &__tab {
+    padding: var(--space-8);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &--active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  &__form,
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+    padding: 1vh 0;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  &__req,
+  &__err {
+    color: var(--accent);
+  }
+
+  &__err {
+    font-size: 0.75rem;
+  }
+
+  &__forgot,
+  &__signup a {
+    color: var(--brand-strong);
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+
+  &__wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__input {
+    width: 100%;
+    padding: var(--space-12) var(--space-16);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.9375rem;
+
+    &:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: var(--focus-ring);
+    }
+
+    &--err {
+      border-color: var(--accent);
+    }
+  }
+
+  &__toggle {
+    position: absolute;
+    right: var(--space-12);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+  }
+
+  &__remember {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    font-size: 0.8125rem;
+    cursor: pointer;
+
+    input {
+      accent-color: var(--brand);
+    }
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    width: 100%;
+    padding: var(--space-12);
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--brand);
+    color: var(--brand-contrast);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--brand-strong);
+      color: var(--brand-strong-contrast);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--brand-contrast);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  &__div {
+    height: 1px;
+    background: var(--border);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,207 @@
+<div class="login">
+  <div class="login__nav">
+    <button
+      type="button"
+      class="login__theme"
+      (click)="themeService.toggleTheme()"
+      [attr.aria-label]="'Alternar para tema ' + (themeService.isDark() ? 'claro' : 'escuro')"
+    >
+      {{ themeService.isDark() ? '☀️ Tema claro' : '🌙 Tema escuro' }}
+    </button>
+  </div>
+
+  <main class="login__box">
+    <pdp-card class="login__card" padding="none">
+      <div class="login__body">
+        <header class="login__header">
+          <img src="/img/logo.png" alt="Point da Pizza" class="login__logo" width="140" height="122" />
+          <p class="login__subtitle">Acesse sua conta para fazer pedidos e acompanhar entregas</p>
+        </header>
+
+        @if (submitSuccess()) {
+          <div class="login__alert" role="alert">
+            <span>✔ {{ submitSuccess() }}</span>
+          </div>
+        }
+
+        <div class="login__tabs" role="tablist" aria-label="Método de acesso">
+          <button
+            type="button"
+            role="tab"
+            class="login__tab"
+            [class.login__tab--active]="loginType() === 'email'"
+            [attr.aria-selected]="loginType() === 'email'"
+            (click)="setLoginType('email')"
+          >
+            Entrar com e-mail
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="login__tab"
+            [class.login__tab--active]="loginType() === 'phone'"
+            [attr.aria-selected]="loginType() === 'phone'"
+            (click)="setLoginType('phone')"
+          >
+            Entrar com telefone
+          </button>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login__form" novalidate>
+          @if (loginType() === 'email') {
+            <div class="login__field">
+              <label for="pdp-login-email" class="login__label"> E-mail <span class="login__req" aria-hidden="true">*</span> </label>
+              <div class="login__wrap">
+                <input
+                  id="pdp-login-email"
+                  type="email"
+                  formControlName="email"
+                  class="login__input"
+                  [class.login__input--err]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+                  placeholder="exemplo@email.com"
+                  autocomplete="username"
+                />
+              </div>
+              @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+                <span class="login__err" role="alert">
+                  @if (loginForm.get('email')?.errors?.['required']) {
+                    O e-mail é obrigatório.
+                  } @else if (loginForm.get('email')?.errors?.['email']) {
+                    Informe um formato de e-mail válido.
+                  }
+                </span>
+              }
+            </div>
+          }
+
+          @if (loginType() === 'phone') {
+            <div class="login__field">
+              <label for="pdp-login-phone" class="login__label">
+                Telefone / WhatsApp <span class="login__req" aria-hidden="true">*</span>
+              </label>
+              <div class="login__wrap">
+                <input
+                  id="pdp-login-phone"
+                  type="tel"
+                  formControlName="phone"
+                  class="login__input"
+                  [class.login__input--err]="loginForm.get('phone')?.touched && loginForm.get('phone')?.invalid"
+                  placeholder="(85) 99999-9999"
+                  autocomplete="tel"
+                  maxlength="15"
+                  (input)="onPhoneInput($event)"
+                />
+              </div>
+              @if (loginForm.get('phone')?.touched && loginForm.get('phone')?.invalid) {
+                <span class="login__err" role="alert">
+                  @if (loginForm.get('phone')?.errors?.['required']) {
+                    O telefone é obrigatório.
+                  } @else {
+                    Informe um celular válido com DDD: (85) 99999-9999.
+                  }
+                </span>
+              }
+            </div>
+          }
+
+          <div class="login__field">
+            <div class="login__label-row">
+              <label for="pdp-login-password" class="login__label"> Senha <span class="login__req" aria-hidden="true">*</span> </label>
+              <a href="javascript:void(0)" class="login__forgot">Esqueceu a senha?</a>
+            </div>
+
+            <div class="login__wrap">
+              <input
+                id="pdp-login-password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                class="login__input"
+                [class.login__input--err]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+                placeholder="Sua senha secreta"
+                autocomplete="current-password"
+                maxlength="10"
+              />
+              <button
+                type="button"
+                class="login__toggle"
+                (click)="toggleShowPassword()"
+                [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Exibir senha em texto'"
+              >
+                @if (showPassword()) {
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                    <line x1="2" y1="2" x2="22" y2="22" />
+                  </svg>
+                } @else {
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                }
+              </button>
+            </div>
+
+            @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+              <span class="login__err" role="alert">
+                @if (loginForm.get('password')?.errors?.['required']) {
+                  A senha é obrigatória.
+                } @else if (loginForm.get('password')?.errors?.['minlength']) {
+                  A senha não está completa: digite no mínimo 8 caracteres.
+                } @else if (loginForm.get('password')?.errors?.['maxlength']) {
+                  A senha deve ter no máximo 10 caracteres.
+                } @else {
+                  A senha deve conter letras maiúsculas, minúsculas e números.
+                }
+              </span>
+            }
+          </div>
+
+          <label class="login__remember">
+            <input type="checkbox" formControlName="rememberMe" />
+            <span>Manter conectado neste dispositivo</span>
+          </label>
+
+          <button type="submit" class="login__btn" [disabled]="isSubmitting()" aria-label="Entrar na conta">
+            @if (isSubmitting()) {
+              <span class="login__spinner" aria-hidden="true"></span>
+              <span>Validando dados...</span>
+            } @else {
+              <span>Entrar no Point da Pizza</span>
+            }
+          </button>
+        </form>
+
+        <footer class="login__footer">
+          <p class="login__signup">
+            Ainda não tem cadastro?
+            <a href="javascript:void(0)">Criar conta grátis</a>
+          </p>
+          <div class="login__div"></div>
+          <a routerLink="/styleguide" class="login__guide"> 📐 Ver Catálogo de Componentes (/styleguide) </a>
+        </footer>
+      </div>
+    </pdp-card>
+  </main>
+</div>
