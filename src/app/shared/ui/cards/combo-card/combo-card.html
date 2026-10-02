@@ -1,0 +1,58 @@
+<pdp-card padding="none">
+  <div class="pdp-combo-card__container">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-combo-card__skeleton-title"></div>
+      <div class="pdp-skeleton pdp-combo-card__skeleton-item"></div>
+      <div class="pdp-skeleton pdp-combo-card__skeleton-item"></div>
+      <div class="pdp-skeleton pdp-combo-card__skeleton-item"></div>
+      <div class="pdp-combo-card__footer-loading">
+        <div class="pdp-skeleton pdp-combo-card__skeleton-price"></div>
+        <div class="pdp-skeleton pdp-combo-card__skeleton-btn"></div>
+      </div>
+    } @else {
+      <div class="pdp-combo-card__header">
+        <span class="pdp-combo-card__tag">Combo Especial</span>
+        <h3 class="pdp-combo-card__title">{{ combo().titulo }}</h3>
+      </div>
+
+      <div class="pdp-combo-card__body">
+        <span class="pdp-combo-card__items-label">O que está incluso:</span>
+        <ul class="pdp-combo-card__list">
+          @for (item of combo().itens; track item) {
+            <li class="pdp-combo-card__item">
+              <span class="pdp-combo-card__bullet" aria-hidden="true">✔</span>
+              <span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="pdp-combo-card__footer">
+        <div class="pdp-combo-card__pricing">
+          @if (combo().precoOriginal) {
+            <span class="pdp-combo-card__price-original">
+              De {{ combo().precoOriginal | pdpCurrency }}
+            </span>
+          }
+          <div class="pdp-combo-card__price-row">
+            <strong class="pdp-combo-card__price-current">{{ combo().preco | pdpCurrency }}</strong>
+            @if (economia() > 0) {
+              <span class="pdp-combo-card__savings">
+                Você economiza {{ economia() | pdpCurrency }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="pdp-combo-card__btn"
+          [attr.aria-label]="'Escolher combo ' + combo().titulo"
+          (click)="onChooseClick()"
+        >
+          Escolher combo
+        </button>
+      </div>
+    }
+  </div>
+</pdp-card>
