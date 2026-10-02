@@ -14,6 +14,24 @@
   --success-contrast: #FFFFFF;
   --warning-contrast: #1A1A1A;
 
+  /* Cores de status de pedidos (contraste AA garantido com texto branco) */
+  --status-received: #475569;
+  --status-received-contrast: #FFFFFF;
+  --status-production: #C2410C;
+  --status-production-contrast: #FFFFFF;
+  --status-delivery: #0284C7;
+  --status-delivery-contrast: #FFFFFF;
+  --status-delivered: #2E7D32;
+  --status-delivered-contrast: #FFFFFF;
+  --status-canceled: #DC2626;
+  --status-canceled-contrast: #FFFFFF;
+
+  /* Promoção escura constante */
+  --surface-promo: #1C1917;
+  --surface-promo-border: #F58220;
+  --surface-promo-text: #FFF8EC;
+  --surface-promo-muted: #D1C4B5;
+
   /* Fontes */
   --font-display: 'Anton', Impact, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -48,6 +66,10 @@
   --border: #E8DCC8;
   --border-focus: #F58220;
 
+  /* Skeleton Shimmer Claro */
+  --skeleton-base: #EDE2D0;
+  --skeleton-highlight: #FBF4E8;
+
   /* Sombras Claro */
   --shadow-sm: 0 1px 3px 0 rgba(92, 81, 72, 0.08);
   --shadow-md: 0 4px 14px -2px rgba(92, 81, 72, 0.12), 0 2px 6px -1px rgba(92, 81, 72, 0.06);
@@ -67,6 +89,10 @@
   --text-muted: #B8AC9C;
   --border: #333333;
   --border-focus: #F58220;
+
+  /* Skeleton Shimmer Escuro */
+  --skeleton-base: #282828;
+  --skeleton-highlight: #383838;
 
   /* Sombras Escuro */
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.45);
