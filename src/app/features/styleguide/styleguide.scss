@@ -1,0 +1,201 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.styleguide {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: var(--space-24) var(--space-16) var(--space-48);
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+    padding-bottom: var(--space-24);
+    margin-bottom: var(--space-32);
+    border-bottom: 2px solid var(--border);
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  &__logo-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--brand-strong);
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: var(--space-4) 0 0;
+  }
+
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-12);
+  }
+
+  &__status-pill {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+  }
+
+  &__status-label {
+    color: var(--text-muted);
+  }
+
+  &__status-val {
+    color: var(--brand-strong);
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-16);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--text);
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+
+    &:hover {
+      background-color: var(--surface-hover);
+      border-color: var(--brand);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    &--theme {
+      background-color: var(--brand);
+      color: var(--brand-contrast);
+      border-color: var(--brand);
+
+      &:hover {
+        background-color: var(--brand-strong);
+        color: var(--brand-strong-contrast);
+        border-color: var(--brand-strong);
+      }
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-48);
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+
+  &__section-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  &__section-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--text);
+    margin: 0;
+  }
+
+  &__section-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  &__grid {
+    display: grid;
+    gap: var(--space-20, var(--space-16));
+    width: 100%;
+
+    &--2 {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    &--3 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    &--4 {
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  &__variant-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (max-width: 640px) {
+  .styleguide {
+    padding: var(--space-16) var(--space-12);
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__controls {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__status-pill {
+      justify-content: space-between;
+    }
+  }
+}

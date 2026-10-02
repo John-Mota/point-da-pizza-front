@@ -1,0 +1,360 @@
+<div class="styleguide">
+  <!-- Top Bar / Header de Demonstração -->
+  <header class="styleguide__header no-print">
+    <div class="styleguide__brand">
+      <span class="styleguide__logo-icon">🍕</span>
+      <div>
+        <h1 class="styleguide__title">Point da Pizza</h1>
+        <p class="styleguide__subtitle">Design System — Catálogo de Cards</p>
+      </div>
+    </div>
+
+    <div class="styleguide__controls">
+      <div class="styleguide__status-pill">
+        <span class="styleguide__status-label">Último evento:</span>
+        <strong class="styleguide__status-val">{{ lastAction() }}</strong>
+      </div>
+
+      <button
+        type="button"
+        class="styleguide__btn styleguide__btn--theme"
+        (click)="themeService.toggleTheme()"
+        [attr.aria-label]="'Alternar para tema ' + (themeService.isDark() ? 'claro' : 'escuro')"
+      >
+        <span>{{ themeService.isDark() ? '☀️ Tema claro' : '🌙 Tema escuro' }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="styleguide__btn styleguide__btn--print"
+        (click)="printStyleguide()"
+        aria-label="Baixar catálogo em PDF"
+      >
+        📄 Baixar PDF
+      </button>
+    </div>
+  </header>
+
+  <main class="styleguide__main">
+    <!-- Seção 1: pdp-card (Base) -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">1. pdp-card (Componente Base)</h2>
+        <p class="styleguide__section-desc">Container de superfície com variantes, padding e projeção de conteúdo.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--3">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Variante Default (Superfície clara/escura)</span>
+          <pdp-card variant="default">
+            <h4 style="margin-bottom: 8px;">Card Padrão</h4>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Card base utilizado como alicerce de toda a biblioteca.</p>
+          </pdp-card>
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Variante Outlined (Borda reforçada)</span>
+          <pdp-card variant="outlined">
+            <h4 style="margin-bottom: 8px;">Card Contornado</h4>
+            <p style="color: var(--text-muted); font-size: 0.875rem;">Ideal para divisões sutis e listas secundárias.</p>
+          </pdp-card>
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Variante Promo (Tema escuro constante)</span>
+          <pdp-card variant="promo">
+            <h4 style="margin-bottom: 8px; color: var(--surface-promo-text);">Card Promocional</h4>
+            <p style="color: var(--surface-promo-muted); font-size: 0.875rem;">Superfície de alto impacto visual nos dois modos.</p>
+          </pdp-card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 2: pdp-product-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">2. pdp-product-card (Card de Produto)</h2>
+        <p class="styleguide__section-desc">Item do cardápio com imagem ou placeholder da marca, descrição e botão de compra.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--4">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Normal (Com imagem)</span>
+          <pdp-product-card
+            [produto]="mockProdutoComImagem"
+            (add)="onActionTriggered('Adicionou ao carrinho: ' + $event.nome)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Sem imagem (Placeholder da marca)</span>
+          <pdp-product-card
+            [produto]="mockProdutoSemImagem"
+            (add)="onActionTriggered('Adicionou ao carrinho: ' + $event.nome)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Indisponível (Esmaecido e bloqueado)</span>
+          <pdp-product-card
+            [produto]="mockProdutoComImagem"
+            [indisponivel]="true"
+            (add)="onActionTriggered('Falha ao adicionar indisponível')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton Shimmer)</span>
+          <pdp-product-card
+            [produto]="mockProdutoComImagem"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 3: pdp-promo-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">3. pdp-promo-card (Card de Promoção)</h2>
+        <p class="styleguide__section-desc">Card de campanha com selo inclinado, fonte Anton e visual escuro marcante.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--2">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Promoção Ativa</span>
+          <pdp-promo-card
+            [promocao]="mockPromocao"
+            (order)="onActionTriggered('Pediu promoção: ' + $event.titulo)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-promo-card
+            [promocao]="mockPromocao"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 4: pdp-combo-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">4. pdp-combo-card (Card de Combo)</h2>
+        <p class="styleguide__section-desc">Lista de itens inclusos, preço original riscado e economia calculada em tempo real.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--3">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Com desconto e economia calculada</span>
+          <pdp-combo-card
+            [combo]="mockComboComDesconto"
+            (choose)="onActionTriggered('Escolheu combo: ' + $event.titulo)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Preço único regular</span>
+          <pdp-combo-card
+            [combo]="mockComboSemDesconto"
+            (choose)="onActionTriggered('Escolheu combo: ' + $event.titulo)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-combo-card
+            [combo]="mockComboComDesconto"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 5: pdp-order-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">5. pdp-order-card (Card de Pedido com pdp-status-badge)</h2>
+        <p class="styleguide__section-desc">Painel operacional de pedidos com horário relativo, badge semântico e avanço de etapas.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--3">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Status: Recebido</span>
+          <pdp-order-card
+            [pedido]="mockPedidoRecebido"
+            (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
+            (advance)="onActionTriggered('Avançou pedido #' + $event.numero + ' para Em Produção')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Status: Em Produção</span>
+          <pdp-order-card
+            [pedido]="mockPedidoEmProducao"
+            (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
+            (advance)="onActionTriggered('Avançou pedido #' + $event.numero + ' para A Caminho')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Status: A Caminho</span>
+          <pdp-order-card
+            [pedido]="mockPedidoACaminho"
+            (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
+            (advance)="onActionTriggered('Concluiu entrega do pedido #' + $event.numero)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Status: Entregue (Sem botão avançar)</span>
+          <pdp-order-card
+            [pedido]="mockPedidoEntregue"
+            (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Status: Cancelado</span>
+          <pdp-order-card
+            [pedido]="mockPedidoCancelado"
+            (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-order-card
+            [pedido]="mockPedidoRecebido"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 6: pdp-cart-summary-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">6. pdp-cart-summary-card (Resumo do Carrinho)</h2>
+        <p class="styleguide__section-desc">Cálculo de subtotal, frete, desconto condicional e chamada para fechamento.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--3">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Com cupom de desconto</span>
+          <pdp-cart-summary-card
+            [subtotal]="95.0"
+            [taxaEntrega]="8.0"
+            [desconto]="15.0"
+            (checkout)="onActionTriggered('Iniciou checkout com desconto')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Sem desconto</span>
+          <pdp-cart-summary-card
+            [subtotal]="64.0"
+            [taxaEntrega]="6.0"
+            (checkout)="onActionTriggered('Iniciou checkout padrão')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-cart-summary-card
+            [subtotal]="0"
+            [taxaEntrega]="0"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 7: pdp-kpi-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">7. pdp-kpi-card (Cartão de Indicadores)</h2>
+        <p class="styleguide__section-desc">Métricas operacionais com variação positiva/negativa e barra de progresso de meta.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--4">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Variação Positiva</span>
+          <pdp-kpi-card
+            rotulo="Faturamento Hoje"
+            valor="R$ 4.280,00"
+            [variacao]="18.4"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Variação Negativa</span>
+          <pdp-kpi-card
+            rotulo="Cancelamentos"
+            valor="2 pedidos"
+            [variacao]="-5.2"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Com Barra de Meta</span>
+          <pdp-kpi-card
+            rotulo="Meta Semanal"
+            valor="R$ 18.500"
+            [meta]="82"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-kpi-card
+            rotulo="Carregando"
+            valor="---"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 8: pdp-empty-state-card -->
+    <section class="styleguide__section pdp-print-avoid-break">
+      <div class="styleguide__section-header">
+        <h2 class="styleguide__section-title">8. pdp-empty-state-card (Estado Vazio)</h2>
+        <p class="styleguide__section-desc">Feedback amigável com borda tracejada e ação opcional.</p>
+      </div>
+
+      <div class="styleguide__grid styleguide__grid--3">
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Com Ação (Carrinho vazio)</span>
+          <pdp-empty-state-card
+            icone="🛒"
+            titulo="Seu carrinho está vazio"
+            texto="Nenhum item adicionado ainda. Explore nossas pizzas e monte seu pedido."
+            acaoLabel="Ver cardápio completo"
+            (action)="onActionTriggered('Clicou em Ver cardápio completo')"
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Sem Ação (Busca sem resultados)</span>
+          <pdp-empty-state-card
+            icone="🔍"
+            titulo="Nenhum produto encontrado"
+            texto="Tente buscar por outro sabor ou limpe os filtros aplicados."
+          />
+        </div>
+
+        <div class="styleguide__col">
+          <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
+          <pdp-empty-state-card
+            titulo="Carregando"
+            texto="Carregando estado"
+            [loading]="true"
+          />
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
