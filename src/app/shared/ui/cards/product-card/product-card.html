@@ -1,0 +1,55 @@
+<pdp-card [class.pdp-product-card--disabled]="indisponivel()" padding="none">
+  <div card-media class="pdp-product-card__media">
+    @if (loading()) {
+      <div class="pdp-product-card__image-skeleton pdp-skeleton"></div>
+    } @else {
+      @if (produto().imagemUrl && !imageError()) {
+        <img
+          [src]="produto().imagemUrl"
+          [alt]="produto().nome"
+          class="pdp-product-card__image"
+          (error)="onImageError()"
+          loading="lazy"
+        />
+      } @else {
+        <div class="pdp-product-card__placeholder" aria-hidden="true">
+          <span class="pdp-product-card__placeholder-icon">🍕</span>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="pdp-product-card__body">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-product-card__skeleton-title"></div>
+      <div class="pdp-skeleton pdp-product-card__skeleton-desc"></div>
+      <div class="pdp-skeleton pdp-product-card__skeleton-desc pdp-product-card__skeleton-desc--short"></div>
+      <div class="pdp-product-card__footer-loading">
+        <div class="pdp-skeleton pdp-product-card__skeleton-price"></div>
+        <div class="pdp-skeleton pdp-product-card__skeleton-btn"></div>
+      </div>
+    } @else {
+      <div class="pdp-product-card__info">
+        <h3 class="pdp-product-card__title">{{ produto().nome }}</h3>
+        <p class="pdp-product-card__desc">{{ produto().descricao }}</p>
+      </div>
+
+      <div class="pdp-product-card__footer">
+        <div class="pdp-product-card__price-wrap">
+          <span class="pdp-product-card__price-label">Preço</span>
+          <strong class="pdp-product-card__price">{{ produto().preco | pdpCurrency }}</strong>
+        </div>
+
+        <button
+          type="button"
+          class="pdp-product-card__action-btn"
+          [disabled]="indisponivel()"
+          [attr.aria-label]="indisponivel() ? 'Produto indisponível' : 'Adicionar ' + produto().nome + ' ao carrinho'"
+          (click)="onAddClick()"
+        >
+          {{ indisponivel() ? 'Indisponível' : 'Adicionar ao carrinho' }}
+        </button>
+      </div>
+    }
+  </div>
+</pdp-card>
