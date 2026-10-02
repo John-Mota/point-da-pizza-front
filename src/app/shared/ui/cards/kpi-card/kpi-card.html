@@ -1,0 +1,65 @@
+<pdp-card padding="none">
+  <div class="pdp-kpi-card__container">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-kpi-card__skeleton-label"></div>
+      <div class="pdp-skeleton pdp-kpi-card__skeleton-value"></div>
+      <div class="pdp-skeleton pdp-kpi-card__skeleton-progress"></div>
+    } @else {
+      <div class="pdp-kpi-card__header">
+        <span class="pdp-kpi-card__label">{{ rotulo() }}</span>
+        @if (hasVariacao()) {
+          <div
+            class="pdp-kpi-card__badge"
+            [class.pdp-kpi-card__badge--positive]="isPositive()"
+            [class.pdp-kpi-card__badge--negative]="!isPositive()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="pdp-kpi-card__icon"
+              aria-hidden="true"
+            >
+              @if (isPositive()) {
+                <path d="m18 15-6-6-6 6" />
+              } @else {
+                <path d="m6 9 6 6 6-6" />
+              }
+            </svg>
+            <span>{{ variacaoFormatada() }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="pdp-kpi-card__value-box">
+        <strong class="pdp-kpi-card__value">{{ valor() }}</strong>
+      </div>
+
+      @if (hasMeta()) {
+        <div class="pdp-kpi-card__meta-box">
+          <div class="pdp-kpi-card__meta-header">
+            <span class="pdp-kpi-card__meta-label">Meta atingida</span>
+            <span class="pdp-kpi-card__meta-pct">{{ metaClamped() }}%</span>
+          </div>
+
+          <div
+            class="pdp-kpi-card__progress-track"
+            role="progressbar"
+            [attr.aria-valuenow]="metaClamped()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'Meta de ' + rotulo() + ': ' + metaClamped() + '%'"
+          >
+            <div class="pdp-kpi-card__progress-bar" [style.width.%]="metaClamped()"></div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</pdp-card>
