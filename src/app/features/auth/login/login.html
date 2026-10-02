@@ -1,15 +1,4 @@
 <div class="login">
-  <div class="login__nav">
-    <button
-      type="button"
-      class="login__theme"
-      (click)="themeService.toggleTheme()"
-      [attr.aria-label]="'Alternar para tema ' + (themeService.isDark() ? 'claro' : 'escuro')"
-    >
-      {{ themeService.isDark() ? '☀️ Tema claro' : '🌙 Tema escuro' }}
-    </button>
-  </div>
-
   <main class="login__box">
     <pdp-card class="login__card" padding="none">
       <div class="login__body">

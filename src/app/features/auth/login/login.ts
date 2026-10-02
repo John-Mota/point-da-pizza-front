@@ -8,7 +8,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ThemeService } from '../../../core/theme';
 import { PdpCard } from '../../../shared/ui/cards';
 
 export type LoginType = 'email' | 'phone';
@@ -37,7 +36,6 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
 })
 export class Login {
   private readonly fb = inject(FormBuilder);
-  protected readonly themeService = inject(ThemeService);
 
   readonly loginType = signal<LoginType>('email');
   readonly showPassword = signal<boolean>(false);

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { vi } from 'vitest';
 import { Login } from './login';
-import { ThemeService } from '../../../core/theme';
 
 describe('Login', () => {
   let fixture: ComponentFixture<Login>;
@@ -11,7 +10,7 @@ describe('Login', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login],
-      providers: [ThemeService, provideRouter([])],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);
