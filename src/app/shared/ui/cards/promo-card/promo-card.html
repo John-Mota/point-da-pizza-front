@@ -1,0 +1,43 @@
+<pdp-card variant="promo" padding="none">
+  <div class="pdp-promo-card__container">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-promo-card__skeleton-badge"></div>
+      <div class="pdp-skeleton pdp-promo-card__skeleton-title"></div>
+      <div class="pdp-skeleton pdp-promo-card__skeleton-desc"></div>
+      <div class="pdp-promo-card__footer-loading">
+        <div class="pdp-skeleton pdp-promo-card__skeleton-price"></div>
+        <div class="pdp-skeleton pdp-promo-card__skeleton-btn"></div>
+      </div>
+    } @else {
+      @if (promocao().selo) {
+        <div class="pdp-promo-card__badge-wrapper">
+          <span class="pdp-promo-card__badge">{{ promocao().selo }}</span>
+        </div>
+      }
+
+      <div class="pdp-promo-card__content">
+        <h3 class="pdp-promo-card__title">{{ promocao().titulo }}</h3>
+        <p class="pdp-promo-card__desc">{{ promocao().descricao }}</p>
+        @if (promocao().diasValidos) {
+          <span class="pdp-promo-card__validity">Válido: {{ promocao().diasValidos }}</span>
+        }
+      </div>
+
+      <div class="pdp-promo-card__footer">
+        <div class="pdp-promo-card__price-box">
+          <span class="pdp-promo-card__price-prefix">Por apenas</span>
+          <strong class="pdp-promo-card__price">{{ promocao().preco | pdpCurrency }}</strong>
+        </div>
+
+        <button
+          type="button"
+          class="pdp-promo-card__btn"
+          [attr.aria-label]="'Pedir agora ' + promocao().titulo"
+          (click)="onOrderClick()"
+        >
+          Pedir agora
+        </button>
+      </div>
+    }
+  </div>
+</pdp-card>
