@@ -1,0 +1,124 @@
+/* Estilos Base - Point da Pizza */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background-color: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* Tipografia */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  color: var(--text);
+}
+
+p, span, label, input, textarea, select, button {
+  font-family: var(--font-body);
+}
+
+a {
+  color: var(--brand-strong);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--brand);
+  }
+}
+
+/* Foco acessível */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Imagens e mídias */
+img, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* Barra de rolagem discreta */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+
+  &:hover {
+    background: var(--text-muted);
+  }
+}
+
+/* Respeito a prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Regras de impressão padronizadas */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  :root {
+    --bg: #FFFFFF !important;
+    --surface: #FFFFFF !important;
+    --text: #1A1A1A !important;
+    --text-muted: #555555 !important;
+    --border: #D0D0D0 !important;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #1A1A1A !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .pdp-print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
