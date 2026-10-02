@@ -1,0 +1,73 @@
+<pdp-card padding="none">
+  <div class="pdp-order-card__container">
+    @if (loading()) {
+      <div class="pdp-order-card__header-loading">
+        <div class="pdp-skeleton pdp-order-card__skeleton-title"></div>
+        <div class="pdp-skeleton pdp-order-card__skeleton-badge"></div>
+      </div>
+      <div class="pdp-skeleton pdp-order-card__skeleton-client"></div>
+      <div class="pdp-skeleton pdp-order-card__skeleton-items"></div>
+      <div class="pdp-skeleton pdp-order-card__skeleton-items"></div>
+      <div class="pdp-order-card__footer-loading">
+        <div class="pdp-skeleton pdp-order-card__skeleton-price"></div>
+        <div class="pdp-skeleton pdp-order-card__skeleton-btn"></div>
+      </div>
+    } @else {
+      <div class="pdp-order-card__header">
+        <div class="pdp-order-card__number-wrap">
+          <h3 class="pdp-order-card__number">Pedido #{{ pedido().numero }}</h3>
+          <span class="pdp-order-card__time">{{ tempoRelativo() }}</span>
+        </div>
+        <pdp-status-badge [status]="pedido().status" />
+      </div>
+
+      <div class="pdp-order-card__client-wrap">
+        <span class="pdp-order-card__client-label">Cliente:</span>
+        <strong class="pdp-order-card__client-name">{{ pedido().cliente }}</strong>
+      </div>
+
+      <div class="pdp-order-card__items-section">
+        <ul class="pdp-order-card__items-list">
+          @for (item of pedido().itens; track item.nome) {
+            <li class="pdp-order-card__item">
+              <span class="pdp-order-card__item-qty">{{ item.quantidade }}×</span>
+              <span class="pdp-order-card__item-name">{{ item.nome }}</span>
+              @if (item.opcoes && item.opcoes.length > 0) {
+                <span class="pdp-order-card__item-options">({{ item.opcoes.join(', ') }})</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="pdp-order-card__footer">
+        <div class="pdp-order-card__total-wrap">
+          <span class="pdp-order-card__total-label">Total</span>
+          <strong class="pdp-order-card__total-value">{{ pedido().total | pdpCurrency }}</strong>
+        </div>
+
+        <div class="pdp-order-card__actions">
+          <button
+            type="button"
+            class="pdp-order-card__btn pdp-order-card__btn--ghost"
+            [attr.aria-label]="'Ver detalhes do pedido #' + pedido().numero"
+            (click)="onDetailsClick()"
+          >
+            Ver detalhes
+          </button>
+
+          @if (podeAvancar()) {
+            <button
+              type="button"
+              class="pdp-order-card__btn pdp-order-card__btn--advance"
+              [attr.aria-label]="proximoRotulo() + ' do pedido #' + pedido().numero"
+              (click)="onAdvanceClick()"
+            >
+              {{ proximoRotulo() }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</pdp-card>
