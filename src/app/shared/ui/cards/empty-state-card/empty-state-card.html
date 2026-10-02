@@ -1,0 +1,30 @@
+<pdp-card variant="outlined" padding="none">
+  <div class="pdp-empty-state-card__container">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-empty-state-card__skeleton-icon"></div>
+      <div class="pdp-skeleton pdp-empty-state-card__skeleton-title"></div>
+      <div class="pdp-skeleton pdp-empty-state-card__skeleton-text"></div>
+      <div class="pdp-skeleton pdp-empty-state-card__skeleton-btn"></div>
+    } @else {
+      <div class="pdp-empty-state-card__icon" aria-hidden="true">
+        {{ icone() }}
+      </div>
+
+      <div class="pdp-empty-state-card__content">
+        <h3 class="pdp-empty-state-card__title">{{ titulo() }}</h3>
+        <p class="pdp-empty-state-card__text">{{ texto() }}</p>
+      </div>
+
+      @if (acaoLabel()) {
+        <button
+          type="button"
+          class="pdp-empty-state-card__btn"
+          [attr.aria-label]="acaoLabel()"
+          (click)="onActionClick()"
+        >
+          {{ acaoLabel() }}
+        </button>
+      }
+    }
+  </div>
+</pdp-card>
