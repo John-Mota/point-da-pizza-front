@@ -42,3 +42,13 @@ export interface Pedido {
   status: StatusPedido;
   criadoEm: Date;
 }
+
+export interface CadastroPayload {
+  nome: string;
+  telefone?: string;
+  telefoneWhatsapp: boolean;
+  email?: string;
+  senha: string;
+  foto?: File;
+}
+
