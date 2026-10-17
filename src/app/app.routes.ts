@@ -14,8 +14,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/styleguide/styleguide').then((m) => m.Styleguide),
   },
   {
+    path: 'home',
+    pathMatch: 'full',
+    redirectTo: '',
+  },
+  {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'login',
+    loadComponent: () => import('./features/home/home-page').then((m) => m.PdpHomePage),
   },
 ];
+
