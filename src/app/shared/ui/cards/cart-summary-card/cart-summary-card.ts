@@ -12,7 +12,6 @@ import { PdpCard } from '../card/card';
 })
 export class PdpCartSummaryCard {
   readonly subtotal = input.required<number>();
-  readonly taxaEntrega = input.required<number>();
   readonly desconto = input<number>(0);
   readonly ctaLabel = input<string>('Finalizar pelo WhatsApp');
   readonly desabilitado = input<boolean>(false);
@@ -24,9 +23,8 @@ export class PdpCartSummaryCard {
 
   readonly total = computed(() => {
     const sub = this.subtotal();
-    const taxa = this.taxaEntrega();
     const desc = this.desconto() ?? 0;
-    return Math.max(0, sub + taxa - desc);
+    return Math.max(0, sub - desc);
   });
 
   onCheckoutClick(): void {

@@ -3,18 +3,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  HostListener,
   OnInit,
   PLATFORM_ID,
   computed,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ClockService } from '../../../core/clock';
 import { ThemeService } from '../../../core/theme';
 import { DiaSemana, Loja } from '../../../shared/models';
-import { PdpCurrencyPipe } from '../../../shared/pipes';
 import {
   NOMES_DIAS_SEMANA,
   StatusLojaResult,
@@ -36,22 +37,28 @@ const ORDEM_DIAS_SEMANA: readonly DiaSemana[] = [1, 2, 3, 4, 5, 6, 0];
 @Component({
   selector: 'pdp-loja-header',
   standalone: true,
-  imports: [RouterLink, PdpCurrencyPipe],
   templateUrl: './loja-header.html',
   styleUrl: './loja-header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PdpLojaHeader implements OnInit {
   readonly loja = input<Loja | null>(null);
+  readonly usuarioFotoUrl = input<string | null>(null);
+  readonly usuarioNome = input<string>('Cliente');
+
+  readonly configurar = output<void>();
+  readonly sair = output<void>();
 
   protected readonly themeService = inject(ThemeService);
+  private readonly router = inject(Router);
   private readonly clockService = inject(ClockService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly painelAberto = signal<boolean>(false);
-  readonly erroCapa = signal<boolean>(false);
+  readonly menuUsuarioAberto = signal<boolean>(false);
   readonly erroLogo = signal<boolean>(false);
+  readonly erroFotoUsuario = signal<boolean>(false);
   readonly agora = signal<Date>(this.clockService.now());
 
   readonly statusLoja = computed<StatusLojaResult>(() => {
@@ -132,12 +139,47 @@ export class PdpLojaHeader implements OnInit {
     }
   }
 
+  @HostListener('document:keydown.escape')
+  aoPressionarEscape(): void {
+    if (this.painelAberto()) {
+      this.painelAberto.set(false);
+    }
+    if (this.menuUsuarioAberto()) {
+      this.menuUsuarioAberto.set(false);
+    }
+  }
+
   atualizarRelogio(): void {
     this.agora.set(this.clockService.now());
   }
 
   alternarPainelInfo(): void {
+    this.menuUsuarioAberto.set(false);
     this.painelAberto.update((aberto) => !aberto);
+  }
+
+  fecharPainelInfo(): void {
+    this.painelAberto.set(false);
+  }
+
+  alternarMenuUsuario(): void {
+    this.painelAberto.set(false);
+    this.menuUsuarioAberto.update((aberto) => !aberto);
+  }
+
+  fecharMenuUsuario(): void {
+    this.menuUsuarioAberto.set(false);
+  }
+
+  aoClicarConfigurar(): void {
+    this.menuUsuarioAberto.set(false);
+    this.configurar.emit();
+  }
+
+  aoClicarSair(): void {
+    this.menuUsuarioAberto.set(false);
+    this.sair.emit();
+    void this.router.navigate(['/login']);
   }
 
   alternarTema(): void {

@@ -1,0 +1,55 @@
+@if (carregando() || categorias().length > 0) {
+  <nav
+    class="pdp-cat-nav"
+    [class.pdp-cat-nav--stuck]="estaGrudada()"
+    data-area="categorias-nav"
+    aria-label="Categorias do cardápio"
+  >
+    @if (carregando()) {
+      <div
+        class="pdp-cat-nav__skeletons"
+        aria-busy="true"
+        aria-label="Carregando categorias"
+      >
+        @for (item of skeletonItems; track item) {
+          <div class="pdp-skeleton pdp-cat-nav__skeleton-pill"></div>
+        }
+      </div>
+    } @else {
+      <div
+        class="pdp-cat-nav__viewport"
+        [class.pdp-cat-nav__viewport--fade-left]="podeRolarEsquerda() && !podeRolarDireita()"
+        [class.pdp-cat-nav__viewport--fade-right]="!podeRolarEsquerda() && podeRolarDireita()"
+        [class.pdp-cat-nav__viewport--fade-both]="podeRolarEsquerda() && podeRolarDireita()"
+      >
+        <ul
+          #listaEl
+          class="pdp-cat-nav__list"
+          (scroll)="atualizarBordasScroll()"
+        >
+          @for (cat of categorias(); track cat.id; let idx = $index) {
+            @let ativo = idAtivoEfetivo() === cat.id;
+            <li class="pdp-cat-nav__item">
+              <button
+                #pillBtn
+                type="button"
+                class="pdp-cat-nav__pill"
+                [class.pdp-cat-nav__pill--active]="ativo"
+                [attr.aria-current]="ativo ? 'true' : null"
+                [attr.data-cat-id]="cat.id"
+                (click)="aoClicarCategoria(cat.id, idx)"
+                (keydown)="aoPressionarTecla($event, idx)"
+              >
+                <span class="pdp-cat-nav__icon" aria-hidden="true">{{
+                  obterIcone(cat)
+                }}</span>
+                <span class="pdp-cat-nav__label">{{ cat.nome }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </nav>
+}
+

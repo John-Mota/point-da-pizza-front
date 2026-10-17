@@ -17,11 +17,6 @@
           <span class="pdp-cart-summary__value">{{ subtotal() | pdpCurrency }}</span>
         </div>
 
-        <div class="pdp-cart-summary__row">
-          <span class="pdp-cart-summary__label">Taxa de entrega</span>
-          <span class="pdp-cart-summary__value">{{ taxaEntrega() | pdpCurrency }}</span>
-        </div>
-
         @if (temDesconto()) {
           <div class="pdp-cart-summary__row pdp-cart-summary__row--discount">
             <span class="pdp-cart-summary__label">Desconto</span>

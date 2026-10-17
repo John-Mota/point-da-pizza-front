@@ -41,7 +41,6 @@ describe('PdpLojaHeader', () => {
   });
 
   it('deve exibir "Fechado" e a previsão de abertura quando o relógio falso estiver fora do horário', () => {
-    // Terça-feira às 17:00 -> Fechado, Abre hoje às 18h
     fakeClock.currentDate = new Date('2026-10-20T17:00:00-03:00');
     component.atualizarRelogio();
     fixture.detectChanges();
@@ -55,7 +54,7 @@ describe('PdpLojaHeader', () => {
     expect(nextOpen?.textContent).toContain('Abre hoje às 18h');
   });
 
-  it('deve abrir e fechar o painel de informações da loja com aria-expanded correto', () => {
+  it('deve abrir e fechar o popup de informações da pizzaria ao clicar no ícone de informações', () => {
     const hostEl = fixture.nativeElement as HTMLElement;
     const toggleBtn = hostEl.querySelector<HTMLButtonElement>('.pdp-loja-header__info-toggle');
     const panel = hostEl.querySelector<HTMLElement>('#pdp-loja-info-painel');
@@ -65,7 +64,6 @@ describe('PdpLojaHeader', () => {
     expect(toggleBtn?.getAttribute('aria-expanded')).toBe('false');
     expect(panel?.hidden).toBe(true);
 
-    // Clica para abrir
     toggleBtn?.click();
     fixture.detectChanges();
 
@@ -73,12 +71,10 @@ describe('PdpLojaHeader', () => {
     expect(panel?.hidden).toBe(false);
     expect(panel?.textContent).toContain(LOJA_MOCK.endereco);
 
-    // Verifica que Terça-feira (dia 2) está destacada como Hoje
     const linhaHoje = panel?.querySelector('.pdp-loja-header__schedule-row--today');
     expect(linhaHoje?.textContent).toContain('Terça-feira');
     expect(linhaHoje?.textContent).toContain('Hoje');
 
-    // Clica novamente para fechar
     toggleBtn?.click();
     fixture.detectChanges();
 
@@ -102,19 +98,30 @@ describe('PdpLojaHeader', () => {
     expect(whatsappLink?.getAttribute('rel')).toBe('noopener noreferrer');
   });
 
-  it('deve exibir "Grátis" quando a taxa de entrega for zero e logo em texto quando sem logoUrl', () => {
+  it('deve exibir /img/logo.png na esquerda, /img/logo-entregador-point-da-pizza.png no centro e abrir o menu do usuário com Configurar e Sair', () => {
     fixture.componentRef.setInput('loja', {
       ...LOJA_MOCK,
-      taxaEntrega: 0,
       logoUrl: undefined,
     });
+    fixture.componentRef.setInput('usuarioFotoUrl', '/img/logo.png');
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
-    expect(hostEl.querySelector('.pdp-loja-header__free')?.textContent?.trim()).toBe('Grátis');
-    expect(hostEl.querySelector('.pdp-loja-header__logo-fallback')?.textContent).toContain(
-      'POINT'
-    );
+    const fallbackImg = hostEl.querySelector<HTMLImageElement>('.pdp-loja-header__logo-fallback');
+    const centerImg = hostEl.querySelector<HTMLImageElement>('.pdp-loja-header__center-img');
+    expect(fallbackImg?.getAttribute('src')).toBe('/img/logo.png');
+    expect(centerImg?.getAttribute('src')).toBe('/img/logo-entregador-point-da-pizza.png');
+    expect(hostEl.querySelector('.pdp-loja-header__user-img')).toBeTruthy();
+
+    const userBtn = hostEl.querySelector<HTMLButtonElement>('.pdp-loja-header__user-btn');
+    const userMenu = hostEl.querySelector<HTMLElement>('#pdp-user-menu');
+    expect(userMenu?.hidden).toBe(true);
+
+    userBtn?.click();
+    fixture.detectChanges();
+
+    expect(userMenu?.hidden).toBe(false);
+    expect(userMenu?.textContent).toContain('Configurar');
+    expect(userMenu?.textContent).toContain('Sair');
   });
 });
-

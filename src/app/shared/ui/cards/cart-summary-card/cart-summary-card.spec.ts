@@ -16,7 +16,6 @@ describe('PdpCartSummaryCard', () => {
 
   it('deve calcular o total corretamente sem desconto e exibir valores', () => {
     fixture.componentRef.setInput('subtotal', 80.0);
-    fixture.componentRef.setInput('taxaEntrega', 7.5);
     fixture.componentRef.setInput('desconto', 0);
     fixture.detectChanges();
 
@@ -24,12 +23,11 @@ describe('PdpCartSummaryCard', () => {
     const totalEl = fixture.nativeElement.querySelector('.pdp-cart-summary__value-total');
 
     expect(discountRow).toBeNull();
-    expect(totalEl?.textContent.trim()).toBe('R$ 87,50');
+    expect(totalEl?.textContent.trim()).toBe('R$ 80,00');
   });
 
   it('deve exibir a linha de desconto e abater do total quando desconto > 0', () => {
     fixture.componentRef.setInput('subtotal', 80.0);
-    fixture.componentRef.setInput('taxaEntrega', 7.5);
     fixture.componentRef.setInput('desconto', 10.0);
     fixture.detectChanges();
 
@@ -38,12 +36,11 @@ describe('PdpCartSummaryCard', () => {
 
     expect(discountRow).toBeTruthy();
     expect(discountRow?.textContent).toContain('- R$ 10,00');
-    expect(totalEl?.textContent.trim()).toBe('R$ 77,50');
+    expect(totalEl?.textContent.trim()).toBe('R$ 70,00');
   });
 
   it('deve emitir o evento checkout ao clicar no botão CTA', () => {
     fixture.componentRef.setInput('subtotal', 50.0);
-    fixture.componentRef.setInput('taxaEntrega', 5.0);
     fixture.detectChanges();
 
     let checkoutCalled = false;
@@ -57,7 +54,6 @@ describe('PdpCartSummaryCard', () => {
 
   it('deve desabilitar o botão quando desabilitado for true', () => {
     fixture.componentRef.setInput('subtotal', 0);
-    fixture.componentRef.setInput('taxaEntrega', 0);
     fixture.componentRef.setInput('desabilitado', true);
     fixture.detectChanges();
 

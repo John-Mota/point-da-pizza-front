@@ -238,7 +238,7 @@
     <section class="styleguide__section pdp-print-avoid-break">
       <div class="styleguide__section-header">
         <h2 class="styleguide__section-title">6. pdp-cart-summary-card (Resumo do Carrinho)</h2>
-        <p class="styleguide__section-desc">Cálculo de subtotal, frete, desconto condicional e chamada para fechamento.</p>
+        <p class="styleguide__section-desc">Cálculo de subtotal, desconto condicional e chamada para fechamento.</p>
       </div>
 
       <div class="styleguide__grid styleguide__grid--3">
@@ -246,7 +246,6 @@
           <span class="styleguide__variant-tag">Com cupom de desconto</span>
           <pdp-cart-summary-card
             [subtotal]="95.0"
-            [taxaEntrega]="8.0"
             [desconto]="15.0"
             (checkout)="onActionTriggered('Iniciou checkout com desconto')"
           />
@@ -256,7 +255,6 @@
           <span class="styleguide__variant-tag">Sem desconto</span>
           <pdp-cart-summary-card
             [subtotal]="64.0"
-            [taxaEntrega]="6.0"
             (checkout)="onActionTriggered('Iniciou checkout padrão')"
           />
         </div>
@@ -265,7 +263,6 @@
           <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
           <pdp-cart-summary-card
             [subtotal]="0"
-            [taxaEntrega]="0"
             [loading]="true"
           />
         </div>

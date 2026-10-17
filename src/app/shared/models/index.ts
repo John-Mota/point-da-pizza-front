@@ -15,9 +15,6 @@ export interface Loja {
   capaUrl?: string;
   aberta: boolean;
   horarios: HorarioFuncionamento[];
-  tempoEntrega: string;
-  pedidoMinimo: number;
-  taxaEntrega: number;
   endereco: string;
   telefone: string;
   whatsapp: string;
