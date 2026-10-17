@@ -1,4 +1,4 @@
-import { DiaSemana, HorarioFuncionamento } from '../../../shared/models';
+import { DiaSemana, HorarioFuncionamento } from '../../../../shared/models';
 
 export interface ProximaAberturaLoja {
   quando: 'hoje' | 'amanha' | 'dia';

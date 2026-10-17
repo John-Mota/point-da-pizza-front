@@ -1,5 +1,5 @@
-import { HorarioFuncionamento } from '../../../shared/models';
-import { HORARIOS_LOJA_MOCK } from '../data';
+import { HorarioFuncionamento } from '../../../../shared/models';
+import { HORARIOS_LOJA_MOCK } from '../../data';
 import { calcularStatusLoja, formatarProximaAbertura } from './loja-status.util';
 
 describe('calcularStatusLoja (America/Fortaleza UTC-3)', () => {

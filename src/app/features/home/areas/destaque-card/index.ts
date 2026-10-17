@@ -1,0 +1,2 @@
+export * from './destaque-card';
+

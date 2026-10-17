@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -13,9 +14,9 @@ import { Categoria, Combo, Loja, Produto, Promocao } from '../../shared/models';
 import { PdpCard } from '../../shared/ui/cards';
 import {
   PdpCategoriasNav,
+  PdpDestaquesSection,
   PdpLojaHeader,
   PdpProdutos,
-  PdpPromocoes,
   PdpRodape,
 } from './areas';
 import { CardapioService } from './data';
@@ -29,7 +30,7 @@ import { CardapioService } from './data';
     PdpCard,
     PdpLojaHeader,
     PdpCategoriasNav,
-    PdpPromocoes,
+    PdpDestaquesSection,
     PdpProdutos,
     PdpRodape,
   ],
@@ -50,6 +51,11 @@ export class PdpHomePage implements OnInit {
   readonly produtos = signal<Produto[]>([]);
   readonly promocoes = signal<Promocao[]>([]);
   readonly combos = signal<Combo[]>([]);
+  readonly ultimoProdutoPedido = signal<Produto | null>(null);
+
+  readonly destaques = computed(() =>
+    this.produtos().filter((produto) => produto.destaque && produto.disponivel)
+  );
 
   ngOnInit(): void {
     this.carregarCardapio();
@@ -57,6 +63,10 @@ export class PdpHomePage implements OnInit {
 
   aoSelecionarCategoria(categoriaId: string): void {
     this.categoriaAtivaId.set(categoriaId);
+  }
+
+  aoPedirDestaque(produto: Produto): void {
+    this.ultimoProdutoPedido.set(produto);
   }
 
   carregarCardapio(): void {

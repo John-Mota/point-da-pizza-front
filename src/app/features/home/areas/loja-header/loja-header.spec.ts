@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { ClockService } from '../../../core/clock';
-import { LOJA_MOCK } from '../data';
+import { ClockService } from '../../../../core/clock';
+import { LOJA_MOCK } from '../../data';
 import { PdpLojaHeader } from './loja-header';
 
 class FakeClockService extends ClockService {

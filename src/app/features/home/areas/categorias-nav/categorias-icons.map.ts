@@ -1,4 +1,4 @@
-import { Categoria } from '../../../shared/models';
+import { Categoria } from '../../../../shared/models';
 
 export const ICONE_CATEGORIA_PADRAO = '🍽️';
 

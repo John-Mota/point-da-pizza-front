@@ -19,7 +19,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Categoria } from '../../../shared/models';
+import { Categoria } from '../../../../shared/models';
 import { obterIconeCategoria } from './categorias-icons.map';
 import { CategoriasScrollSpyService } from './categorias-scroll-spy.service';
 

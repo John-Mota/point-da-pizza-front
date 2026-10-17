@@ -31,17 +31,20 @@
       </pdp-card>
     </main>
   } @else {
-    <pdp-loja-header [loja]="loja()" />
+    <pdp-loja-header [loja]="loja()"></pdp-loja-header>
     <main class="pdp-home__container">
       <div class="pdp-home__areas">
         <pdp-categorias-nav
           [categorias]="categorias()"
           [(ativaId)]="categoriaAtivaId"
           (selecionar)="aoSelecionarCategoria($event)"
-        />
-        <pdp-promocoes [promocoes]="promocoes()" [combos]="combos()" />
-        <pdp-produtos [categorias]="categorias()" [produtos]="produtos()" />
-        <pdp-rodape [loja]="loja()" />
+        ></pdp-categorias-nav>
+        <pdp-destaques-section
+          [destaques]="destaques()"
+          (pedir)="aoPedirDestaque($event)"
+        ></pdp-destaques-section>
+        <pdp-produtos [categorias]="categorias()" [produtos]="produtos()"></pdp-produtos>
+        <pdp-rodape [loja]="loja()"></pdp-rodape>
       </div>
     </main>
   }

@@ -36,6 +36,11 @@ export class CardapioService {
     return of(PRODUTOS_MOCK).pipe(delay(this.delayMs));
   }
 
+  listarDestaques(): Observable<Produto[]> {
+    const destaques = PRODUTOS_MOCK.filter((produto) => produto.destaque && produto.disponivel);
+    return of(destaques).pipe(delay(this.delayMs));
+  }
+
   obterPromocoes(): Observable<Promocao[]> {
     return of(PROMOCOES_MOCK).pipe(delay(this.delayMs));
   }

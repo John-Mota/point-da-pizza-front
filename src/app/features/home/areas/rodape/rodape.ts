@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, input, isDevMode } from '@angular/core';
-import { Categoria, Produto } from '../../../shared/models';
+import { Loja } from '../../../../shared/models';
 
 @Component({
-  selector: 'pdp-produtos',
+  selector: 'pdp-rodape',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="pdp-area-slot" data-area="produtos" aria-label="Lista de produtos do cardápio">
+    <footer class="pdp-area-slot" data-area="rodape" aria-label="Rodapé da loja">
       @if (devMode) {
-        <span class="pdp-area-slot__label">produtos</span>
+        <span class="pdp-area-slot__label">rodape</span>
       }
-    </section>
+    </footer>
   `,
   styles: `
     :host {
@@ -27,9 +27,8 @@ import { Categoria, Produto } from '../../../shared/models';
     }
   `,
 })
-export class PdpProdutos {
-  readonly categorias = input<Categoria[]>([]);
-  readonly produtos = input<Produto[]>([]);
+export class PdpRodape {
+  readonly loja = input<Loja | null>(null);
   protected readonly devMode = isDevMode();
 }
 

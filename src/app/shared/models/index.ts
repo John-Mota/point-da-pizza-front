@@ -49,8 +49,11 @@ export interface Produto {
   nome: string;
   descricao: string;
   preco: number;
+  precoOriginal?: number;
   imagemUrl?: string;
   disponivel: boolean;
+  destaque?: boolean;
+  seloDestaque?: string;
   tamanhos?: TamanhoPizza[];
   bordas?: TipoBorda[];
 }

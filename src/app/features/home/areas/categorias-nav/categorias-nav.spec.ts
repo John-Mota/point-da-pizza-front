@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { CATEGORIAS_MOCK } from '../data';
+import { CATEGORIAS_MOCK } from '../../data';
 import { obterIconeCategoria } from './categorias-icons.map';
 import { PdpCategoriasNav } from './categorias-nav';
 

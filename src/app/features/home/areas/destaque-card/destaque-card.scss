@@ -1,0 +1,183 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.pdp-destaque-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition:
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+  user-select: none;
+
+  &--active {
+    border-color: color-mix(in srgb, var(--brand) 45%, var(--border));
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.pdp-destaque-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: var(--surface-promo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pdp-destaque-card__badge-wrap {
+  position: absolute;
+  top: var(--space-12);
+  left: var(--space-12);
+  z-index: 2;
+}
+
+:host ::ng-deep .pdp-destaque-card__tag.p-tag {
+  background: var(--brand);
+  color: var(--brand-contrast);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: var(--space-4) var(--space-12);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdp-destaque-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.pdp-destaque-card__compact-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  background: linear-gradient(
+    145deg,
+    var(--surface-promo) 0%,
+    color-mix(in srgb, var(--brand-strong) 35%, var(--surface-promo)) 100%
+  );
+  color: var(--surface-promo-text);
+}
+
+.pdp-destaque-card__emoji {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.pdp-destaque-card__fallback-brand {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: var(--brand);
+}
+
+.pdp-destaque-card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16) var(--space-16);
+}
+
+.pdp-destaque-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pdp-destaque-card__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pdp-destaque-card__desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pdp-destaque-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border);
+}
+
+.pdp-destaque-card__pricing {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdp-destaque-card__price-old,
+.pdp-destaque-card__price-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.pdp-destaque-card__price-old {
+  text-decoration: line-through;
+}
+
+.pdp-destaque-card__price {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--brand);
+  line-height: 1.1;
+}
+
+.pdp-destaque-card__cta.p-button {
+  min-height: 44px;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-md);
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-contrast);
+  font-weight: 700;
+  font-size: 0.875rem;
+  gap: var(--space-8);
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--brand-strong);
+    border-color: var(--brand-strong);
+    color: var(--brand-strong-contrast);
+  }
+}
+

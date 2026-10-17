@@ -1,0 +1,97 @@
+@let listaSlides = slides();
+
+@if (listaSlides.length > 0) {
+  <section
+    class="pdp-destaques"
+    data-area="promocoes"
+    aria-roledescription="carrossel"
+    aria-label="Destaques"
+    (mouseenter)="aoEntrarMouse()"
+    (mouseleave)="aoSairMouse()"
+    (focusin)="aoReceberFoco()"
+    (focusout)="aoPerderFoco($event)"
+    (keydown)="aoPressionarTecla($event)"
+  >
+    <header class="pdp-destaques__header">
+      <div class="pdp-destaques__title-group">
+        <h2 class="pdp-destaques__title">Destaque</h2>
+      </div>
+    </header>
+
+    <div
+      class="pdp-destaques__stage"
+      [class.pdp-destaques__stage--static]="!ehCarrossel()"
+      (pointerdown)="aoIniciarToque($event)"
+      (pointerup)="aoFinalizarToque($event)"
+      (pointercancel)="aoCancelarToque()"
+    >
+      @if (ehCarrossel()) {
+        <button
+          pButton
+          pRipple
+          type="button"
+          [rounded]="true"
+          severity="secondary"
+          class="pdp-destaques__arrow pdp-destaques__arrow--prev"
+          aria-label="Destaque anterior"
+          (click)="anterior(true)"
+        >
+          <i class="pi pi-chevron-left" aria-hidden="true"></i>
+        </button>
+      }
+
+      <div class="pdp-destaques__track" [class.pdp-destaques__track--static]="!ehCarrossel()" [attr.aria-live]="modoAriaLive()">
+        @for (slide of listaSlides; track slide.produto.id; let i = $index) {
+          <div
+            class="pdp-destaques__slide"
+            [class.pdp-destaques__slide--center]="slide.posicao === 'center'"
+            [class.pdp-destaques__slide--prev]="slide.posicao === 'prev'"
+            [class.pdp-destaques__slide--next]="slide.posicao === 'next'"
+            [class.pdp-destaques__slide--hidden-left]="slide.posicao === 'hidden-left'"
+            [class.pdp-destaques__slide--hidden-right]="slide.posicao === 'hidden-right'"
+            [class.pdp-destaques__slide--static]="slide.posicao === 'static'"
+            role="group"
+            aria-roledescription="slide"
+            [attr.aria-label]="i + 1 + ' de ' + listaSlides.length"
+            [attr.aria-current]="ehCarrossel() && slide.ativo ? 'true' : null"
+            (click)="aoClicarSlide(i, $event)"
+          >
+            <pdp-destaque-card [produto]="slide.produto" [ativo]="slide.ativo" (pedir)="aoPedirProduto($event)"></pdp-destaque-card>
+          </div>
+        }
+      </div>
+
+      @if (ehCarrossel()) {
+        <button
+          pButton
+          pRipple
+          type="button"
+          [rounded]="true"
+          severity="secondary"
+          class="pdp-destaques__arrow pdp-destaques__arrow--next"
+          aria-label="Próximo destaque"
+          (click)="proximo(true)"
+        >
+          <i class="pi pi-chevron-right" aria-hidden="true"></i>
+        </button>
+      }
+    </div>
+
+    @if (ehCarrossel()) {
+      <div class="pdp-destaques__dots" role="group" aria-label="Indicadores de destaques">
+        @for (slide of listaSlides; track slide.produto.id; let i = $index) {
+          <button
+            pButton
+            pRipple
+            type="button"
+            class="pdp-destaques__dot"
+            [class.pdp-destaques__dot--active]="slide.ativo"
+            [attr.aria-label]="'Ir para ' + slide.produto.nome"
+            [attr.aria-current]="slide.ativo ? 'true' : null"
+            (click)="irPara(i, true)"
+          ></button>
+        }
+      </div>
+    }
+  </section>
+}

@@ -1,0 +1,68 @@
+@let item = produto();
+
+<article
+  class="pdp-destaque-card"
+  [class.pdp-destaque-card--active]="ativo()"
+  [class.pdp-destaque-card--no-image]="!mostrarImagem()"
+>
+  <div class="pdp-destaque-card__media">
+    <div class="pdp-destaque-card__badge-wrap">
+      <p-tag
+        severity="warn"
+        [rounded]="true"
+        [value]="selo()"
+        class="pdp-destaque-card__tag"
+      ></p-tag>
+    </div>
+
+    @if (mostrarImagem()) {
+      <img
+        [src]="item.imagemUrl"
+        [alt]="item.nome"
+        class="pdp-destaque-card__img"
+        loading="lazy"
+        draggable="false"
+        (error)="aoErroImagem()"
+      />
+    } @else {
+      <div class="pdp-destaque-card__compact-fallback" aria-hidden="true">
+        <span class="pdp-destaque-card__emoji">{{ emojiFallback() }}</span>
+        <span class="pdp-destaque-card__fallback-brand">POINT da PIZZA</span>
+      </div>
+    }
+  </div>
+
+  <div class="pdp-destaque-card__body">
+    <div class="pdp-destaque-card__info">
+      <h3 class="pdp-destaque-card__title">{{ item.nome }}</h3>
+      <p class="pdp-destaque-card__desc">{{ item.descricao }}</p>
+    </div>
+
+    <div class="pdp-destaque-card__footer">
+      <div class="pdp-destaque-card__pricing">
+        @if (item.precoOriginal && item.precoOriginal > item.preco) {
+          <span class="pdp-destaque-card__price-old">
+            De {{ item.precoOriginal | pdpCurrency }}
+          </span>
+        } @else {
+          <span class="pdp-destaque-card__price-label">A partir de</span>
+        }
+        <strong class="pdp-destaque-card__price">{{ item.preco | pdpCurrency }}</strong>
+      </div>
+
+      <button
+        pButton
+        pRipple
+        type="button"
+        class="pdp-destaque-card__cta"
+        [attr.aria-label]="'Pedir ' + item.nome"
+        (click)="aoClicarPedir($event)"
+        (pointerdown)="$event.stopPropagation()"
+      >
+        <span>Pedir</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</article>
+

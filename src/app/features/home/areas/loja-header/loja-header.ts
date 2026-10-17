@@ -17,9 +17,9 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { TagModule } from 'primeng/tag';
-import { ClockService } from '../../../core/clock';
-import { ThemeService } from '../../../core/theme';
-import { DiaSemana, Loja } from '../../../shared/models';
+import { ClockService } from '../../../../core/clock';
+import { ThemeService } from '../../../../core/theme';
+import { DiaSemana, Loja } from '../../../../shared/models';
 import {
   NOMES_DIAS_SEMANA,
   StatusLojaResult,
