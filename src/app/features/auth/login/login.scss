@@ -116,6 +116,11 @@
     font-size: 0.875rem;
     background: color-mix(in srgb, var(--success) 15%, transparent);
     color: var(--success);
+
+    &--err {
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent);
+    }
   }
 
   &__tabs {

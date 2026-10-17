@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { vi } from 'vitest';
 import { Login } from './login';
 
@@ -164,5 +164,28 @@ describe('Login', () => {
       expect(component.isSubmitting()).toBe(false);
       expect(component.submitSuccess()).toContain('joao@pizzaria.com');
     });
+
+    it('deve autenticar o login mockado pointdapizza@gmail.com com a senha John3472 e redirecionar para a home', () => {
+      vi.useFakeTimers();
+      const router = TestBed.inject(Router);
+      const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+      component.loginForm.patchValue({
+        email: 'pointdapizza@gmail.com',
+        password: 'John3472',
+      });
+
+      expect(component.loginForm.valid).toBe(true);
+
+      component.onSubmit();
+      expect(component.isSubmitting()).toBe(true);
+
+      vi.advanceTimersByTime(800);
+
+      expect(component.isSubmitting()).toBe(false);
+      expect(component.submitSuccess()).toContain('pointdapizza@gmail.com');
+      expect(navSpy).toHaveBeenCalledWith(['/']);
+    });
   });
 });
+

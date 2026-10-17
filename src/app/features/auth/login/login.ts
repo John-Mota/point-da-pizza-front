@@ -7,10 +7,16 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PdpCard } from '../../../shared/ui/cards';
 
 export type LoginType = 'email' | 'phone';
+
+export const MOCK_USER_CREDENTIALS = {
+  email: 'pointdapizza@gmail.com',
+  senha: 'John3472',
+  nome: 'Point da Pizza',
+} as const;
 
 export function passwordValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value || '';
@@ -36,11 +42,13 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
 })
 export class Login {
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
   readonly loginType = signal<LoginType>('email');
   readonly showPassword = signal<boolean>(false);
   readonly isSubmitting = signal<boolean>(false);
   readonly submitSuccess = signal<string | null>(null);
+  readonly submitError = signal<string | null>(null);
 
   readonly loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -70,6 +78,7 @@ export class Login {
 
     this.loginType.set(type);
     this.submitSuccess.set(null);
+    this.submitError.set(null);
 
     const emailCtrl = this.loginForm.get('email');
     const phoneCtrl = this.loginForm.get('phone');
@@ -113,6 +122,15 @@ export class Login {
 
   onSubmit(): void {
     this.submitSuccess.set(null);
+    this.submitError.set(null);
+
+    if (this.loginType() === 'email') {
+      const emailCtrl = this.loginForm.get('email');
+      const trimmedEmail = String(emailCtrl?.value ?? '').trim();
+      if (emailCtrl && emailCtrl.value !== trimmedEmail) {
+        emailCtrl.setValue(trimmedEmail);
+      }
+    }
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -121,12 +139,28 @@ export class Login {
 
     this.isSubmitting.set(true);
 
-    const identifier = this.loginType() === 'email' ? this.loginForm.value.email : this.loginForm.value.phone;
+    const emailInput = String(this.loginForm.value.email ?? '')
+      .trim()
+      .toLowerCase();
+    const passwordInput = String(this.loginForm.value.password ?? '');
+    const identifier = this.loginType() === 'email' ? emailInput : this.loginForm.value.phone;
 
     // Simulação de login seguro (sem backend)
     setTimeout(() => {
       this.isSubmitting.set(false);
+
+      if (
+        this.loginType() === 'email' &&
+        emailInput === MOCK_USER_CREDENTIALS.email &&
+        passwordInput !== MOCK_USER_CREDENTIALS.senha
+      ) {
+        this.submitError.set('E-mail ou senha inválidos.');
+        return;
+      }
+
       this.submitSuccess.set(`Autenticação efetuada com sucesso para ${identifier}!`);
+      void this.router.navigate(['/']);
     }, 700);
   }
 }
+

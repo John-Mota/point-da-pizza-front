@@ -13,6 +13,12 @@
           </div>
         }
 
+        @if (submitError()) {
+          <div class="login__alert login__alert--err" role="alert">
+            <span>✖ {{ submitError() }}</span>
+          </div>
+        }
+
         <div class="login__tabs" role="tablist" aria-label="Método de acesso">
           <button
             type="button"
