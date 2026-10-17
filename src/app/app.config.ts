@@ -1,9 +1,15 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  makeEnvironmentProviders,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
-import { providePrimeNG } from 'primeng/config';
+import { PRIME_NG_CONFIG, PrimeNG, PrimeNGConfigType } from 'primeng/config';
 import { routes } from './app.routes';
 
 const PointDaPizzaPreset = definePreset(Aura, {
@@ -24,19 +30,28 @@ const PointDaPizzaPreset = definePreset(Aura, {
   },
 });
 
+const primeNgConfig: PrimeNGConfigType = {
+  ripple: true,
+  theme: {
+    preset: PointDaPizzaPreset,
+    options: {
+      darkModeSelector: '[data-theme="dark"]',
+    },
+  },
+};
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
-    providePrimeNG({
-      ripple: true,
-      theme: {
-        preset: PointDaPizzaPreset,
-        options: {
-          darkModeSelector: '[data-theme="dark"]',
-        },
-      },
-    }),
+    makeEnvironmentProviders([
+      { provide: PRIME_NG_CONFIG, useValue: primeNgConfig },
+      provideAppInitializer(() => {
+        const primeNg = inject(PrimeNG);
+        primeNg.setConfig(primeNgConfig);
+        primeNg._setVerified(true);
+      }),
+    ]),
   ],
 };
