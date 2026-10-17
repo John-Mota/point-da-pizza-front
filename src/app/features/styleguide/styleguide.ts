@@ -37,19 +37,23 @@ export class Styleguide {
   // Mocks para Produto
   readonly mockProdutoComImagem: Produto = {
     id: 'prod-1',
+    categoriaId: 'cat-tradicionais',
     nome: 'Pizza Calabresa Nobre',
     descricao: 'Calabresa artesanal defumada, fatias finas de cebola roxa, azeitonas pretas e orégano fresco.',
     preco: 44.9,
     imagemUrl: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=500&auto=format&fit=crop&q=80',
     categoria: 'Pizzas Salgadas',
+    disponivel: true,
   };
 
   readonly mockProdutoSemImagem: Produto = {
     id: 'prod-2',
+    categoriaId: 'cat-tradicionais',
     nome: 'Pizza Frango com Catupiry',
     descricao: 'Peito de frango desfiado temperado com ervas finas e legítimo Catupiry cremoso.',
     preco: 48.0,
     categoria: 'Pizzas Salgadas',
+    disponivel: true,
   };
 
   // Mock para Promoção

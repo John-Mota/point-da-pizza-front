@@ -1,12 +1,52 @@
 export type StatusPedido = 'recebido' | 'em-producao' | 'a-caminho' | 'entregue' | 'cancelado';
 
+export interface Loja {
+  nome: string;
+  slogan: string;
+  logoUrl?: string;
+  capaUrl?: string;
+  aberta: boolean;
+  horarios: string;
+  tempoEntrega: string;
+  pedidoMinimo: number;
+  taxaEntrega: number;
+  endereco: string;
+  telefone: string;
+  whatsapp: string;
+  formasPagamento: string[];
+}
+
+export interface Categoria {
+  id: string;
+  nome: string;
+  ordem: number;
+}
+
+export interface TamanhoPizza {
+  sigla: 'P' | 'M' | 'G' | 'GG';
+  nome: string;
+  fatias: number;
+  maxSabores: number;
+  precoBase?: number;
+}
+
+export interface TipoBorda {
+  id: string;
+  nome: string;
+  precoAdicional: number;
+}
+
 export interface Produto {
   id: string;
+  categoriaId: string;
+  categoria?: string;
   nome: string;
   descricao: string;
   preco: number;
   imagemUrl?: string;
-  categoria: string;
+  disponivel: boolean;
+  tamanhos?: TamanhoPizza[];
+  bordas?: TipoBorda[];
 }
 
 export interface Combo {
@@ -51,4 +91,3 @@ export interface CadastroPayload {
   senha: string;
   foto?: File;
 }
-

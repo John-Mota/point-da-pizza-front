@@ -8,10 +8,12 @@ describe('PdpProductCard', () => {
 
   const mockProduto: Produto = {
     id: 'p1',
+    categoriaId: 'cat-tradicionais',
     nome: 'Pizza Calabresa Especial',
     descricao: 'Molho de tomate artesanal, mussarela, calabresa fatiada e cebola roxa.',
     preco: 42.5,
     categoria: 'Pizzas Salgadas',
+    disponivel: true,
   };
 
   beforeEach(async () => {
