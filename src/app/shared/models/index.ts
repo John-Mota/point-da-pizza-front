@@ -20,6 +20,7 @@ export interface Categoria {
   id: string;
   nome: string;
   ordem: number;
+  imagemUrl?: string;
 }
 
 export interface TamanhoPizza {
@@ -65,6 +66,7 @@ export interface Promocao {
   preco: number;
   selo?: string;
   diasValidos?: string;
+  imagemUrl?: string;
 }
 
 export interface ItemPedido {
