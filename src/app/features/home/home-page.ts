@@ -1,0 +1,78 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Categoria, Combo, Loja, Produto, Promocao } from '../../shared/models';
+import { PdpCard } from '../../shared/ui/cards';
+import {
+  PdpCategoriasNav,
+  PdpLojaHeader,
+  PdpProdutos,
+  PdpPromocoes,
+  PdpRodape,
+} from './areas';
+import { CardapioService } from './data';
+
+@Component({
+  selector: 'pdp-home-page',
+  standalone: true,
+  imports: [
+    PdpCard,
+    PdpLojaHeader,
+    PdpCategoriasNav,
+    PdpPromocoes,
+    PdpProdutos,
+    PdpRodape,
+  ],
+  templateUrl: './home-page.html',
+  styleUrl: './home-page.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class PdpHomePage implements OnInit {
+  private readonly cardapioService = inject(CardapioService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly carregando = signal<boolean>(true);
+  readonly erro = signal<string | null>(null);
+
+  readonly loja = signal<Loja | null>(null);
+  readonly categorias = signal<Categoria[]>([]);
+  readonly produtos = signal<Produto[]>([]);
+  readonly promocoes = signal<Promocao[]>([]);
+  readonly combos = signal<Combo[]>([]);
+
+  ngOnInit(): void {
+    this.carregarCardapio();
+  }
+
+  carregarCardapio(): void {
+    this.carregando.set(true);
+    this.erro.set(null);
+
+    this.cardapioService
+      .carregarCardapio()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (dados) => {
+          this.loja.set(dados.loja);
+          this.categorias.set(dados.categorias);
+          this.produtos.set(dados.produtos);
+          this.promocoes.set(dados.promocoes);
+          this.combos.set(dados.combos);
+          this.carregando.set(false);
+        },
+        error: () => {
+          this.carregando.set(false);
+          this.erro.set(
+            'Não foi possível carregar o cardápio agora. Verifique sua conexão e tente novamente.'
+          );
+        },
+      });
+  }
+}
+

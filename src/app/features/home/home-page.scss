@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+.pdp-home {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  padding: var(--space-24) var(--space-16);
+
+  &__container {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  &__loading,
+  &__areas {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+
+  &__skeleton-header {
+    height: 120px;
+    border-radius: var(--radius-md);
+  }
+
+  &__skeleton-nav {
+    height: 48px;
+    border-radius: var(--radius-md);
+  }
+
+  &__skeleton-promos {
+    height: 160px;
+    border-radius: var(--radius-md);
+  }
+
+  &__skeleton-products {
+    height: 280px;
+    border-radius: var(--radius-md);
+  }
+
+  &__skeleton-footer {
+    height: 80px;
+    border-radius: var(--radius-md);
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-16);
+    padding: var(--space-24);
+  }
+
+  &__error-msg {
+    color: var(--accent);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  &__retry-btn {
+    padding: var(--space-12) var(--space-24);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--brand);
+    color: var(--brand-contrast);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--brand-strong);
+      color: var(--brand-strong-contrast);
+    }
+  }
+}
+

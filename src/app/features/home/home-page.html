@@ -1,0 +1,39 @@
+<div class="pdp-home">
+  <main class="pdp-home__container">
+    @if (carregando()) {
+      <section
+        class="pdp-home__loading"
+        aria-busy="true"
+        aria-label="Carregando cardápio"
+      >
+        <div class="pdp-skeleton pdp-home__skeleton-header"></div>
+        <div class="pdp-skeleton pdp-home__skeleton-nav"></div>
+        <div class="pdp-skeleton pdp-home__skeleton-promos"></div>
+        <div class="pdp-skeleton pdp-home__skeleton-products"></div>
+        <div class="pdp-skeleton pdp-home__skeleton-footer"></div>
+      </section>
+    } @else if (erro()) {
+      <pdp-card class="pdp-home__error-card">
+        <div class="pdp-home__error" role="alert">
+          <p class="pdp-home__error-msg">{{ erro() }}</p>
+          <button
+            type="button"
+            class="pdp-home__retry-btn"
+            (click)="carregarCardapio()"
+          >
+            Tentar de novo
+          </button>
+        </div>
+      </pdp-card>
+    } @else {
+      <div class="pdp-home__areas">
+        <pdp-loja-header [loja]="loja()" />
+        <pdp-categorias-nav [categorias]="categorias()" />
+        <pdp-promocoes [promocoes]="promocoes()" [combos]="combos()" />
+        <pdp-produtos [categorias]="categorias()" [produtos]="produtos()" />
+        <pdp-rodape [loja]="loja()" />
+      </div>
+    }
+  </main>
+</div>
+
