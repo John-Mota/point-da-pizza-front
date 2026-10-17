@@ -3,17 +3,9 @@
     <pdp-card class="cadastro__card" padding="none">
       <div class="cadastro__body">
         <header class="cadastro__header">
-          <img
-            src="/img/logo.png"
-            alt="Point da Pizza"
-            class="cadastro__logo"
-            width="140"
-            height="122"
-          />
+          <img src="/img/logo.png" alt="Point da Pizza" class="cadastro__logo" width="140" height="122" />
           <h1 class="cadastro__title">Criar conta</h1>
-          <p class="cadastro__subtitle">
-            Cadastre-se para pedir suas pizzas favoritas com rapidez
-          </p>
+          <p class="cadastro__subtitle">Cadastre-se para pedir suas pizzas favoritas com rapidez</p>
         </header>
 
         @if (submitSuccess()) {
@@ -22,22 +14,13 @@
           </div>
         }
 
-        <form
-          [formGroup]="cadastroForm"
-          (ngSubmit)="submit()"
-          class="cadastro__form"
-          novalidate
-        >
+        <form [formGroup]="cadastroForm" (ngSubmit)="submit()" class="cadastro__form" novalidate>
           <!-- Foto de perfil (opcional) -->
           <div class="cadastro__field">
             <label for="pdp-cadastro-foto" class="cadastro__label">
               Foto de perfil <span class="cadastro__optional">(opcional)</span>
             </label>
-            <pdp-photo-upload
-              formControlName="foto"
-              [name]="nomeValue()"
-              inputId="pdp-cadastro-foto"
-            ></pdp-photo-upload>
+            <pdp-photo-upload formControlName="foto" [name]="nomeValue()" inputId="pdp-cadastro-foto"></pdp-photo-upload>
           </div>
 
           <!-- Nome completo -->
@@ -82,9 +65,7 @@
 
           <!-- Telefone -->
           <div class="cadastro__field">
-            <label for="pdp-cadastro-telefone" class="cadastro__label">
-              Telefone (celular com DDD)
-            </label>
+            <label for="pdp-cadastro-telefone" class="cadastro__label"> Telefone (celular com DDD) </label>
             <div class="cadastro__wrap">
               <input
                 pInputText
@@ -96,9 +77,7 @@
                 [class.cadastro__input--err]="shouldShowError('telefone')"
                 [attr.aria-invalid]="shouldShowError('telefone')"
                 [attr.aria-describedby]="
-                  shouldShowError('telefone')
-                    ? 'pdp-cadastro-contato-hint pdp-cadastro-telefone-err'
-                    : 'pdp-cadastro-contato-hint'
+                  shouldShowError('telefone') ? 'pdp-cadastro-contato-hint pdp-cadastro-telefone-err' : 'pdp-cadastro-contato-hint'
                 "
                 placeholder="(85) 99999-9999"
                 autocomplete="tel"
@@ -119,11 +98,7 @@
 
             @if (isPhoneValid()) {
               <label class="cadastro__checkbox" for="pdp-cadastro-whatsapp">
-                <input
-                  id="pdp-cadastro-whatsapp"
-                  type="checkbox"
-                  formControlName="telefoneWhatsapp"
-                />
+                <input id="pdp-cadastro-whatsapp" type="checkbox" formControlName="telefoneWhatsapp" />
                 <span>Este número é WhatsApp</span>
               </label>
             }
@@ -131,9 +106,7 @@
 
           <!-- E-mail -->
           <div class="cadastro__field">
-            <label for="pdp-cadastro-email" class="cadastro__label">
-              E-mail
-            </label>
+            <label for="pdp-cadastro-email" class="cadastro__label"> E-mail </label>
             <div class="cadastro__wrap">
               <input
                 pInputText
@@ -144,9 +117,7 @@
                 [class.cadastro__input--err]="shouldShowError('email')"
                 [attr.aria-invalid]="shouldShowError('email')"
                 [attr.aria-describedby]="
-                  shouldShowError('email')
-                    ? 'pdp-cadastro-contato-hint pdp-cadastro-email-err'
-                    : 'pdp-cadastro-contato-hint'
+                  shouldShowError('email') ? 'pdp-cadastro-contato-hint pdp-cadastro-email-err' : 'pdp-cadastro-contato-hint'
                 "
                 placeholder="nome@dominio.com"
                 autocomplete="email"
@@ -169,9 +140,7 @@
 
           <!-- Senha -->
           <div class="cadastro__field">
-            <label for="pdp-cadastro-senha" class="cadastro__label">
-              Senha <span class="cadastro__req" aria-hidden="true">*</span>
-            </label>
+            <label for="pdp-cadastro-senha" class="cadastro__label"> Senha <span class="cadastro__req" aria-hidden="true">*</span> </label>
             <div class="cadastro__wrap">
               <input
                 pInputText
@@ -182,9 +151,7 @@
                 [class.cadastro__input--err]="shouldShowError('senha')"
                 [attr.aria-invalid]="shouldShowError('senha')"
                 [attr.aria-describedby]="
-                  shouldShowError('senha')
-                    ? 'pdp-cadastro-senha-checklist pdp-cadastro-senha-err'
-                    : 'pdp-cadastro-senha-checklist'
+                  shouldShowError('senha') ? 'pdp-cadastro-senha-checklist pdp-cadastro-senha-err' : 'pdp-cadastro-senha-checklist'
                 "
                 placeholder="Crie uma senha segura"
                 autocomplete="new-password"
@@ -203,29 +170,16 @@
               </button>
             </div>
 
-            <ul
-              id="pdp-cadastro-senha-checklist"
-              class="cadastro__checklist"
-              aria-live="polite"
-            >
-              <li
-                class="cadastro__checklist-item"
-                [class.cadastro__checklist-item--ok]="hasMinLength()"
-              >
+            <ul id="pdp-cadastro-senha-checklist" class="cadastro__checklist" aria-live="polite">
+              <li class="cadastro__checklist-item" [class.cadastro__checklist-item--ok]="hasMinLength()">
                 <span aria-hidden="true">{{ hasMinLength() ? '✔' : '✖' }}</span>
                 <span>8+ caracteres</span>
               </li>
-              <li
-                class="cadastro__checklist-item"
-                [class.cadastro__checklist-item--ok]="hasLetter()"
-              >
+              <li class="cadastro__checklist-item" [class.cadastro__checklist-item--ok]="hasLetter()">
                 <span aria-hidden="true">{{ hasLetter() ? '✔' : '✖' }}</span>
                 <span>Tem letra</span>
               </li>
-              <li
-                class="cadastro__checklist-item"
-                [class.cadastro__checklist-item--ok]="hasNumber()"
-              >
+              <li class="cadastro__checklist-item" [class.cadastro__checklist-item--ok]="hasNumber()">
                 <span aria-hidden="true">{{ hasNumber() ? '✔' : '✖' }}</span>
                 <span>Tem número</span>
               </li>
@@ -269,9 +223,7 @@
                 class="cadastro__input cadastro__input--with-toggle"
                 [class.cadastro__input--err]="shouldShowError('confirmarSenha')"
                 [attr.aria-invalid]="shouldShowError('confirmarSenha')"
-                [attr.aria-describedby]="
-                  shouldShowError('confirmarSenha') ? 'pdp-cadastro-confirmar-senha-err' : null
-                "
+                [attr.aria-describedby]="shouldShowError('confirmarSenha') ? 'pdp-cadastro-confirmar-senha-err' : null"
                 placeholder="Repita sua senha"
                 autocomplete="new-password"
               />
@@ -282,9 +234,7 @@
                 class="cadastro__toggle p-button-text"
                 (mousedown)="$event.preventDefault()"
                 (click)="toggleShowConfirmPassword()"
-                [attr.aria-label]="
-                  showConfirmPassword() ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'
-                "
+                [attr.aria-label]="showConfirmPassword() ? 'Ocultar confirmação de senha' : 'Mostrar confirmação de senha'"
                 [attr.aria-pressed]="showConfirmPassword()"
               >
                 <i class="pi" [class.pi-eye-slash]="showConfirmPassword()" [class.pi-eye]="!showConfirmPassword()" aria-hidden="true"></i>
@@ -302,19 +252,10 @@
           </div>
 
           @if (showErrorSummary()) {
-            <div class="cadastro__summary-err" role="alert">
-              Corrija os campos destacados
-            </div>
+            <div class="cadastro__summary-err" role="alert">Corrija os campos destacados</div>
           }
 
-          <button
-            pButton
-            pRipple
-            type="submit"
-            class="cadastro__btn"
-            [disabled]="isSubmitting()"
-            [attr.aria-busy]="isSubmitting()"
-          >
+          <button pButton pRipple type="submit" class="cadastro__btn" [disabled]="isSubmitting()" [attr.aria-busy]="isSubmitting()">
             @if (isSubmitting()) {
               <span class="cadastro__spinner" aria-hidden="true"></span>
               <span>Criando conta...</span>
@@ -334,4 +275,3 @@
     </pdp-card>
   </main>
 </div>
-
