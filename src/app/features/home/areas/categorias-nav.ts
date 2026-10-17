@@ -16,6 +16,9 @@ import {
   viewChild,
   viewChildren,
 } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { SkeletonModule } from 'primeng/skeleton';
 import { Categoria } from '../../../shared/models';
 import { obterIconeCategoria } from './categorias-icons.map';
 import { CategoriasScrollSpyService } from './categorias-scroll-spy.service';
@@ -23,6 +26,7 @@ import { CategoriasScrollSpyService } from './categorias-scroll-spy.service';
 @Component({
   selector: 'pdp-categorias-nav',
   standalone: true,
+  imports: [ButtonModule, RippleModule, SkeletonModule],
   templateUrl: './categorias-nav.html',
   styleUrl: './categorias-nav.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

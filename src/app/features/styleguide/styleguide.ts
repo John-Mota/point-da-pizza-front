@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { ThemeService } from '../../core/theme';
 import { Combo, Pedido, Produto, Promocao } from '../../shared/models';
 import {
@@ -16,6 +18,8 @@ import {
   selector: 'app-styleguide',
   standalone: true,
   imports: [
+    ButtonModule,
+    RippleModule,
     PdpCard,
     PdpProductCard,
     PdpPromoCard,

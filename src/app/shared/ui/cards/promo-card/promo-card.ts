@@ -1,4 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { TagModule } from 'primeng/tag';
 import { Promocao } from '../../../models';
 import { PdpCurrencyPipe } from '../../../pipes';
 import { PdpCard } from '../card/card';
@@ -6,7 +9,7 @@ import { PdpCard } from '../card/card';
 @Component({
   selector: 'pdp-promo-card',
   standalone: true,
-  imports: [PdpCard, PdpCurrencyPipe],
+  imports: [ButtonModule, RippleModule, TagModule, PdpCard, PdpCurrencyPipe],
   templateUrl: './promo-card.html',
   styleUrl: './promo-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

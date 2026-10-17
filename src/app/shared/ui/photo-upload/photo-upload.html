@@ -27,43 +27,35 @@
       } @else if (initials()) {
         <span class="pdp-photo-upload__initials">{{ initials() }}</span>
       } @else {
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="pdp-photo-upload__icon"
-        >
-          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-          <circle cx="12" cy="7" r="4" />
-        </svg>
+        <i class="pi pi-user pdp-photo-upload__icon" aria-hidden="true"></i>
       }
     </div>
 
     <div class="pdp-photo-upload__actions">
       <div class="pdp-photo-upload__buttons">
         <button
+          pButton
+          pRipple
           type="button"
-          class="pdp-photo-upload__btn pdp-photo-upload__btn--choose"
+          class="pdp-photo-upload__btn pdp-photo-upload__btn--choose p-button-outlined p-button-sm"
           [disabled]="isDisabled()"
           (click)="triggerFileInput()"
         >
-          Escolher foto
+          <i class="pi pi-camera" aria-hidden="true"></i>
+          <span>Escolher foto</span>
         </button>
 
         @if (value()) {
           <button
+            pButton
+            pRipple
             type="button"
-            class="pdp-photo-upload__btn pdp-photo-upload__btn--remove"
+            class="pdp-photo-upload__btn pdp-photo-upload__btn--remove p-button-text p-button-danger p-button-sm"
             [disabled]="isDisabled()"
             (click)="removePhoto()"
           >
-            Remover foto
+            <i class="pi pi-trash" aria-hidden="true"></i>
+            <span>Remover foto</span>
           </button>
         }
       </div>

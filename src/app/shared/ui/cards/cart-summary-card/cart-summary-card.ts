@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { PdpCurrencyPipe } from '../../../pipes';
 import { PdpCard } from '../card/card';
 
 @Component({
   selector: 'pdp-cart-summary-card',
   standalone: true,
-  imports: [PdpCard, PdpCurrencyPipe],
+  imports: [ButtonModule, RippleModule, PdpCard, PdpCurrencyPipe],
   templateUrl: './cart-summary-card.html',
   styleUrl: './cart-summary-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

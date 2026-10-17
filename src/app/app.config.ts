@@ -1,13 +1,42 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
+import { providePrimeNG } from 'primeng/config';
+import { routes } from './app.routes';
+
+const PointDaPizzaPreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50: '{orange.50}',
+      100: '{orange.100}',
+      200: '{orange.200}',
+      300: '{orange.300}',
+      400: '{orange.400}',
+      500: '#F58220',
+      600: '#C2410C',
+      700: '{orange.700}',
+      800: '{orange.800}',
+      900: '{orange.900}',
+      950: '{orange.950}',
+    },
+  },
+});
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
+    providePrimeNG({
+      ripple: true,
+      theme: {
+        preset: PointDaPizzaPreset,
+        options: {
+          darkModeSelector: '[data-theme="dark"]',
+        },
+      },
+    }),
   ],
 };
-

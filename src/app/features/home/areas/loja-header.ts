@@ -13,6 +13,10 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
+import { TagModule } from 'primeng/tag';
 import { ClockService } from '../../../core/clock';
 import { ThemeService } from '../../../core/theme';
 import { DiaSemana, Loja } from '../../../shared/models';
@@ -37,6 +41,7 @@ const ORDEM_DIAS_SEMANA: readonly DiaSemana[] = [1, 2, 3, 4, 5, 6, 0];
 @Component({
   selector: 'pdp-loja-header',
   standalone: true,
+  imports: [ButtonModule, AvatarModule, TagModule, RippleModule],
   templateUrl: './loja-header.html',
   styleUrl: './loja-header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

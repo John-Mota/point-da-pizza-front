@@ -11,6 +11,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 
 export const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 export const MAX_PHOTO_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
@@ -18,6 +20,7 @@ export const MAX_PHOTO_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
 @Component({
   selector: 'pdp-photo-upload',
   standalone: true,
+  imports: [ButtonModule, RippleModule],
   templateUrl: './photo-upload.html',
   styleUrl: './photo-upload.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

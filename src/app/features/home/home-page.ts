@@ -7,6 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { Categoria, Combo, Loja, Produto, Promocao } from '../../shared/models';
 import { PdpCard } from '../../shared/ui/cards';
 import {
@@ -22,6 +24,8 @@ import { CardapioService } from './data';
   selector: 'pdp-home-page',
   standalone: true,
   imports: [
+    ButtonModule,
+    RippleModule,
     PdpCard,
     PdpLojaHeader,
     PdpCategoriasNav,

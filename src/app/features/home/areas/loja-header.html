@@ -42,8 +42,12 @@
 
         <!-- Canto direito: Ícone WhatsApp, Informações da pizzaria (PopUp) e Usuário -->
         <div class="pdp-loja-header__right">
-          <!-- 1. Ícone do WhatsApp -->
+          <!-- 1. Ícone do WhatsApp (PrimeNG pButton) -->
           <a
+            pButton
+            pRipple
+            [rounded]="true"
+            severity="success"
             [href]="whatsappUrl()"
             target="_blank"
             rel="noopener noreferrer"
@@ -51,27 +55,17 @@
             aria-label="Falar no WhatsApp"
             title="Falar no WhatsApp"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path
-                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
-              />
-            </svg>
+            <i class="pi pi-whatsapp" aria-hidden="true"></i>
           </a>
 
-          <!-- 2. Ícone de Informações da Pizzaria (abre PopUp) -->
+          <!-- 2. Ícone de Informações da Pizzaria (PrimeNG pButton abre PopUp) -->
           <button
+            pButton
+            pRipple
             type="button"
+            [rounded]="true"
+            severity="secondary"
+            [outlined]="!painelAberto()"
             class="pdp-loja-header__icon-btn pdp-loja-header__info-toggle"
             [class.pdp-loja-header__icon-btn--active]="painelAberto()"
             (click)="alternarPainelInfo()"
@@ -81,28 +75,18 @@
             aria-label="Informações da pizzaria"
             title="Informações da pizzaria"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
           </button>
 
           <!-- 3. Ícone de Usuário (foto caso tenha + menu Configurar e Sair) -->
           <div class="pdp-loja-header__user-wrap">
             <button
+              pButton
+              pRipple
               type="button"
+              [rounded]="true"
+              severity="secondary"
+              [outlined]="!menuUsuarioAberto()"
               class="pdp-loja-header__icon-btn pdp-loja-header__user-btn"
               [class.pdp-loja-header__icon-btn--active]="menuUsuarioAberto()"
               (click)="alternarMenuUsuario()"
@@ -122,21 +106,7 @@
                   (error)="erroFotoUsuario.set(true)"
                 />
               } @else {
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+                <i class="pi pi-user" aria-hidden="true"></i>
               }
             </button>
 
@@ -148,78 +118,51 @@
               aria-label="Opções do usuário"
             >
               <button
+                pButton
+                pRipple
                 type="button"
+                [text]="true"
+                severity="secondary"
                 role="menuitem"
                 class="pdp-loja-header__user-item"
                 (click)="aoClicarConfigurar()"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="3" />
-                  <path
-                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
-                  />
-                </svg>
+                <i class="pi pi-cog" aria-hidden="true"></i>
                 <span>Configurar</span>
               </button>
 
               <button
+                pButton
+                pRipple
                 type="button"
+                [text]="true"
+                severity="secondary"
                 role="menuitem"
                 class="pdp-loja-header__user-item"
                 (click)="alternarTema()"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                <i
+                  class="pi"
+                  [class.pi-sun]="themeService.isDark()"
+                  [class.pi-moon]="!themeService.isDark()"
                   aria-hidden="true"
-                >
-                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                </svg>
+                ></i>
                 <span>{{ themeService.isDark() ? 'Tema claro' : 'Tema escuro' }}</span>
               </button>
 
               <div class="pdp-loja-header__user-divider" role="separator"></div>
 
               <button
+                pButton
+                pRipple
                 type="button"
+                [text]="true"
+                severity="danger"
                 role="menuitem"
                 class="pdp-loja-header__user-item pdp-loja-header__user-item--logout"
                 (click)="aoClicarSair()"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
+                <i class="pi pi-sign-out" aria-hidden="true"></i>
                 <span>Sair</span>
               </button>
             </div>
@@ -247,21 +190,19 @@
               </h2>
               <div class="pdp-loja-header__status-group">
                 @if (statusLoja().aberta) {
-                  <span
+                  <p-tag
+                    severity="success"
+                    [rounded]="true"
+                    value="Aberto agora"
                     class="pdp-loja-header__badge pdp-loja-header__badge--open"
-                    role="status"
-                  >
-                    <span class="pdp-loja-header__badge-dot" aria-hidden="true"></span>
-                    <span>Aberto agora</span>
-                  </span>
+                  ></p-tag>
                 } @else {
-                  <span
+                  <p-tag
+                    severity="danger"
+                    [rounded]="true"
+                    value="Fechado"
                     class="pdp-loja-header__badge pdp-loja-header__badge--closed"
-                    role="status"
-                  >
-                    <span class="pdp-loja-header__badge-dot" aria-hidden="true"></span>
-                    <span>Fechado</span>
-                  </span>
+                  ></p-tag>
                   @if (textoProximaAbertura()) {
                     <span class="pdp-loja-header__next-open">
                       {{ textoProximaAbertura() }}
@@ -273,12 +214,17 @@
             <p class="pdp-loja-header__slogan">{{ dados.slogan }}</p>
           </div>
           <button
+            pButton
+            pRipple
             type="button"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
             class="pdp-loja-header__modal-close"
             (click)="fecharPainelInfo()"
             aria-label="Fechar informações da pizzaria"
           >
-            ✕
+            <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -298,7 +244,9 @@
             </h3>
             <ul class="pdp-loja-header__payments" aria-label="Formas de pagamento aceitas">
               @for (forma of dados.formasPagamento; track forma) {
-                <li class="pdp-loja-header__payment-chip">{{ forma }}</li>
+                <li class="pdp-loja-header__payment-chip">
+                  <p-tag severity="secondary" [rounded]="true" [value]="forma"></p-tag>
+                </li>
               }
             </ul>
           </div>

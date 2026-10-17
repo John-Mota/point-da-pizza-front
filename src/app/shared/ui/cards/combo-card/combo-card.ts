@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { Combo } from '../../../models';
 import { PdpCurrencyPipe } from '../../../pipes';
 import { PdpCard } from '../card/card';
@@ -6,7 +8,7 @@ import { PdpCard } from '../card/card';
 @Component({
   selector: 'pdp-combo-card',
   standalone: true,
-  imports: [PdpCard, PdpCurrencyPipe],
+  imports: [ButtonModule, RippleModule, PdpCard, PdpCurrencyPipe],
   templateUrl: './combo-card.html',
   styleUrl: './combo-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

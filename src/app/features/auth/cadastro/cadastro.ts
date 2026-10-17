@@ -15,6 +15,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RippleModule } from 'primeng/ripple';
 import { PdpPhoneMask } from '../../../shared/directives';
 import { CadastroPayload } from '../../../shared/models';
 import { PdpCard, PdpPhotoUpload } from '../../../shared/ui';
@@ -56,6 +59,9 @@ const FIELD_FOCUS_ORDER: ReadonlyArray<{
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    ButtonModule,
+    InputTextModule,
+    RippleModule,
     PdpCard,
     PdpPhotoUpload,
     PdpPhoneMask,

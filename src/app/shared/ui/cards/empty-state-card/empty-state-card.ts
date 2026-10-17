@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { RippleModule } from 'primeng/ripple';
 import { PdpCard } from '../card/card';
 
 @Component({
   selector: 'pdp-empty-state-card',
   standalone: true,
-  imports: [PdpCard],
+  imports: [ButtonModule, RippleModule, PdpCard],
   templateUrl: './empty-state-card.html',
   styleUrl: './empty-state-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

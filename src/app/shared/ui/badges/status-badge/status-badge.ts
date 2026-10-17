@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { TagModule } from 'primeng/tag';
 import { StatusPedido } from '../../../models';
 
 @Component({
   selector: 'pdp-status-badge',
   standalone: true,
+  imports: [TagModule],
   templateUrl: './status-badge.html',
   styleUrl: './status-badge.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

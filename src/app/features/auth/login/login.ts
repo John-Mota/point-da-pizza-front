@@ -8,6 +8,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RippleModule } from 'primeng/ripple';
 import { PdpCard } from '../../../shared/ui/cards';
 
 export type LoginType = 'email' | 'phone';
@@ -35,7 +38,7 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, PdpCard],
+  imports: [ReactiveFormsModule, RouterLink, ButtonModule, InputTextModule, RippleModule, PdpCard],
   templateUrl: './login.html',
   styleUrl: './login.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

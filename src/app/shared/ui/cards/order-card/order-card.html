@@ -48,6 +48,8 @@
 
         <div class="pdp-order-card__actions">
           <button
+            pButton
+            pRipple
             type="button"
             class="pdp-order-card__btn pdp-order-card__btn--ghost"
             [attr.aria-label]="'Ver detalhes do pedido #' + pedido().numero"
@@ -58,6 +60,8 @@
 
           @if (podeAvancar()) {
             <button
+              pButton
+              pRipple
               type="button"
               class="pdp-order-card__btn pdp-order-card__btn--advance"
               [attr.aria-label]="proximoRotulo() + ' do pedido #' + pedido().numero"

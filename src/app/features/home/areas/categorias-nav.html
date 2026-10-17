@@ -32,7 +32,12 @@
             <li class="pdp-cat-nav__item">
               <button
                 #pillBtn
+                pButton
+                pRipple
                 type="button"
+                [rounded]="true"
+                [severity]="ativo ? 'primary' : 'secondary'"
+                [outlined]="!ativo"
                 class="pdp-cat-nav__pill"
                 [class.pdp-cat-nav__pill--active]="ativo"
                 [attr.aria-current]="ativo ? 'true' : null"
