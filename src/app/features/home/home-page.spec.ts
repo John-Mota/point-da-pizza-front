@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import {
@@ -28,6 +29,7 @@ describe('PdpHomePage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PdpHomePage],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     cardapioService = TestBed.inject(CardapioService);

@@ -1,12 +1,27 @@
 import {
   Categoria,
   Combo,
+  HorarioFuncionamento,
   Loja,
   Produto,
   Promocao,
   TamanhoPizza,
   TipoBorda,
 } from '../../../shared/models';
+
+/**
+ * Horários de funcionamento da loja (0 = Domingo, 1 = Segunda ... 6 = Sábado).
+ * Segunda-feira (dia 1) ausente = fechado.
+ * Altere aqui para atualizar os horários de abertura e fechamento da loja.
+ */
+export const HORARIOS_LOJA_MOCK: HorarioFuncionamento[] = [
+  { dia: 0, abre: '18:00', fecha: '23:30' }, // Domingo
+  { dia: 2, abre: '18:00', fecha: '23:30' }, // Terça-feira
+  { dia: 3, abre: '18:00', fecha: '23:30' }, // Quarta-feira
+  { dia: 4, abre: '18:00', fecha: '23:30' }, // Quinta-feira
+  { dia: 5, abre: '18:00', fecha: '23:30' }, // Sexta-feira
+  { dia: 6, abre: '18:00', fecha: '23:30' }, // Sábado
+];
 
 export const TAMANHOS_PIZZA_MOCK: TamanhoPizza[] = [
   { sigla: 'M', nome: 'Média (6 fatias)', fatias: 6, maxSabores: 2, precoBase: 29.9 },
@@ -23,12 +38,12 @@ export const BORDAS_MOCK: TipoBorda[] = [
 
 export const LOJA_MOCK: Loja = {
   nome: 'Point da Pizza',
-  slogan: 'A pizza mais recheada e crocante da região!',
+  slogan: 'Sabor que te leva ao ponto!',
   logoUrl: '/img/logo.png',
   capaUrl: '/img/categoria-pizzas.jpg',
   aberta: true,
-  horarios: 'Terça a Domingo, das 18h às 23h30',
-  tempoEntrega: '35–50 min',
+  horarios: HORARIOS_LOJA_MOCK,
+  tempoEntrega: '35 a 50 min',
   pedidoMinimo: 25.0,
   taxaEntrega: 5.0,
   endereco: 'Av. Principal, 450 - Centro, Fortaleza/CE',

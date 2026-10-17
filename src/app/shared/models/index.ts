@@ -1,12 +1,20 @@
 export type StatusPedido = 'recebido' | 'em-producao' | 'a-caminho' | 'entregue' | 'cancelado';
 
+export type DiaSemana = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface HorarioFuncionamento {
+  dia: DiaSemana;
+  abre: string;
+  fecha: string;
+}
+
 export interface Loja {
   nome: string;
   slogan: string;
   logoUrl?: string;
   capaUrl?: string;
   aberta: boolean;
-  horarios: string;
+  horarios: HorarioFuncionamento[];
   tempoEntrega: string;
   pedidoMinimo: number;
   taxaEntrega: number;
