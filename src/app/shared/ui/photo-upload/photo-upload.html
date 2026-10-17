@@ -1,0 +1,83 @@
+<div
+  class="pdp-photo-upload"
+  [class.pdp-photo-upload--dragging]="isDragging()"
+  [class.pdp-photo-upload--error]="!!errorMessage()"
+  [class.pdp-photo-upload--disabled]="isDisabled()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <input
+    #fileInput
+    [id]="inputId()"
+    type="file"
+    class="pdp-photo-upload__input"
+    accept="image/jpeg,image/png,image/webp"
+    [disabled]="isDisabled()"
+    [attr.aria-invalid]="!!errorMessage()"
+    [attr.aria-describedby]="errorMessage() ? inputId() + '-err ' + inputId() + '-hint' : inputId() + '-hint'"
+    (change)="onFileSelected($event)"
+    tabindex="-1"
+  />
+
+  <div class="pdp-photo-upload__content">
+    <div class="pdp-photo-upload__avatar" aria-hidden="true">
+      @if (previewUrl()) {
+        <img [src]="previewUrl()" alt="Prévia da foto de perfil" class="pdp-photo-upload__img" />
+      } @else if (initials()) {
+        <span class="pdp-photo-upload__initials">{{ initials() }}</span>
+      } @else {
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="pdp-photo-upload__icon"
+        >
+          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+      }
+    </div>
+
+    <div class="pdp-photo-upload__actions">
+      <div class="pdp-photo-upload__buttons">
+        <button
+          type="button"
+          class="pdp-photo-upload__btn pdp-photo-upload__btn--choose"
+          [disabled]="isDisabled()"
+          (click)="triggerFileInput()"
+        >
+          Escolher foto
+        </button>
+
+        @if (value()) {
+          <button
+            type="button"
+            class="pdp-photo-upload__btn pdp-photo-upload__btn--remove"
+            [disabled]="isDisabled()"
+            (click)="removePhoto()"
+          >
+            Remover foto
+          </button>
+        }
+      </div>
+
+      <span [id]="inputId() + '-hint'" class="pdp-photo-upload__hint">
+        JPG, PNG ou WebP até 2 MB (ou arraste aqui)
+      </span>
+    </div>
+  </div>
+</div>
+
+@if (errorMessage()) {
+  <span [id]="inputId() + '-err'" class="pdp-photo-upload__err" role="alert">
+    {{ errorMessage() }}
+  </span>
+}
+
