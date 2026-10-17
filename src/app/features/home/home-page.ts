@@ -42,12 +42,17 @@ export class PdpHomePage implements OnInit {
 
   readonly loja = signal<Loja | null>(null);
   readonly categorias = signal<Categoria[]>([]);
+  readonly categoriaAtivaId = signal<string | null>(null);
   readonly produtos = signal<Produto[]>([]);
   readonly promocoes = signal<Promocao[]>([]);
   readonly combos = signal<Combo[]>([]);
 
   ngOnInit(): void {
     this.carregarCardapio();
+  }
+
+  aoSelecionarCategoria(categoriaId: string): void {
+    this.categoriaAtivaId.set(categoriaId);
   }
 
   carregarCardapio(): void {
@@ -61,6 +66,9 @@ export class PdpHomePage implements OnInit {
         next: (dados) => {
           this.loja.set(dados.loja);
           this.categorias.set(dados.categorias);
+          if (!this.categoriaAtivaId() && dados.categorias.length > 0) {
+            this.categoriaAtivaId.set(dados.categorias[0].id);
+          }
           this.produtos.set(dados.produtos);
           this.promocoes.set(dados.promocoes);
           this.combos.set(dados.combos);

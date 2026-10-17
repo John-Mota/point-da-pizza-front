@@ -1,18 +1,20 @@
 <div class="pdp-home">
-  <main class="pdp-home__container">
-    @if (carregando()) {
+  @if (carregando()) {
+    <div class="pdp-skeleton pdp-home__skeleton-header"></div>
+    <main class="pdp-home__container">
       <section
         class="pdp-home__loading"
         aria-busy="true"
         aria-label="Carregando cardápio"
       >
-        <div class="pdp-skeleton pdp-home__skeleton-header"></div>
         <div class="pdp-skeleton pdp-home__skeleton-nav"></div>
         <div class="pdp-skeleton pdp-home__skeleton-promos"></div>
         <div class="pdp-skeleton pdp-home__skeleton-products"></div>
         <div class="pdp-skeleton pdp-home__skeleton-footer"></div>
       </section>
-    } @else if (erro()) {
+    </main>
+  } @else if (erro()) {
+    <main class="pdp-home__container pdp-home__container--spaced">
       <pdp-card class="pdp-home__error-card">
         <div class="pdp-home__error" role="alert">
           <p class="pdp-home__error-msg">{{ erro() }}</p>
@@ -25,15 +27,21 @@
           </button>
         </div>
       </pdp-card>
-    } @else {
+    </main>
+  } @else {
+    <pdp-loja-header [loja]="loja()" />
+    <main class="pdp-home__container">
       <div class="pdp-home__areas">
-        <pdp-loja-header [loja]="loja()" />
-        <pdp-categorias-nav [categorias]="categorias()" />
+        <pdp-categorias-nav
+          [categorias]="categorias()"
+          [(ativaId)]="categoriaAtivaId"
+          (selecionar)="aoSelecionarCategoria($event)"
+        />
         <pdp-promocoes [promocoes]="promocoes()" [combos]="combos()" />
         <pdp-produtos [categorias]="categorias()" [produtos]="produtos()" />
         <pdp-rodape [loja]="loja()" />
       </div>
-    }
-  </main>
+    </main>
+  }
 </div>
 
