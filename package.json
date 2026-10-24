@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/gerar-env.mjs",
     "start": "ng serve",
+    "prebuild": "node scripts/gerar-env.mjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "pretest": "node scripts/gerar-env.mjs",
     "test": "ng test",
     "serve:ssr:point-da-pizza-front": "node dist/point-da-pizza-front/server/server.mjs"
   },
