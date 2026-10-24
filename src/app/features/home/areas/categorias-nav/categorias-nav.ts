@@ -5,7 +5,9 @@ import {
   DestroyRef,
   ElementRef,
   OnInit,
+  Injector,
   PLATFORM_ID,
+  afterNextRender,
   computed,
   effect,
   inject,
@@ -41,6 +43,7 @@ export class PdpCategoriasNav implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
   private readonly scrollSpyService = inject(CategoriasScrollSpyService);
+  private readonly injector = inject(Injector);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   protected readonly skeletonItems = [1, 2, 3, 4, 5] as const;
@@ -69,8 +72,14 @@ export class PdpCategoriasNav implements OnInit {
         this.ativaId.set(ids[0]);
       }
 
-      this.configurarScrollSpy(ids);
-      queueMicrotask(() => this.atualizarBordasScroll());
+      // As seções (cat-{id}) são renderizadas por componentes irmãos: observa após o render.
+      afterNextRender(
+        () => {
+          this.configurarScrollSpy(ids);
+          this.atualizarBordasScroll();
+        },
+        { injector: this.injector }
+      );
     });
 
     effect(() => {

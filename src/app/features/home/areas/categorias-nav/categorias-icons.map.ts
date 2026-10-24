@@ -8,6 +8,7 @@ export const ICONE_CATEGORIA_PADRAO = '🍽️';
  * A ordem das chaves prioriza termos mais específicos (ex.: "doces" antes de "pizzas").
  */
 export const MAPA_ICONES_CATEGORIA: ReadonlyArray<{ readonly chave: string; readonly icone: string }> = [
+  { chave: 'destaque', icone: '⭐' },
   { chave: 'promoc', icone: '🔥' },
   { chave: 'oferta', icone: '🔥' },
   { chave: 'combo', icone: '🎁' },

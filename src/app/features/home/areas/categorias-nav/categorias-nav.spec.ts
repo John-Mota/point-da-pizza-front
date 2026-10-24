@@ -59,7 +59,7 @@ describe('PdpCategoriasNav', () => {
 
   it('deve renderizar uma pílula por categoria e marcar a ativa com aria-current="true"', () => {
     fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
-    fixture.componentRef.setInput('ativaId', 'cat-tradicionais');
+    fixture.componentRef.setInput('ativaId', 'pizzas');
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
@@ -69,7 +69,7 @@ describe('PdpCategoriasNav', () => {
 
     const ativa = botoes.find((btn) => btn.getAttribute('aria-current') === 'true');
     expect(ativa).toBeTruthy();
-    expect(ativa?.textContent).toContain('Pizzas tradicionais');
+    expect(ativa?.textContent).toContain('Pizzas');
 
     const inativas = botoes.filter((btn) => btn !== ativa);
     for (const btn of inativas) {
@@ -88,12 +88,12 @@ describe('PdpCategoriasNav', () => {
     const hostEl = fixture.nativeElement as HTMLElement;
     const botoes = hostEl.querySelectorAll<HTMLButtonElement>('.pdp-cat-nav__pill');
 
-    // Clica na 3ª categoria (Pizzas doces)
+    // Clica na 3ª categoria (Pastéis Especiais)
     botoes[2].click();
     fixture.detectChanges();
 
-    expect(selecionadas).toEqual(['cat-doces']);
-    expect(component.ativaId()).toBe('cat-doces');
+    expect(selecionadas).toEqual(['pasteis-especiais']);
+    expect(component.ativaId()).toBe('pasteis-especiais');
     expect(botoes[2].getAttribute('aria-current')).toBe('true');
     expect(botoes[0].getAttribute('aria-current')).toBeNull();
   });
@@ -136,7 +136,7 @@ describe('PdpCategoriasNav', () => {
   it('deve atualizar a categoria ativa via scroll-spy quando o IntersectionObserver notificar interseção', () => {
     // Cria elementos de seção simulados no DOM
     const secaoTrad = document.createElement('section');
-    secaoTrad.id = 'cat-tradicionais';
+    secaoTrad.id = 'cat-pizzas';
     const secaoBebidas = document.createElement('section');
     secaoBebidas.id = 'cat-bebidas';
     document.body.appendChild(secaoTrad);
@@ -144,7 +144,7 @@ describe('PdpCategoriasNav', () => {
 
     try {
       fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
-      fixture.componentRef.setInput('ativaId', 'cat-promocoes');
+      fixture.componentRef.setInput('ativaId', 'pizzas');
       fixture.detectChanges();
 
       expect(observerCallback).toBeTruthy();
@@ -163,7 +163,7 @@ describe('PdpCategoriasNav', () => {
       );
       fixture.detectChanges();
 
-      expect(component.ativaId()).toBe('cat-bebidas');
+      expect(component.ativaId()).toBe('bebidas');
       const hostEl = fixture.nativeElement as HTMLElement;
       const pilulaAtiva = hostEl.querySelector('[aria-current="true"]');
       expect(pilulaAtiva?.textContent).toContain('Bebidas');

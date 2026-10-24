@@ -109,7 +109,7 @@
     box-shadow: var(--focus-ring);
   }
 
-  &--active {
+  &.pdp-cat-nav__pill--active {
     background: var(--brand);
     color: var(--brand-contrast);
     border-color: var(--brand);
