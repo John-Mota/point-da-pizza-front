@@ -58,6 +58,9 @@
 
   /* Offset para elementos sticky abaixo do topo */
   --pdp-sticky-nav-top: 76px;
+  /* Altura da barra de categorias e deslocamento total ao navegar até uma seção */
+  --pdp-cat-nav-height: 64px;
+  --pdp-scroll-offset: calc(var(--pdp-sticky-nav-top) + var(--pdp-cat-nav-height) + var(--space-8));
 
   /* Tema Claro (padrão) */
   --bg: #FFF8EC;
