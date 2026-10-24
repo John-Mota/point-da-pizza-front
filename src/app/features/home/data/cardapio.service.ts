@@ -15,6 +15,30 @@ export interface CardapioDados {
   produtos: Produto[];
   promocoes: Promocao[];
   combos: Combo[];
+  /** Categorias com produtos, já agrupadas (fonte única para barra e lista). */
+  cardapio: SecaoCardapio[];
+}
+
+export interface SecaoCardapio {
+  categoria: Categoria;
+  produtos: Produto[];
+}
+
+/**
+ * Agrupa os produtos por categoria, na ordem das categorias e na ordem original
+ * dos produtos, omitindo categorias sem nenhum produto.
+ */
+export function montarCardapio(
+  categorias: readonly Categoria[],
+  produtos: readonly Produto[]
+): SecaoCardapio[] {
+  return [...categorias]
+    .sort((a, b) => a.ordem - b.ordem)
+    .map((categoria) => ({
+      categoria,
+      produtos: produtos.filter((p) => p.categoriaId === categoria.id),
+    }))
+    .filter((secao) => secao.produtos.length > 0);
 }
 
 @Injectable({
@@ -41,6 +65,10 @@ export class CardapioService {
     return of(destaques).pipe(delay(this.delayMs));
   }
 
+  listarCardapio(): Observable<SecaoCardapio[]> {
+    return of(montarCardapio(CATEGORIAS_MOCK, PRODUTOS_MOCK)).pipe(delay(this.delayMs));
+  }
+
   obterPromocoes(): Observable<Promocao[]> {
     return of(PROMOCOES_MOCK).pipe(delay(this.delayMs));
   }
@@ -56,6 +84,7 @@ export class CardapioService {
       produtos: this.obterProdutos(),
       promocoes: this.obterPromocoes(),
       combos: this.obterCombos(),
+      cardapio: this.listarCardapio(),
     });
   }
 }
