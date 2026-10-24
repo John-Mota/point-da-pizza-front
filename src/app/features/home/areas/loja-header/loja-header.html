@@ -42,21 +42,23 @@
 
         <!-- Canto direito: Ícone WhatsApp, Informações da pizzaria (PopUp) e Usuário -->
         <div class="pdp-loja-header__right">
-          <!-- 1. Ícone do WhatsApp (PrimeNG pButton) -->
-          <a
-            pButton
-            pRipple
-            [rounded]="true"
-            severity="success"
-            [href]="whatsappUrl()"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="pdp-loja-header__icon-btn pdp-loja-header__whatsapp-btn"
-            aria-label="Falar no WhatsApp"
-            title="Falar no WhatsApp"
-          >
-            <i class="pi pi-whatsapp" aria-hidden="true"></i>
-          </a>
+          <!-- 1. Ícone do WhatsApp (PrimeNG pButton), exibido apenas quando disponível -->
+          @if (whatsappDisponivel()) {
+            <a
+              pButton
+              pRipple
+              [rounded]="true"
+              severity="success"
+              [href]="whatsappUrl()"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pdp-loja-header__icon-btn pdp-loja-header__whatsapp-btn"
+              aria-label="Falar no WhatsApp"
+              title="Falar no WhatsApp"
+            >
+              <i class="pi pi-whatsapp" aria-hidden="true"></i>
+            </a>
+          }
 
           <!-- 2. Ícone de Informações da Pizzaria (PrimeNG pButton abre PopUp) -->
           <button
@@ -232,12 +234,14 @@
           <div class="pdp-loja-header__panel-block">
             <h3 class="pdp-loja-header__panel-title">Endereço e contato</h3>
             <p class="pdp-loja-header__panel-text">{{ dados.endereco }}</p>
-            <p class="pdp-loja-header__panel-text">
-              Telefone:
-              <a [href]="'tel:' + telefoneLimpo()" class="pdp-loja-header__phone-link">
-                {{ telefoneFormatado() }}
-              </a>
-            </p>
+            @if (telefoneFormatado()) {
+              <p class="pdp-loja-header__panel-text">
+                Telefone:
+                <a [href]="'tel:' + telefoneLimpo()" class="pdp-loja-header__phone-link">
+                  {{ telefoneFormatado() }}
+                </a>
+              </p>
+            }
 
             <h3 class="pdp-loja-header__panel-title pdp-loja-header__panel-title--spaced">
               Formas de pagamento

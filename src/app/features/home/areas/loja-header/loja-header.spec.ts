@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ClockService } from '../../../../core/clock';
+import { WHATSAPP_RAW_NUMBER } from '../../../../core/whatsapp';
 import { LOJA_MOCK } from '../../data';
 import { PdpLojaHeader } from './loja-header';
 
@@ -22,7 +23,11 @@ describe('PdpLojaHeader', () => {
 
     await TestBed.configureTestingModule({
       imports: [PdpLojaHeader],
-      providers: [provideRouter([]), { provide: ClockService, useValue: fakeClock }],
+      providers: [
+        provideRouter([]),
+        { provide: ClockService, useValue: fakeClock },
+        { provide: WHATSAPP_RAW_NUMBER, useValue: '11987654321' },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PdpLojaHeader);
@@ -82,10 +87,10 @@ describe('PdpLojaHeader', () => {
     expect(panel?.hidden).toBe(true);
   });
 
-  it('deve gerar o link do WhatsApp formatado apenas com dígitos e DDI 55 em nova aba', () => {
+  it('deve usar o WhatsappService para gerar o link do WhatsApp e exibir o telefone do WhatsappService caso a loja não tenha telefone', () => {
     fixture.componentRef.setInput('loja', {
       ...LOJA_MOCK,
-      whatsapp: '(85) 98877-6655',
+      telefone: undefined,
     });
     fixture.detectChanges();
 
@@ -93,9 +98,29 @@ describe('PdpLojaHeader', () => {
     const whatsappLink = hostEl.querySelector<HTMLAnchorElement>('.pdp-loja-header__whatsapp-btn');
 
     expect(whatsappLink).toBeTruthy();
-    expect(whatsappLink?.getAttribute('href')).toBe('https://wa.me/5585988776655');
+    expect(whatsappLink?.getAttribute('href')).toBe('https://wa.me/5511987654321');
     expect(whatsappLink?.getAttribute('target')).toBe('_blank');
     expect(whatsappLink?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(component.telefoneFormatado()).toBe('(11) 98765-4321');
+  });
+
+  it('deve ocultar o botão de WhatsApp quando o WhatsappService não tiver número disponível', async () => {
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [PdpLojaHeader],
+      providers: [
+        provideRouter([]),
+        { provide: ClockService, useValue: fakeClock },
+        { provide: WHATSAPP_RAW_NUMBER, useValue: '' },
+      ],
+    }).compileComponents();
+
+    const f = TestBed.createComponent(PdpLojaHeader);
+    f.componentRef.setInput('loja', LOJA_MOCK);
+    f.detectChanges();
+
+    const hostEl = f.nativeElement as HTMLElement;
+    expect(hostEl.querySelector('.pdp-loja-header__whatsapp-btn')).toBeNull();
   });
 
   it('deve exibir /img/logo.png na esquerda, /img/logo-entregador-point-da-pizza.png no centro e abrir o menu do usuário com Configurar e Sair', () => {

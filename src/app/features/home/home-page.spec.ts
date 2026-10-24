@@ -95,6 +95,35 @@ describe('PdpHomePage', () => {
     expect(pilulas.slice(1)).toEqual(secoes);
   });
 
+  it('abrir pelo "Pedir" da lista e do carrossel mostra o mesmo detalhe com o produto certo', () => {
+    vi.spyOn(cardapioService, 'carregarCardapio').mockReturnValue(of(mockDados));
+    fixture = TestBed.createComponent(PdpHomePage);
+    fixture.detectChanges();
+
+    const hostEl = fixture.nativeElement as HTMLElement;
+
+    // 1. Clica em "Pedir" no primeiro card do carrossel de destaques
+    const btnDestaque = hostEl.querySelector<HTMLButtonElement>('.pdp-destaque-card__cta')!;
+    btnDestaque.click();
+    fixture.detectChanges();
+
+    const tituloModal1 = hostEl.querySelector('#pdp-detalhe-titulo')?.textContent?.trim();
+    expect(tituloModal1).toBe(component.destaques()[0].nome);
+
+    // Fecha o modal
+    hostEl.querySelector<HTMLButtonElement>('.pdp-detalhe__fechar')!.click();
+    fixture.detectChanges();
+    expect(hostEl.querySelector('#pdp-detalhe-titulo')).toBeNull();
+
+    // 2. Clica em "Pedir" no primeiro item da lista de produtos
+    const btnLista = hostEl.querySelector<HTMLButtonElement>('.pdp-produto-item__cta')!;
+    btnLista.click();
+    fixture.detectChanges();
+
+    const tituloModal2 = hostEl.querySelector('#pdp-detalhe-titulo')?.textContent?.trim();
+    expect(tituloModal2).toBe(component.cardapio()[0].produtos[0].nome);
+  });
+
   it('deve exibir o estado de erro e botão "Tentar de novo" quando o serviço falhar, e recarregar ao clicar', () => {
     const spy = vi
       .spyOn(cardapioService, 'carregarCardapio')

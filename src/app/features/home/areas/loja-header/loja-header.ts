@@ -19,6 +19,7 @@ import { RippleModule } from 'primeng/ripple';
 import { TagModule } from 'primeng/tag';
 import { ClockService } from '../../../../core/clock';
 import { ThemeService } from '../../../../core/theme';
+import { WhatsappService, formatarTelefoneBr } from '../../../../core/whatsapp';
 import { DiaSemana, Loja } from '../../../../shared/models';
 import {
   NOMES_DIAS_SEMANA,
@@ -55,6 +56,7 @@ export class PdpLojaHeader implements OnInit {
   readonly sair = output<void>();
 
   protected readonly themeService = inject(ThemeService);
+  protected readonly whatsappService = inject(WhatsappService);
   private readonly router = inject(Router);
   private readonly clockService = inject(ClockService);
   private readonly destroyRef = inject(DestroyRef);
@@ -82,30 +84,21 @@ export class PdpLojaHeader implements OnInit {
     return formatarProximaAbertura(status.proximaAbertura);
   });
 
-  readonly whatsappUrl = computed<string>(() => {
-    const bruto = this.loja()?.whatsapp ?? '';
-    const digitos = bruto.replace(/\D/g, '');
-    if (!digitos) {
-      return 'https://wa.me/';
-    }
-    const comDdi = digitos.startsWith('55') ? digitos : `55${digitos}`;
-    return `https://wa.me/${comDdi}`;
-  });
+  readonly whatsappDisponivel = computed<boolean>(() => this.whatsappService.disponivel);
+
+  readonly whatsappUrl = computed<string>(() => this.whatsappService.link());
 
   readonly telefoneLimpo = computed<string>(() => {
-    const bruto = this.loja()?.telefone ?? '';
-    return bruto.replace(/\D/g, '');
+    const bruto = (this.loja()?.telefone ?? '').replace(/\D/g, '');
+    return bruto || this.whatsappService.digitosLocais;
   });
 
   readonly telefoneFormatado = computed<string>(() => {
-    const digitos = this.telefoneLimpo();
-    if (digitos.length === 11) {
-      return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
+    const bruto = (this.loja()?.telefone ?? '').replace(/\D/g, '');
+    if (bruto) {
+      return formatarTelefoneBr(bruto) || (this.loja()?.telefone ?? '');
     }
-    if (digitos.length === 10) {
-      return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 6)}-${digitos.slice(6)}`;
-    }
-    return this.loja()?.telefone ?? '';
+    return this.whatsappService.numeroFormatado;
   });
 
   readonly horariosSemana = computed<HorarioDiaView[]>(() => {

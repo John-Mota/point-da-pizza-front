@@ -22,7 +22,7 @@ describe('PdpProdutoItem', () => {
 
   it('com tamanhos mostra "A partir de" com o menor preço', () => {
     const el = criar(pizza);
-    const menor = Math.min(...pizza.tamanhos!.map((t) => t.precoBase!));
+    const menor = Math.min(...pizza.tamanhos!.map((t) => t.preco));
     const preco = el.querySelector('.pdp-produto-item__preco')!.textContent!.replace(/\s+/g, ' ');
 
     expect(preco).toContain('A partir de');

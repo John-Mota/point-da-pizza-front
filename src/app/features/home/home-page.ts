@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { Categoria, Combo, Loja, Produto, Promocao } from '../../shared/models';
+import { Categoria, Combo, ItemConfigurado, Loja, Produto, Promocao } from '../../shared/models';
 import { PdpCard } from '../../shared/ui/cards';
 import {
   PdpCategoriasNav,
@@ -18,7 +18,7 @@ import {
   PdpLojaHeader,
   PdpRodape,
 } from './areas';
-import { PdpProdutosLista } from './components';
+import { PdpProdutoDetalhe, PdpProdutosLista, ProdutoDetalheService } from './components';
 import { CardapioService, SecaoCardapio } from './data';
 
 /** Pílula fixa que aponta para a seção Destaque (id "cat-destaque"). */
@@ -35,6 +35,7 @@ export const CATEGORIA_DESTAQUE: Categoria = { id: 'destaque', nome: 'Destaque',
     PdpCategoriasNav,
     PdpDestaquesSection,
     PdpProdutosLista,
+    PdpProdutoDetalhe,
     PdpRodape,
   ],
   templateUrl: './home-page.html',
@@ -43,6 +44,7 @@ export const CATEGORIA_DESTAQUE: Categoria = { id: 'destaque', nome: 'Destaque',
 })
 export class PdpHomePage implements OnInit {
   private readonly cardapioService = inject(CardapioService);
+  private readonly produtoDetalheService = inject(ProdutoDetalheService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly carregando = signal<boolean>(true);
@@ -76,10 +78,16 @@ export class PdpHomePage implements OnInit {
 
   aoPedirDestaque(produto: Produto): void {
     this.ultimoProdutoPedido.set(produto);
+    this.produtoDetalheService.abrir(produto);
   }
 
-  /** Abrirá o detalhe do produto na etapa 6. Intencionalmente vazio por enquanto. */
-  aoPedirProduto(_produto: Produto): void {}
+  aoPedirProduto(produto: Produto): void {
+    this.ultimoProdutoPedido.set(produto);
+    this.produtoDetalheService.abrir(produto);
+  }
+
+  /** Receberá o item configurado na etapa 7 (carrinho). Intencionalmente vazio por enquanto. */
+  aoAdicionarItem(_item: ItemConfigurado): void {}
 
   carregarCardapio(): void {
     this.carregando.set(true);
