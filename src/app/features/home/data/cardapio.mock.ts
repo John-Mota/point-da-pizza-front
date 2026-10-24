@@ -1,12 +1,12 @@
 import {
+  BordaProdutoOpcao,
   Categoria,
   Combo,
   HorarioFuncionamento,
   Loja,
   Produto,
   Promocao,
-  TamanhoPizza,
-  TipoBorda,
+  TamanhoProdutoOpcao,
 } from '../../../shared/models';
 
 /**
@@ -23,17 +23,17 @@ export const HORARIOS_LOJA_MOCK: HorarioFuncionamento[] = [
   { dia: 6, abre: '18:00', fecha: '23:30' }, // Sábado
 ];
 
-export const TAMANHOS_PIZZA_MOCK: TamanhoPizza[] = [
-  { sigla: 'M', nome: 'Média (6 fatias)', fatias: 6, maxSabores: 2, precoBase: 29.9 },
-  { sigla: 'G', nome: 'Grande (8 fatias)', fatias: 8, maxSabores: 2, precoBase: 34.9 },
-  { sigla: 'GG', nome: 'Gigante (12 fatias)', fatias: 12, maxSabores: 3, precoBase: 44.9 },
+/**
+ * Opções PROVISÓRIAS de tamanhos e bordas (apenas para testar a interface de detalhe do produto).
+ * Substitua aqui pelos tamanhos, nomes e valores reais do cardápio.
+ */
+export const TAMANHOS_PIZZA_MOCK: TamanhoProdutoOpcao[] = [
+  { id: 'P', nome: 'Pequena (P)', preco: 29.9 },
+  { id: 'G', nome: 'Grande (G)', preco: 34.9 },
 ];
 
-export const BORDAS_MOCK: TipoBorda[] = [
-  { id: 'borda-sem', nome: 'Sem borda recheada', precoAdicional: 0 },
-  { id: 'borda-requeijao', nome: 'Borda de requeijão', precoAdicional: 5.0 },
-  { id: 'borda-cheddar', nome: 'Borda de cheddar', precoAdicional: 6.0 },
-  { id: 'borda-chocolate', nome: 'Borda de chocolate', precoAdicional: 7.0 },
+export const BORDAS_MOCK: BordaProdutoOpcao[] = [
+  { id: 'requeijao', nome: 'Requeijão', acrescimo: 0 },
 ];
 
 export const LOJA_MOCK: Loja = {
@@ -45,7 +45,6 @@ export const LOJA_MOCK: Loja = {
   horarios: HORARIOS_LOJA_MOCK,
   endereco: 'Av. Principal, 450 - Centro, Fortaleza/CE',
   telefone: '85988776655',
-  whatsapp: '5585988776655',
   formasPagamento: ['Pix', 'Cartão de crédito', 'Cartão de débito', 'Dinheiro'],
 };
 
@@ -216,8 +215,6 @@ export const PRODUTOS_MOCK: Produto[] = [
     preco: 35.9,
     imagemUrl: '/img/pizza-tomate-manjericao.jpg',
     disponivel: true,
-    tamanhos: TAMANHOS_PIZZA_MOCK,
-    bordas: BORDAS_MOCK,
   },
   {
     id: 'prod-trad-4',
@@ -228,8 +225,6 @@ export const PRODUTOS_MOCK: Produto[] = [
     preco: 37.9,
     imagemUrl: '/img/pizza-mussarela-especial.jpg',
     disponivel: true,
-    tamanhos: TAMANHOS_PIZZA_MOCK,
-    bordas: BORDAS_MOCK,
   },
 
   // Pizzas doces
@@ -242,8 +237,6 @@ export const PRODUTOS_MOCK: Produto[] = [
     preco: 33.9,
     imagemUrl: '/img/pizza-chocolate.jpg',
     disponivel: true,
-    tamanhos: TAMANHOS_PIZZA_MOCK,
-    bordas: BORDAS_MOCK,
   },
   {
     id: 'prod-doce-2',
@@ -254,8 +247,6 @@ export const PRODUTOS_MOCK: Produto[] = [
     preco: 36.9,
     imagemUrl: '/img/pizza-chocolate.jpg',
     disponivel: true,
-    tamanhos: TAMANHOS_PIZZA_MOCK,
-    bordas: BORDAS_MOCK,
   },
   {
     id: 'prod-doce-3',
@@ -266,8 +257,6 @@ export const PRODUTOS_MOCK: Produto[] = [
     preco: 32.9,
     imagemUrl: '/img/pizza-mussarela-especial.jpg',
     disponivel: true,
-    tamanhos: TAMANHOS_PIZZA_MOCK,
-    bordas: BORDAS_MOCK,
   },
 
   // Calzones, pastéis e lasanhas
