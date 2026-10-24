@@ -8,6 +8,7 @@
 }
 
 .pdp-destaques {
+  scroll-margin-top: var(--pdp-scroll-offset);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -155,11 +156,6 @@
     color: var(--brand-contrast);
   }
 
-  &:active:not(:disabled) {
-    background: var(--brand-strong);
-    border-color: var(--brand-strong);
-    color: var(--brand-strong-contrast);
-  }
 
   &.pdp-destaques__arrow--prev {
     left: var(--space-8);
@@ -190,9 +186,6 @@
     width var(--transition-base),
     background-color var(--transition-base);
 
-  &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--brand) 55%, var(--surface));
-  }
 
   &.pdp-destaques__dot--active {
     width: 28px;
