@@ -12,6 +12,7 @@ export class CategoriasScrollSpyService {
   private observer: IntersectionObserver | null = null;
   private bloqueioTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private bloqueadoPorClique = false;
+  private removerOuvinteFimPagina: (() => void) | null = null;
 
   observarSecoes(
     categoriaIds: readonly string[],
@@ -69,6 +70,24 @@ export class CategoriasScrollSpyService {
     for (const el of elementosMap.keys()) {
       this.observer.observe(el);
     }
+
+    // A última seção pode ser curta demais para cruzar a faixa do observer:
+    // ao chegar no fim da página, ativa a última categoria.
+    const ultimoId = categoriaIds[categoriaIds.length - 1];
+    const view = this.document.defaultView;
+    if (view && ultimoId) {
+      const aoRolar = () => {
+        if (this.bloqueadoPorClique) {
+          return;
+        }
+        const raiz = this.document.documentElement;
+        if (view.innerHeight + view.scrollY >= raiz.scrollHeight - 2) {
+          aoEntrarSecao(ultimoId);
+        }
+      };
+      view.addEventListener('scroll', aoRolar, { passive: true });
+      this.removerOuvinteFimPagina = () => view.removeEventListener('scroll', aoRolar);
+    }
   }
 
   rolarParaSecao(categoriaId: string): void {
@@ -115,6 +134,8 @@ export class CategoriasScrollSpyService {
   }
 
   private desconectarObserver(): void {
+    this.removerOuvinteFimPagina?.();
+    this.removerOuvinteFimPagina = null;
     if (this.observer) {
       this.observer.disconnect();
       this.observer = null;
