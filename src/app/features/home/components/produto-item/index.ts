@@ -1,0 +1,2 @@
+export * from './produto-item';
+
