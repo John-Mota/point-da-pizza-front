@@ -1,0 +1,55 @@
+<div class="pdp-produtos-lista" data-area="produtos">
+  @if (carregando()) {
+    <div class="pdp-produtos-lista__loading" aria-busy="true" aria-label="Carregando produtos">
+      @for (c of skeletonCategorias; track c) {
+        <div class="pdp-produtos-lista__secao">
+          <p-skeleton width="9rem" height="1.75rem" styleClass="pdp-produtos-lista__sk-titulo"></p-skeleton>
+          <ul class="pdp-produtos-lista__itens" role="presentation">
+            @for (i of skeletonItens; track i) {
+              <li class="pdp-produtos-lista__sk-item">
+                <div class="pdp-produtos-lista__sk-texto">
+                  <p-skeleton width="60%" height="1rem"></p-skeleton>
+                  <p-skeleton width="95%" height="0.8rem"></p-skeleton>
+                  <p-skeleton width="80%" height="0.8rem"></p-skeleton>
+                  <p-skeleton width="5rem" height="1.25rem"></p-skeleton>
+                </div>
+                <p-skeleton size="88px" borderRadius="14px"></p-skeleton>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  } @else if (secoes().length === 0) {
+    <div class="pdp-produtos-lista__vazio" role="status">
+      <i class="pi pi-clock" aria-hidden="true"></i>
+      <p>Cardápio em atualização</p>
+    </div>
+  } @else {
+    @for (secao of secoes(); track secao.categoria.id) {
+      <section
+        class="pdp-produtos-lista__secao"
+        [id]="'cat-' + secao.categoria.id"
+        [attr.aria-labelledby]="'titulo-cat-' + secao.categoria.id"
+      >
+        <header class="pdp-produtos-lista__header">
+          <h2 class="pdp-produtos-lista__titulo" [id]="'titulo-cat-' + secao.categoria.id">
+            {{ secao.categoria.nome }}
+          </h2>
+          <span class="pdp-produtos-lista__contagem">
+            {{ secao.produtos.length }} {{ secao.produtos.length === 1 ? 'item' : 'itens' }}
+          </span>
+        </header>
+
+        <ul class="pdp-produtos-lista__itens">
+          @for (produto of secao.produtos; track produto.id) {
+            <li class="pdp-produtos-lista__item">
+              <pdp-produto-item [produto]="produto" (pedir)="aoPedir($event)"></pdp-produto-item>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</div>
+
