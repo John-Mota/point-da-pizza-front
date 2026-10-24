@@ -1,0 +1,50 @@
+@let item = produto();
+
+<article
+  class="pdp-produto-item"
+  [class.pdp-produto-item--indisponivel]="indisponivel()"
+  [class.pdp-produto-item--sem-imagem]="!mostrarImagem()"
+>
+  <div class="pdp-produto-item__body">
+    <h3 class="pdp-produto-item__nome">{{ item.nome }}</h3>
+    <p class="pdp-produto-item__desc">{{ item.descricao }}</p>
+
+    <div class="pdp-produto-item__footer">
+      <p class="pdp-produto-item__preco">
+        @if (menorPrecoTamanho() !== null) {
+          <span class="pdp-produto-item__preco-label">A partir de</span>
+        }
+        <strong class="pdp-produto-item__preco-valor">{{ precoExibido() | pdpCurrency }}</strong>
+      </p>
+
+      @if (indisponivel()) {
+        <p-tag value="Indisponível" severity="secondary" class="pdp-produto-item__tag"></p-tag>
+      }
+
+      <button
+        pButton
+        type="button"
+        class="pdp-produto-item__cta"
+        [disabled]="indisponivel()"
+        [attr.aria-label]="'Pedir ' + item.nome"
+        (click)="aoClicarPedir()"
+      >
+        <span>Pedir</span>
+      </button>
+    </div>
+  </div>
+
+  @if (mostrarImagem()) {
+    <img
+      class="pdp-produto-item__thumb"
+      [src]="item.imagemUrl"
+      alt=""
+      [width]="thumbPx"
+      [height]="thumbPx"
+      loading="lazy"
+      decoding="async"
+      (error)="aoErroImagem()"
+    />
+  }
+</article>
+
