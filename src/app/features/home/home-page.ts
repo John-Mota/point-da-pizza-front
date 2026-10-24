@@ -16,10 +16,13 @@ import {
   PdpCategoriasNav,
   PdpDestaquesSection,
   PdpLojaHeader,
-  PdpProdutos,
   PdpRodape,
 } from './areas';
-import { CardapioService } from './data';
+import { PdpProdutosLista } from './components';
+import { CardapioService, SecaoCardapio } from './data';
+
+/** Pílula fixa que aponta para a seção Destaque (id "cat-destaque"). */
+export const CATEGORIA_DESTAQUE: Categoria = { id: 'destaque', nome: 'Destaque', ordem: 0 };
 
 @Component({
   selector: 'pdp-home-page',
@@ -31,7 +34,7 @@ import { CardapioService } from './data';
     PdpLojaHeader,
     PdpCategoriasNav,
     PdpDestaquesSection,
-    PdpProdutos,
+    PdpProdutosLista,
     PdpRodape,
   ],
   templateUrl: './home-page.html',
@@ -46,7 +49,7 @@ export class PdpHomePage implements OnInit {
   readonly erro = signal<string | null>(null);
 
   readonly loja = signal<Loja | null>(null);
-  readonly categorias = signal<Categoria[]>([]);
+  readonly cardapio = signal<SecaoCardapio[]>([]);
   readonly categoriaAtivaId = signal<string | null>(null);
   readonly produtos = signal<Produto[]>([]);
   readonly promocoes = signal<Promocao[]>([]);
@@ -56,6 +59,12 @@ export class PdpHomePage implements OnInit {
   readonly destaques = computed(() =>
     this.produtos().filter((produto) => produto.destaque && produto.disponivel)
   );
+
+  /** Pílulas da barra: Destaque (se houver) + exatamente as categorias da lista. */
+  readonly categorias = computed<Categoria[]>(() => [
+    ...(this.destaques().length > 0 ? [CATEGORIA_DESTAQUE] : []),
+    ...this.cardapio().map((secao) => secao.categoria),
+  ]);
 
   ngOnInit(): void {
     this.carregarCardapio();
@@ -69,6 +78,9 @@ export class PdpHomePage implements OnInit {
     this.ultimoProdutoPedido.set(produto);
   }
 
+  /** Abrirá o detalhe do produto na etapa 6. Intencionalmente vazio por enquanto. */
+  aoPedirProduto(_produto: Produto): void {}
+
   carregarCardapio(): void {
     this.carregando.set(true);
     this.erro.set(null);
@@ -79,11 +91,12 @@ export class PdpHomePage implements OnInit {
       .subscribe({
         next: (dados) => {
           this.loja.set(dados.loja);
-          this.categorias.set(dados.categorias);
-          if (!this.categoriaAtivaId() && dados.categorias.length > 0) {
-            this.categoriaAtivaId.set(dados.categorias[0].id);
-          }
           this.produtos.set(dados.produtos);
+          this.cardapio.set(dados.cardapio);
+          const primeira = this.categorias()[0];
+          if (!this.categoriaAtivaId() && primeira) {
+            this.categoriaAtivaId.set(primeira.id);
+          }
           this.promocoes.set(dados.promocoes);
           this.combos.set(dados.combos);
           this.carregando.set(false);

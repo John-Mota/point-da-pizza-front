@@ -10,6 +10,7 @@ import {
   LOJA_MOCK,
   PRODUTOS_MOCK,
   PROMOCOES_MOCK,
+  montarCardapio,
 } from './data';
 import { PdpHomePage } from './home-page';
 
@@ -24,6 +25,7 @@ describe('PdpHomePage', () => {
     produtos: PRODUTOS_MOCK,
     promocoes: PROMOCOES_MOCK,
     combos: COMBOS_MOCK,
+    cardapio: montarCardapio(CATEGORIAS_MOCK, PRODUTOS_MOCK),
   };
 
   beforeEach(async () => {
@@ -50,7 +52,8 @@ describe('PdpHomePage', () => {
     const hostEl = fixture.nativeElement as HTMLElement;
     expect(component.carregando()).toBe(true);
     expect(hostEl.querySelector('.pdp-home__loading')).toBeTruthy();
-    expect(hostEl.querySelectorAll('.pdp-skeleton').length).toBe(5);
+    expect(hostEl.querySelectorAll('.pdp-skeleton').length).toBe(4);
+    expect(hostEl.querySelectorAll('.pdp-produtos-lista__sk-item').length).toBe(6);
     expect(hostEl.querySelector('.pdp-home__areas')).toBeNull();
 
     // Emite os dados e conclui o carregamento
@@ -72,6 +75,24 @@ describe('PdpHomePage', () => {
       'produtos',
       'rodape',
     ]);
+  });
+
+  it('a barra de categorias e a lista mostram exatamente as mesmas categorias (mais a pílula Destaque)', () => {
+    vi.spyOn(cardapioService, 'carregarCardapio').mockReturnValue(of(mockDados));
+    fixture = TestBed.createComponent(PdpHomePage);
+    fixture.detectChanges();
+
+    const hostEl = fixture.nativeElement as HTMLElement;
+    const pilulas = Array.from(hostEl.querySelectorAll('.pdp-cat-nav__pill')).map(
+      (b) => b.getAttribute('data-cat-id')
+    );
+    const secoes = Array.from(hostEl.querySelectorAll('pdp-produtos-lista section')).map((s) =>
+      s.id.replace(/^cat-/, '')
+    );
+
+    expect(pilulas[0]).toBe('destaque');
+    expect(hostEl.querySelector('#cat-destaque')).toBeTruthy();
+    expect(pilulas.slice(1)).toEqual(secoes);
   });
 
   it('deve exibir o estado de erro e botão "Tentar de novo" quando o serviço falhar, e recarregar ao clicar', () => {

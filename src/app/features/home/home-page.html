@@ -9,7 +9,7 @@
       >
         <div class="pdp-skeleton pdp-home__skeleton-nav"></div>
         <div class="pdp-skeleton pdp-home__skeleton-promos"></div>
-        <div class="pdp-skeleton pdp-home__skeleton-products"></div>
+        <pdp-produtos-lista [carregando]="true"></pdp-produtos-lista>
         <div class="pdp-skeleton pdp-home__skeleton-footer"></div>
       </section>
     </main>
@@ -43,7 +43,10 @@
           [destaques]="destaques()"
           (pedir)="aoPedirDestaque($event)"
         ></pdp-destaques-section>
-        <pdp-produtos [categorias]="categorias()" [produtos]="produtos()"></pdp-produtos>
+        <pdp-produtos-lista
+          [secoes]="cardapio()"
+          (pedir)="aoPedirProduto($event)"
+        ></pdp-produtos-lista>
         <pdp-rodape [loja]="loja()"></pdp-rodape>
       </div>
     </main>
