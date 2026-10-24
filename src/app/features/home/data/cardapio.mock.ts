@@ -49,12 +49,19 @@ export const LOJA_MOCK: Loja = {
   formasPagamento: ['Pix', 'Cartão de crédito', 'Cartão de débito', 'Dinheiro'],
 };
 
+/**
+ * Categorias do cardápio (dados provisórios, até a integração com a API).
+ * Categorias sem produtos não são exibidas na home.
+ */
 export const CATEGORIAS_MOCK: Categoria[] = [
-  { id: 'cat-promocoes', nome: 'Promoções', ordem: 1, imagemUrl: '/img/promo-1-pizza-g-borda-refri-1l.jpg' },
-  { id: 'cat-tradicionais', nome: 'Pizzas tradicionais', ordem: 2, imagemUrl: '/img/categoria-pizzas.jpg' },
-  { id: 'cat-doces', nome: 'Pizzas doces', ordem: 3, imagemUrl: '/img/pizza-chocolate.jpg' },
-  { id: 'cat-pasteis-calzones', nome: 'Pastéis e calzones', ordem: 4, imagemUrl: '/img/categoria-pasteis.jpg' },
-  { id: 'cat-bebidas', nome: 'Bebidas', ordem: 5, imagemUrl: '/img/categoria-bebidas.jpg' },
+  { id: 'pizzas', nome: 'Pizzas', ordem: 1, imagemUrl: '/img/categoria-pizzas.jpg' },
+  { id: 'pasteis', nome: 'Pastéis', ordem: 2, imagemUrl: '/img/categoria-pasteis.jpg' },
+  { id: 'pasteis-especiais', nome: 'Pastéis Especiais', ordem: 3 },
+  { id: 'calzones', nome: 'Calzones', ordem: 4, imagemUrl: '/img/calzone-assado.jpg' },
+  { id: 'porcoes', nome: 'Porções', ordem: 5 },
+  { id: 'bebidas', nome: 'Bebidas', ordem: 6, imagemUrl: '/img/categoria-bebidas.jpg' },
+  { id: 'combos', nome: 'Combos', ordem: 7 },
+  { id: 'lasanhas', nome: 'Lasanhas', ordem: 8, imagemUrl: '/img/lasanha-bolonhesa.jpg' },
 ];
 
 export const PROMOCOES_MOCK: Promocao[] = [
@@ -114,12 +121,16 @@ export const COMBOS_MOCK: Combo[] = [
   },
 ];
 
+/**
+ * Produtos do cardápio (dados provisórios). Para adicionar um produto, inclua-o aqui
+ * com o `categoriaId` de uma categoria de CATEGORIAS_MOCK.
+ */
 export const PRODUTOS_MOCK: Produto[] = [
-  // 1. Promoções (4 produtos)
+  // Combos (4 produtos)
   {
     id: 'prod-promo-1',
-    categoriaId: 'cat-promocoes',
-    categoria: 'Promoções',
+    categoriaId: 'combos',
+    categoria: 'Combos',
     nome: '2 Pizzas G com borda de requeijão',
     descricao: 'Escolha até 2 sabores por pizza grande, ambas com borda recheada de requeijão cremoso.',
     preco: 62.0,
@@ -131,8 +142,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-promo-2',
-    categoriaId: 'cat-promocoes',
-    categoria: 'Promoções',
+    categoriaId: 'combos',
+    categoria: 'Combos',
     nome: '1 Pizza G com borda + refrigerante 1L',
     descricao: '1 pizza grande tradicional com borda de requeijão + 1 refrigerante de 1 litro gelado.',
     preco: 36.9,
@@ -144,8 +155,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-promo-3',
-    categoriaId: 'cat-promocoes',
-    categoria: 'Promoções',
+    categoriaId: 'combos',
+    categoria: 'Combos',
     nome: '2 Calzones + refrigerante 1L',
     descricao: '2 calzones assados na hora bem recheados + 1 refrigerante de 1 litro.',
     preco: 41.9,
@@ -157,8 +168,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-promo-4',
-    categoriaId: 'cat-promocoes',
-    categoria: 'Promoções',
+    categoriaId: 'combos',
+    categoria: 'Combos',
     nome: 'Combo Família 2 Pizzas G + Pizza P Doce + Refri 2L',
     descricao: '2 pizzas grandes com borda de requeijão + 1 pizza pequena de chocolate + 1 refrigerante de 2 litros.',
     preco: 89.9,
@@ -169,11 +180,11 @@ export const PRODUTOS_MOCK: Produto[] = [
     seloDestaque: 'Combo Família',
   },
 
-  // 2. Pizzas tradicionais (4 produtos)
+  // Pizzas tradicionais
   {
     id: 'prod-trad-1',
-    categoriaId: 'cat-tradicionais',
-    categoria: 'Pizzas tradicionais',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Calabresa Acebolada',
     descricao: 'Molho artesanal, mussarela derretida, calabresa fatiada, cebola roxa e orégano.',
     preco: 32.9,
@@ -186,8 +197,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-trad-2',
-    categoriaId: 'cat-tradicionais',
-    categoria: 'Pizzas tradicionais',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Mussarela Tradicional',
     descricao: 'Molho artesanal, camada dupla de mussarela derretida, rodelas de tomate e orégano.',
     preco: 34.9,
@@ -198,8 +209,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-trad-3',
-    categoriaId: 'cat-tradicionais',
-    categoria: 'Pizzas tradicionais',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Marguerita Especial',
     descricao: 'Molho artesanal, mussarela, tomates selecionados, folhas de manjericão fresco e azeite.',
     preco: 35.9,
@@ -210,8 +221,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-trad-4',
-    categoriaId: 'cat-tradicionais',
-    categoria: 'Pizzas tradicionais',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Quatro Queijos da Casa',
     descricao: 'Molho artesanal, mussarela especial, requeijão cremoso, parmesão gratinado e orégano.',
     preco: 37.9,
@@ -221,11 +232,11 @@ export const PRODUTOS_MOCK: Produto[] = [
     bordas: BORDAS_MOCK,
   },
 
-  // 3. Pizzas doces (3 produtos)
+  // Pizzas doces
   {
     id: 'prod-doce-1',
-    categoriaId: 'cat-doces',
-    categoria: 'Pizzas doces',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Brigadeiro Tradicional',
     descricao: 'Cobertura generosa de chocolate ao leite cremoso com granulado crocante e cerejas.',
     preco: 33.9,
@@ -236,8 +247,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-doce-2',
-    categoriaId: 'cat-doces',
-    categoria: 'Pizzas doces',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Chocolate com Morango',
     descricao: 'Chocolate ao leite derretido coberto com morangos frescos selecionados e leite condensado.',
     preco: 36.9,
@@ -248,8 +259,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-doce-3',
-    categoriaId: 'cat-doces',
-    categoria: 'Pizzas doces',
+    categoriaId: 'pizzas',
+    categoria: 'Pizzas',
     nome: 'Pizza Romeu e Julieta',
     descricao: 'Mussarela especial combinada com goiabada cremosa derretida no forno.',
     preco: 32.9,
@@ -259,11 +270,11 @@ export const PRODUTOS_MOCK: Produto[] = [
     bordas: BORDAS_MOCK,
   },
 
-  // 4. Pastéis e calzones (4 produtos)
+  // Calzones, pastéis e lasanhas
   {
     id: 'prod-calz-1',
-    categoriaId: 'cat-pasteis-calzones',
-    categoria: 'Pastéis e calzones',
+    categoriaId: 'calzones',
+    categoria: 'Calzones',
     nome: 'Calzone Frango com Requeijão',
     descricao: 'Massa fechada assada no forno, recheada com frango desfiado, mussarela, milho e requeijão.',
     preco: 21.9,
@@ -272,8 +283,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-calz-2',
-    categoriaId: 'cat-pasteis-calzones',
-    categoria: 'Pastéis e calzones',
+    categoriaId: 'calzones',
+    categoria: 'Calzones',
     nome: 'Calzone Calabresa com Queijo',
     descricao: 'Massa dourada recheada com calabresa defumada, mussarela, cebola e orégano.',
     preco: 21.9,
@@ -282,8 +293,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-calz-3',
-    categoriaId: 'cat-pasteis-calzones',
-    categoria: 'Pastéis e calzones',
+    categoriaId: 'pasteis',
+    categoria: 'Pastéis',
     nome: 'Pastel de Forno Carne de Sol',
     descricao: 'Pastel grande assado com recheio cremoso de carne de sol e queijo coalho.',
     preco: 16.9,
@@ -292,8 +303,8 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-calz-4',
-    categoriaId: 'cat-pasteis-calzones',
-    categoria: 'Pastéis e calzones',
+    categoriaId: 'lasanhas',
+    categoria: 'Lasanhas',
     nome: 'Lasanha à Bolonhesa da Casa',
     descricao: 'Lasanha artesanal bem recheada com molho à bolonhesa, presunto e mussarela gratinada.',
     preco: 24.9,
@@ -301,10 +312,10 @@ export const PRODUTOS_MOCK: Produto[] = [
     disponivel: true,
   },
 
-  // 5. Bebidas (4 produtos)
+  // Bebidas
   {
     id: 'prod-beb-1',
-    categoriaId: 'cat-bebidas',
+    categoriaId: 'bebidas',
     categoria: 'Bebidas',
     nome: 'Refrigerante 1 Litro',
     descricao: 'Coca-Cola, Guaraná Antarctica, Pepsi ou São Geraldo de 1 litro bem gelado.',
@@ -314,7 +325,7 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-beb-2',
-    categoriaId: 'cat-bebidas',
+    categoriaId: 'bebidas',
     categoria: 'Bebidas',
     nome: 'Refrigerante 2 Litros',
     descricao: 'Coca-Cola, Guaraná Antarctica, Sukita ou Cajuína São Geraldo 2 litros.',
@@ -324,7 +335,7 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-beb-3',
-    categoriaId: 'cat-bebidas',
+    categoriaId: 'bebidas',
     categoria: 'Bebidas',
     nome: 'Refrigerante Lata 350ml',
     descricao: 'Coca-Cola original ou Guaraná Antarctica em lata 350ml.',
@@ -334,7 +345,7 @@ export const PRODUTOS_MOCK: Produto[] = [
   },
   {
     id: 'prod-beb-4',
-    categoriaId: 'cat-bebidas',
+    categoriaId: 'bebidas',
     categoria: 'Bebidas',
     nome: 'Suco Natural 500ml',
     descricao: 'Suco gelado de acerola, cajá, goiaba, graviola, manga ou maracujá feito na hora (500ml).',

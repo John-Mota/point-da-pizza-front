@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { CardapioService } from './cardapio.service';
+import { Categoria } from '../../../shared/models';
+import { PRODUTOS_MOCK } from './cardapio.mock';
+import { CardapioService, montarCardapio } from './cardapio.service';
 
 describe('CardapioService', () => {
   let service: CardapioService;
@@ -18,28 +20,35 @@ describe('CardapioService', () => {
     expect(loja.formasPagamento.length).toBeGreaterThan(0);
   });
 
-  it('deve devolver as 5 categorias ordenadas e 3 a 4 produtos por categoria', async () => {
-    const categorias = await firstValueFrom(service.obterCategorias());
-    const produtos = await firstValueFrom(service.obterProdutos());
+  it('listarCardapio omite categorias vazias e respeita a ordem das categorias e dos produtos', async () => {
+    const cardapio = await firstValueFrom(service.listarCardapio());
 
-    expect(categorias.map((c) => c.nome)).toEqual([
-      'Promoções',
-      'Pizzas tradicionais',
-      'Pizzas doces',
-      'Pastéis e calzones',
-      'Bebidas',
+    expect(cardapio.map((s) => s.categoria.id)).toEqual([
+      'pizzas',
+      'pasteis',
+      'calzones',
+      'bebidas',
+      'combos',
+      'lasanhas',
     ]);
+    expect(cardapio.every((s) => s.produtos.length > 0)).toBe(true);
 
-    for (const cat of categorias) {
-      const daCategoria = produtos.filter((p) => p.categoriaId === cat.id);
-      expect(daCategoria.length).toBeGreaterThanOrEqual(3);
-      expect(daCategoria.length).toBeLessThanOrEqual(4);
-    }
+    const pizzasMock = PRODUTOS_MOCK.filter((p) => p.categoriaId === 'pizzas').map((p) => p.id);
+    expect(cardapio[0].produtos.map((p) => p.id)).toEqual(pizzasMock);
+  });
 
-    const precosPromocoes = produtos
-      .filter((p) => p.categoriaId === 'cat-promocoes')
-      .map((p) => p.preco);
-    expect(precosPromocoes).toEqual(expect.arrayContaining([62.0, 36.9, 41.9]));
+  it('montarCardapio ordena pela ordem da categoria e descarta categorias sem produtos', () => {
+    const categorias: Categoria[] = [
+      { id: 'b', nome: 'B', ordem: 2 },
+      { id: 'vazia', nome: 'Vazia', ordem: 0 },
+      { id: 'a', nome: 'A', ordem: 1 },
+    ];
+    const produtos = [
+      { ...PRODUTOS_MOCK[0], id: 'p1', categoriaId: 'b' },
+      { ...PRODUTOS_MOCK[0], id: 'p2', categoriaId: 'a' },
+    ];
+
+    const resultado = montarCardapio(categorias, produtos);
+    expect(resultado.map((s) => s.categoria.id)).toEqual(['a', 'b']);
   });
 });
-
