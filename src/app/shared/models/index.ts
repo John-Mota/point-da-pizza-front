@@ -16,8 +16,7 @@ export interface Loja {
   aberta: boolean;
   horarios: HorarioFuncionamento[];
   endereco: string;
-  telefone: string;
-  whatsapp: string;
+  telefone?: string;
   formasPagamento: string[];
 }
 
@@ -28,18 +27,16 @@ export interface Categoria {
   imagemUrl?: string;
 }
 
-export interface TamanhoPizza {
-  sigla: 'P' | 'M' | 'G' | 'GG';
-  nome: string;
-  fatias: number;
-  maxSabores: number;
-  precoBase?: number;
-}
-
-export interface TipoBorda {
+export interface TamanhoProdutoOpcao {
   id: string;
   nome: string;
-  precoAdicional: number;
+  preco: number;
+}
+
+export interface BordaProdutoOpcao {
+  id: string;
+  nome: string;
+  acrescimo: number;
 }
 
 export interface Produto {
@@ -54,8 +51,18 @@ export interface Produto {
   disponivel: boolean;
   destaque?: boolean;
   seloDestaque?: string;
-  tamanhos?: TamanhoPizza[];
-  bordas?: TipoBorda[];
+  tamanhos?: TamanhoProdutoOpcao[];
+  bordas?: BordaProdutoOpcao[];
+}
+
+export interface ItemConfigurado {
+  produto: Produto;
+  tamanhoId?: string;
+  bordaId?: string;
+  observacao?: string;
+  quantidade: number;
+  precoUnitario: number;
+  total: number;
 }
 
 export interface Combo {
