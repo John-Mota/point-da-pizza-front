@@ -29,7 +29,7 @@ export class PdpProdutoItem {
   /** Menor preço entre os tamanhos (quando houver); caso contrário, null. */
   readonly menorPrecoTamanho = computed<number | null>(() => {
     const precos = (this.produto().tamanhos ?? [])
-      .map((t) => t.precoBase)
+      .map((t) => t.preco)
       .filter((p): p is number => typeof p === 'number');
     return precos.length > 0 ? Math.min(...precos) : null;
   });

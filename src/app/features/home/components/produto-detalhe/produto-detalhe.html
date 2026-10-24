@@ -1,0 +1,182 @@
+@let item = produtoEfetivo();
+
+@if (item) {
+  <div class="pdp-detalhe-backdrop" (click)="fechar()">
+    <div
+      #dialogEl
+      class="pdp-detalhe"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pdp-detalhe-titulo"
+      (click)="$event.stopPropagation()"
+      (keydown)="aoTeclarDialog($event)"
+    >
+      <button
+        pButton
+        pRipple
+        type="button"
+        [rounded]="true"
+        class="pdp-detalhe__fechar"
+        aria-label="Fechar"
+        (click)="fechar()"
+      >
+        <i class="pi pi-times" aria-hidden="true"></i>
+      </button>
+
+      <div class="pdp-detalhe__conteudo">
+        @if (mostrarImagem()) {
+          <div class="pdp-detalhe__media">
+            <img
+              [src]="item.imagemUrl"
+              [alt]="item.nome"
+              class="pdp-detalhe__img"
+              (error)="aoErroImagem()"
+            />
+          </div>
+        }
+
+        <div class="pdp-detalhe__cabecalho">
+          <h2 #tituloEl id="pdp-detalhe-titulo" class="pdp-detalhe__titulo" tabindex="-1">
+            {{ item.nome }}
+          </h2>
+          <p class="pdp-detalhe__descricao">{{ item.descricao }}</p>
+        </div>
+
+        @if (temTamanhos()) {
+          <div
+            #grupoTamanhoEl
+            class="pdp-detalhe__bloco"
+            role="radiogroup"
+            aria-labelledby="pdp-detalhe-label-tamanho"
+            aria-required="true"
+            [attr.aria-invalid]="erroTamanho() ? 'true' : null"
+            [attr.aria-describedby]="erroTamanho() ? 'pdp-detalhe-erro-tamanho' : null"
+          >
+            <div class="pdp-detalhe__bloco-topo">
+              <span id="pdp-detalhe-label-tamanho" class="pdp-detalhe__bloco-titulo">Tamanho</span>
+              <span class="pdp-detalhe__obrigatorio">Obrigatório</span>
+            </div>
+
+            <div class="pdp-detalhe__opcoes-grid">
+              @for (tam of item.tamanhos!; track tam.id; let i = $index) {
+                @let selecionado = tamanhoSelecionadoId() === tam.id;
+                <button
+                  #radioTamanhoBtn
+                  pButton
+                  pRipple
+                  type="button"
+                  role="radio"
+                  class="pdp-detalhe__opcao"
+                  [class.pdp-detalhe__opcao--ativa]="selecionado"
+                  [attr.aria-checked]="selecionado"
+                  [attr.tabindex]="
+                    selecionado || (!tamanhoSelecionadoId() && i === 0) ? 0 : -1
+                  "
+                  (click)="selecionarTamanho(tam.id)"
+                  (keydown)="aoTeclarGrupoTamanho($event, i)"
+                >
+                  <span class="pdp-detalhe__opcao-nome">{{ tam.nome }}</span>
+                  <strong class="pdp-detalhe__opcao-preco">{{ tam.preco | pdpCurrency }}</strong>
+                </button>
+              }
+            </div>
+
+            @if (erroTamanho()) {
+              <p
+                id="pdp-detalhe-erro-tamanho"
+                class="pdp-detalhe__erro"
+                role="alert"
+                aria-live="assertive"
+              >
+                Escolha um tamanho
+              </p>
+            }
+          </div>
+        }
+
+        @if (temBordas()) {
+          <div
+            class="pdp-detalhe__bloco"
+            role="radiogroup"
+            aria-labelledby="pdp-detalhe-label-borda"
+          >
+            <div class="pdp-detalhe__bloco-topo">
+              <span id="pdp-detalhe-label-borda" class="pdp-detalhe__bloco-titulo">Borda</span>
+              <span class="pdp-detalhe__opcional">Opcional</span>
+            </div>
+
+            <div class="pdp-detalhe__opcoes-grid">
+              @for (borda of opcoesBorda(); track borda.id; let i = $index) {
+                @let selecionada = bordaSelecionadaId() === borda.id;
+                <button
+                  #radioBordaBtn
+                  pButton
+                  pRipple
+                  type="button"
+                  role="radio"
+                  class="pdp-detalhe__opcao"
+                  [class.pdp-detalhe__opcao--ativa]="selecionada"
+                  [attr.aria-checked]="selecionada"
+                  [attr.tabindex]="selecionada ? 0 : -1"
+                  (click)="selecionarBorda(borda.id)"
+                  (keydown)="aoTeclarGrupoBorda($event, i)"
+                >
+                  <span class="pdp-detalhe__opcao-nome">{{ borda.nome }}</span>
+                  @if (borda.acrescimo > 0) {
+                    <strong class="pdp-detalhe__opcao-preco">
+                      + {{ borda.acrescimo | pdpCurrency }}
+                    </strong>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="pdp-detalhe__bloco">
+          <div class="pdp-detalhe__bloco-topo">
+            <label for="pdp-detalhe-obs" class="pdp-detalhe__bloco-titulo">Observações</label>
+            <span class="pdp-detalhe__contador" aria-live="polite">
+              {{ observacao().length }}/{{ maxObservacao }}
+            </span>
+          </div>
+          <textarea
+            id="pdp-detalhe-obs"
+            pTextarea
+            rows="3"
+            class="pdp-detalhe__textarea"
+            [attr.maxlength]="maxObservacao"
+            [value]="observacao()"
+            placeholder="Ex.: sabor, sem cebola, ponto da massa"
+            (input)="aoDigitarObservacao($event)"
+          ></textarea>
+        </div>
+
+        <div class="pdp-detalhe__bloco pdp-detalhe__bloco--quantidade">
+          <span class="pdp-detalhe__bloco-titulo">Quantidade</span>
+          <pdp-quantity-stepper [(valor)]="quantidade" [min]="1" [max]="20"></pdp-quantity-stepper>
+        </div>
+      </div>
+
+      <footer class="pdp-detalhe__rodape">
+        <div class="pdp-detalhe__total-bloco">
+          <span class="pdp-detalhe__total-rotulo">Total</span>
+          <strong class="pdp-detalhe__total-valor" aria-live="polite">
+            {{ total() | pdpCurrency }}
+          </strong>
+        </div>
+
+        <button
+          pButton
+          pRipple
+          type="button"
+          class="pdp-detalhe__confirmar"
+          (click)="aoConfirmar()"
+        >
+          <span>Adicionar ao pedido</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
+
