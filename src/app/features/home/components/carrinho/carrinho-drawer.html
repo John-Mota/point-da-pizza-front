@@ -1,0 +1,320 @@
+@if (carrinhoService.aberto()) {
+  <div class="pdp-carrinho-backdrop" (click)="fechar()">
+    <aside
+      class="pdp-carrinho"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pdp-carrinho-titulo"
+      (click)="$event.stopPropagation()"
+      (keydown)="aoTeclarDialog($event)"
+    >
+      <header class="pdp-carrinho__header">
+        <div class="pdp-carrinho__header-left">
+          @if (etapa() === 'checkout') {
+            <button
+              pButton
+              pRipple
+              type="button"
+              [rounded]="true"
+              [text]="true"
+              class="pdp-carrinho__voltar"
+              aria-label="Voltar para a sacola"
+              (click)="voltarParaSacola()"
+            >
+              <i class="pi pi-arrow-left" aria-hidden="true"></i>
+            </button>
+          }
+          <h2 #tituloEl id="pdp-carrinho-titulo" class="pdp-carrinho__titulo" tabindex="-1">
+            @if (etapa() === 'checkout') {
+              Finalizar pedido
+            } @else if (etapa() === 'concluido') {
+              Pedido enviado
+            } @else {
+              Sua sacola
+            }
+          </h2>
+        </div>
+
+        <button
+          pButton
+          pRipple
+          type="button"
+          [rounded]="true"
+          class="pdp-carrinho__fechar"
+          aria-label="Fechar sacola"
+          (click)="fechar()"
+        >
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="pdp-carrinho__body">
+        @if (etapa() === 'concluido' && ultimoPedido(); as ped) {
+          <div class="pdp-carrinho__sucesso" role="status" aria-live="polite">
+            <i class="pi pi-check-circle pdp-carrinho__sucesso-icone" aria-hidden="true"></i>
+            <h3 class="pdp-carrinho__sucesso-titulo">Pedido {{ ped.numero }} registrado!</h3>
+            <p class="pdp-carrinho__sucesso-texto">
+              Seu pedido foi registrado para a cozinha e encaminhado para o WhatsApp da Point da Pizza.
+            </p>
+            <button
+              pButton
+              pRipple
+              type="button"
+              class="pdp-carrinho__cta"
+              (click)="fechar()"
+            >
+              <span>Voltar ao cardápio</span>
+            </button>
+          </div>
+        } @else if (carrinhoService.vazio()) {
+          <pdp-empty-state-card
+            icone="🍕"
+            titulo="Sua sacola está vazia"
+            texto="Adicione itens do cardápio para montar seu pedido."
+          ></pdp-empty-state-card>
+        } @else if (etapa() === 'sacola') {
+          <div class="pdp-carrinho__topo-lista">
+            <span class="pdp-carrinho__contagem">
+              {{ carrinhoService.quantidadeTotal() }}
+              {{ carrinhoService.quantidadeTotal() === 1 ? 'item' : 'itens' }}
+            </span>
+            <button
+              pButton
+              pRipple
+              type="button"
+              [text]="true"
+              class="pdp-carrinho__limpar"
+              (click)="limparSacola()"
+            >
+              <span>Limpar sacola</span>
+            </button>
+          </div>
+
+          <ul class="pdp-carrinho__lista" aria-label="Itens na sacola">
+            @for (item of carrinhoService.itens(); track item.id) {
+              <li class="pdp-carrinho__item">
+                <div class="pdp-carrinho__item-info">
+                  <div class="pdp-carrinho__item-topo">
+                    <h3 class="pdp-carrinho__item-nome">{{ item.produto.nome }}</h3>
+                    <button
+                      pButton
+                      pRipple
+                      type="button"
+                      [text]="true"
+                      [rounded]="true"
+                      class="pdp-carrinho__remover"
+                      [attr.aria-label]="'Remover ' + item.produto.nome"
+                      (click)="removerItem(item.id)"
+                    >
+                      <i class="pi pi-trash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  @if (item.tamanhoNome || item.bordaNome || item.observacao) {
+                    <ul class="pdp-carrinho__opcoes">
+                      @if (item.tamanhoNome) {
+                        <li>Tamanho: {{ item.tamanhoNome }}</li>
+                      }
+                      @if (item.bordaNome) {
+                        <li>Borda: {{ item.bordaNome }}</li>
+                      }
+                      @if (item.observacao) {
+                        <li>Obs.: {{ item.observacao }}</li>
+                      }
+                    </ul>
+                  }
+
+                  <div class="pdp-carrinho__item-rodape">
+                    <pdp-quantity-stepper
+                      [valor]="item.quantidade"
+                      [min]="1"
+                      [max]="20"
+                      [rotulo]="'Quantidade de ' + item.produto.nome"
+                      (valorChange)="alterarQuantidade(item.id, $event)"
+                    ></pdp-quantity-stepper>
+
+                    <strong class="pdp-carrinho__item-total">
+                      {{ item.total | pdpCurrency }}
+                    </strong>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else if (etapa() === 'checkout') {
+          <form class="pdp-carrinho__form" (submit)="$event.preventDefault(); confirmarPedido()">
+            <div class="pdp-carrinho__campo">
+              <label for="pdp-checkout-nome" class="pdp-carrinho__label">Seu nome</label>
+              <input
+                pInputText
+                id="pdp-checkout-nome"
+                type="text"
+                class="pdp-carrinho__input"
+                placeholder="Ex.: Maria Silva"
+                [value]="clienteNome()"
+                (input)="aoDigitarCampo(clienteNome, $event)"
+              />
+            </div>
+
+            <div class="pdp-carrinho__campo">
+              <label for="pdp-checkout-telefone" class="pdp-carrinho__label">WhatsApp / Telefone</label>
+              <input
+                pInputText
+                pdpPhoneMask
+                id="pdp-checkout-telefone"
+                type="tel"
+                class="pdp-carrinho__input"
+                placeholder="(85) 99999-9999"
+                [value]="clienteTelefone()"
+                (input)="aoDigitarCampo(clienteTelefone, $event)"
+              />
+            </div>
+
+            <div class="pdp-carrinho__campo" role="radiogroup" aria-label="Tipo de entrega">
+              <span class="pdp-carrinho__label">Como deseja receber?</span>
+              <div class="pdp-carrinho__opcoes-grid">
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  role="radio"
+                  class="pdp-carrinho__opcao-btn"
+                  [class.pdp-carrinho__opcao-btn--ativa]="tipoEntrega() === 'entrega'"
+                  [attr.aria-checked]="tipoEntrega() === 'entrega'"
+                  (click)="selecionarTipoEntrega('entrega')"
+                >
+                  <span>Entrega</span>
+                </button>
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  role="radio"
+                  class="pdp-carrinho__opcao-btn"
+                  [class.pdp-carrinho__opcao-btn--ativa]="tipoEntrega() === 'retirada'"
+                  [attr.aria-checked]="tipoEntrega() === 'retirada'"
+                  (click)="selecionarTipoEntrega('retirada')"
+                >
+                  <span>Retirada no balcão</span>
+                </button>
+              </div>
+            </div>
+
+            @if (tipoEntrega() === 'entrega') {
+              <div class="pdp-carrinho__campo">
+                <label for="pdp-checkout-endereco" class="pdp-carrinho__label">
+                  Endereço de entrega
+                </label>
+                <input
+                  pInputText
+                  id="pdp-checkout-endereco"
+                  type="text"
+                  class="pdp-carrinho__input"
+                  placeholder="Rua, número e bairro"
+                  [value]="endereco()"
+                  (input)="aoDigitarCampo(endereco, $event)"
+                />
+              </div>
+
+              <div class="pdp-carrinho__campo">
+                <label for="pdp-checkout-complemento" class="pdp-carrinho__label">
+                  Complemento / Referência (opcional)
+                </label>
+                <input
+                  pInputText
+                  id="pdp-checkout-complemento"
+                  type="text"
+                  class="pdp-carrinho__input"
+                  placeholder="Apto, bloco, próximo a..."
+                  [value]="complemento()"
+                  (input)="aoDigitarCampo(complemento, $event)"
+                />
+              </div>
+            }
+
+            <div class="pdp-carrinho__campo" role="radiogroup" aria-label="Forma de pagamento">
+              <span class="pdp-carrinho__label">Forma de pagamento</span>
+              <div class="pdp-carrinho__opcoes-grid">
+                @for (forma of formasPagamentoEfetivas(); track forma) {
+                  @let ativa = formaPagamento() === forma;
+                  <button
+                    pButton
+                    pRipple
+                    type="button"
+                    role="radio"
+                    class="pdp-carrinho__opcao-btn"
+                    [class.pdp-carrinho__opcao-btn--ativa]="ativa"
+                    [attr.aria-checked]="ativa"
+                    (click)="selecionarFormaPagamento(forma)"
+                  >
+                    <span>{{ forma }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            @if (formaPagamento() === 'Dinheiro') {
+              <div class="pdp-carrinho__campo">
+                <label for="pdp-checkout-troco" class="pdp-carrinho__label">
+                  Troco para quanto? (opcional)
+                </label>
+                <input
+                  pInputText
+                  id="pdp-checkout-troco"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="pdp-carrinho__input"
+                  placeholder="Ex.: 100"
+                  [value]="trocoPara()"
+                  (input)="aoDigitarCampo(trocoPara, $event)"
+                />
+              </div>
+            }
+
+            @if (erroValidacao()) {
+              <p id="pdp-checkout-erro" class="pdp-carrinho__erro" role="alert" aria-live="assertive">
+                {{ erroValidacao() }}
+              </p>
+            }
+          </form>
+        }
+      </div>
+
+      @if (!carrinhoService.vazio() && etapa() !== 'concluido') {
+        <footer class="pdp-carrinho__footer">
+          <div class="pdp-carrinho__resumo-total">
+            <span class="pdp-carrinho__resumo-label">Total</span>
+            <strong class="pdp-carrinho__resumo-valor" aria-live="polite">
+              {{ carrinhoService.total() | pdpCurrency }}
+            </strong>
+          </div>
+
+          @if (etapa() === 'sacola') {
+            <button
+              pButton
+              pRipple
+              type="button"
+              class="pdp-carrinho__cta"
+              (click)="irParaCheckout()"
+            >
+              <span>Continuar pedido</span>
+              <i class="pi pi-arrow-right" aria-hidden="true"></i>
+            </button>
+          } @else {
+            <button
+              pButton
+              pRipple
+              type="button"
+              class="pdp-carrinho__cta pdp-carrinho__cta--whatsapp"
+              (click)="confirmarPedido()"
+            >
+              <i class="pi pi-whatsapp" aria-hidden="true"></i>
+              <span>Enviar pedido no WhatsApp</span>
+            </button>
+          }
+        </footer>
+      }
+    </aside>
+  </div>
+}
