@@ -51,6 +51,8 @@
       </div>
     </main>
     <pdp-produto-detalhe (adicionar)="aoAdicionarItem($event)"></pdp-produto-detalhe>
+    <pdp-carrinho-barra></pdp-carrinho-barra>
+    <pdp-carrinho-drawer [formasPagamento]="loja()?.formasPagamento ?? []"></pdp-carrinho-drawer>
   }
 </div>
 

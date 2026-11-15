@@ -18,7 +18,14 @@ import {
   PdpLojaHeader,
   PdpRodape,
 } from './areas';
-import { PdpProdutoDetalhe, PdpProdutosLista, ProdutoDetalheService } from './components';
+import {
+  CarrinhoService,
+  PdpCarrinhoBarra,
+  PdpCarrinhoDrawer,
+  PdpProdutoDetalhe,
+  PdpProdutosLista,
+  ProdutoDetalheService,
+} from './components';
 import { CardapioService, SecaoCardapio } from './data';
 
 /** Pílula fixa que aponta para a seção Destaque (id "cat-destaque"). */
@@ -36,6 +43,8 @@ export const CATEGORIA_DESTAQUE: Categoria = { id: 'destaque', nome: 'Destaque',
     PdpDestaquesSection,
     PdpProdutosLista,
     PdpProdutoDetalhe,
+    PdpCarrinhoBarra,
+    PdpCarrinhoDrawer,
     PdpRodape,
   ],
   templateUrl: './home-page.html',
@@ -45,6 +54,7 @@ export const CATEGORIA_DESTAQUE: Categoria = { id: 'destaque', nome: 'Destaque',
 export class PdpHomePage implements OnInit {
   private readonly cardapioService = inject(CardapioService);
   private readonly produtoDetalheService = inject(ProdutoDetalheService);
+  protected readonly carrinhoService = inject(CarrinhoService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly carregando = signal<boolean>(true);
@@ -86,8 +96,9 @@ export class PdpHomePage implements OnInit {
     this.produtoDetalheService.abrir(produto);
   }
 
-  /** Receberá o item configurado na etapa 7 (carrinho). Intencionalmente vazio por enquanto. */
-  aoAdicionarItem(_item: ItemConfigurado): void {}
+  aoAdicionarItem(item: ItemConfigurado): void {
+    this.carrinhoService.adicionar(item);
+  }
 
   carregarCardapio(): void {
     this.carregando.set(true);

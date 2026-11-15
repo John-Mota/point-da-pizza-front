@@ -122,6 +122,19 @@ describe('PdpHomePage', () => {
 
     const tituloModal2 = hostEl.querySelector('#pdp-detalhe-titulo')?.textContent?.trim();
     expect(tituloModal2).toBe(component.cardapio()[0].produtos[0].nome);
+
+    // 3. Escolhe tamanho e adiciona ao pedido -> entra na sacola e exibe a barra do carrinho
+    const radiosTamanho = hostEl.querySelectorAll<HTMLButtonElement>(
+      '[aria-labelledby="pdp-detalhe-label-tamanho"] [role="radio"]'
+    );
+    if (radiosTamanho.length > 0) {
+      radiosTamanho[0].click();
+      fixture.detectChanges();
+    }
+    hostEl.querySelector<HTMLButtonElement>('.pdp-detalhe__confirmar')!.click();
+    fixture.detectChanges();
+
+    expect(hostEl.querySelector('.pdp-carrinho-barra__btn')).toBeTruthy();
   });
 
   it('deve exibir o estado de erro e botão "Tentar de novo" quando o serviço falhar, e recarregar ao clicar', () => {

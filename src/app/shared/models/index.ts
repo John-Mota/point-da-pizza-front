@@ -65,6 +65,24 @@ export interface ItemConfigurado {
   total: number;
 }
 
+export interface ItemCarrinho extends ItemConfigurado {
+  id: string;
+  tamanhoNome?: string;
+  bordaNome?: string;
+}
+
+export type TipoEntrega = 'entrega' | 'retirada';
+
+export interface DadosFinalizacaoPedido {
+  clienteNome: string;
+  clienteTelefone: string;
+  tipoEntrega: TipoEntrega;
+  endereco?: string;
+  complemento?: string;
+  formaPagamento: string;
+  trocoPara?: number;
+}
+
 export interface Combo {
   id: string;
   titulo: string;
@@ -94,6 +112,11 @@ export interface Pedido {
   id: string;
   numero: string;
   cliente: string;
+  telefone?: string;
+  tipoEntrega?: TipoEntrega;
+  endereco?: string;
+  formaPagamento?: string;
+  trocoPara?: number;
   itens: ItemPedido[];
   total: number;
   status: StatusPedido;
