@@ -21,7 +21,8 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () => import('./features/home/home-page').then((m) => m.PdpHomePage),
+    loadComponent: () =>
+      import('./features/cardapio/cardapio-page/cardapio-page').then((m) => m.PdpCardapioPage),
   },
 ];
 

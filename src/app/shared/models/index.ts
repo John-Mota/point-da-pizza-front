@@ -50,9 +50,15 @@ export interface Produto {
   imagemUrl?: string;
   disponivel: boolean;
   destaque?: boolean;
+  ordemDestaque?: number;
   seloDestaque?: string;
   tamanhos?: TamanhoProdutoOpcao[];
   bordas?: BordaProdutoOpcao[];
+}
+
+export interface SecaoCardapio {
+  categoria: Categoria;
+  produtos: Produto[];
 }
 
 export interface ItemConfigurado {

@@ -1,7 +1,7 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { CadastroPayload, UsuarioLogado } from '../../shared/models';
-import { formatarTelefoneBr } from '../whatsapp';
+import { formatarTelefoneBr } from '../whatsapp/whatsapp.service';
 
 export const USUARIO_LOGADO_STORAGE_KEY = 'pdp-usuario-logado';
 export const USUARIOS_CADASTRADOS_STORAGE_KEY = 'pdp-usuarios-cadastrados';
