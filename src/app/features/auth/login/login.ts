@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,16 +19,12 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { isApiError } from '../../../core/api';
 import { AuthService } from '../../../core/auth';
+import { LoginPayload } from '../../../shared/models';
 import { PdpCard } from '../../../shared/ui/cards';
 
 export type LoginType = 'email' | 'phone';
-
-export const MOCK_USER_CREDENTIALS = {
-  email: 'pointdapizza@gmail.com',
-  senha: 'John3472',
-  nome: 'Point da Pizza',
-} as const;
 
 export function passwordValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value || '';
@@ -48,6 +52,7 @@ export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly loginType = signal<LoginType>('email');
   readonly showPassword = signal<boolean>(false);
@@ -62,9 +67,10 @@ export class Login {
     rememberMe: [false],
   });
 
-  // Requisitos da senha em tempo real
   readonly passwordValue = signal<string>('');
-  readonly hasMinLength = computed(() => this.passwordValue().length >= 8 && this.passwordValue().length <= 10);
+  readonly hasMinLength = computed(
+    () => this.passwordValue().length >= 8 && this.passwordValue().length <= 10
+  );
   readonly hasUppercase = computed(() => /[A-Z]/.test(this.passwordValue()));
   readonly hasLowercase = computed(() => /[a-z]/.test(this.passwordValue()));
   readonly hasNumber = computed(() => /\d/.test(this.passwordValue()));
@@ -73,9 +79,12 @@ export class Login {
   );
 
   constructor() {
-    this.loginForm.get('password')?.valueChanges.subscribe((val) => {
-      this.passwordValue.set(val || '');
-    });
+    this.loginForm
+      .get('password')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val) => {
+        this.passwordValue.set(val || '');
+      });
   }
 
   setLoginType(type: LoginType): void {
@@ -121,7 +130,8 @@ export class Login {
     if (!digits) return '';
     if (digits.length <= 2) return `(${digits}`;
     if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
-    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    if (digits.length <= 10)
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
   }
 
@@ -147,30 +157,36 @@ export class Login {
     const emailInput = String(this.loginForm.value.email ?? '')
       .trim()
       .toLowerCase();
+    const phoneInput = String(this.loginForm.value.phone ?? '').replace(/\D/g, '');
     const passwordInput = String(this.loginForm.value.password ?? '');
-    const identifier = this.loginType() === 'email' ? emailInput : this.loginForm.value.phone;
+    const rememberMe = Boolean(this.loginForm.value.rememberMe);
+    const identifier = this.loginType() === 'email' ? emailInput : String(this.loginForm.value.phone ?? '');
 
-    // Simulação de login seguro (sem backend)
-    setTimeout(() => {
-      this.isSubmitting.set(false);
+    const payload: LoginPayload = {
+      ...(this.loginType() === 'email' ? { email: emailInput } : { telefone: phoneInput }),
+      senha: passwordInput,
+      lembrarMe: rememberMe,
+    };
 
-      if (
-        this.loginType() === 'email' &&
-        emailInput === MOCK_USER_CREDENTIALS.email &&
-        passwordInput !== MOCK_USER_CREDENTIALS.senha
-      ) {
-        this.submitError.set('E-mail ou senha inválidos.');
-        return;
-      }
-
-      this.authService.entrar(
-        this.loginType() === 'email'
-          ? { email: emailInput }
-          : { telefone: String(this.loginForm.value.phone ?? '') }
-      );
-      this.submitSuccess.set(`Autenticação efetuada com sucesso para ${identifier}!`);
-      void this.router.navigate(['/']);
-    }, 700);
+    this.authService
+      .login(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (resposta) => {
+          this.isSubmitting.set(false);
+          this.submitSuccess.set(
+            resposta.mensagem || `Autenticação efetuada com sucesso para ${identifier}!`
+          );
+          void this.router.navigate(['/']);
+        },
+        error: (err: unknown) => {
+          this.isSubmitting.set(false);
+          if (isApiError(err)) {
+            this.submitError.set(err.mensagem);
+          } else {
+            this.submitError.set('Não foi possível realizar o login. Tente novamente.');
+          }
+        },
+      });
   }
 }
-

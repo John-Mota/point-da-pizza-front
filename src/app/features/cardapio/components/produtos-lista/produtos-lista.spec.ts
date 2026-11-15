@@ -1,12 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Produto } from '../../../../shared/models';
-import { CATEGORIAS_MOCK, PRODUTOS_MOCK } from '../../data/cardapio.mock';
-import { montarCardapio } from '../../data/cardapio.service';
+import { criarSecoesCardapioPadrao } from '../../../../testing';
 import { PdpProdutosLista } from './produtos-lista';
 
 describe('PdpProdutosLista', () => {
   let fixture: ComponentFixture<PdpProdutosLista>;
-  const secoes = montarCardapio(CATEGORIAS_MOCK, PRODUTOS_MOCK);
+  const secoes = criarSecoesCardapioPadrao();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [PdpProdutosLista] }).compileComponents();

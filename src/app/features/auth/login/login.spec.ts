@@ -1,25 +1,33 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { ApiError } from '../../../core/api';
+import { AuthService } from '../../../core/auth';
+import { criarUsuarioLogado } from '../../../testing';
 import { Login } from './login';
 
 describe('Login', () => {
   let fixture: ComponentFixture<Login>;
   let component: Login;
+  let authService: AuthService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
+    authService = TestBed.inject(AuthService);
     fixture.detectChanges();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('deve inicializar com o método de e-mail ativo por padrão e formulário inválido', () => {
@@ -39,46 +47,46 @@ describe('Login', () => {
     const passwordCtrl = () => component.loginForm.get('password');
 
     it('deve rejeitar senha com menos de 8 caracteres', () => {
-      passwordCtrl()?.setValue('Piz123'); // 6 chars
+      passwordCtrl()?.setValue('Piz123');
       expect(passwordCtrl()?.errors?.['minlength']).toBeTruthy();
       expect(component.hasMinLength()).toBe(false);
       expect(component.isPasswordValid()).toBe(false);
     });
 
     it('deve rejeitar senha com mais de 10 caracteres', () => {
-      passwordCtrl()?.setValue('Pizza123456'); // 11 chars
+      passwordCtrl()?.setValue('Pizza123456');
       expect(passwordCtrl()?.errors?.['maxlength']).toBeTruthy();
       expect(component.hasMinLength()).toBe(false);
       expect(component.isPasswordValid()).toBe(false);
     });
 
     it('deve rejeitar senha sem letra maiúscula', () => {
-      passwordCtrl()?.setValue('pizza123'); // 8 chars, mas sem maiúscula
+      passwordCtrl()?.setValue('pizza123');
       expect(passwordCtrl()?.errors?.['requiresUppercase']).toBeTruthy();
       expect(component.hasUppercase()).toBe(false);
       expect(component.isPasswordValid()).toBe(false);
     });
 
     it('deve rejeitar senha sem letra minúscula', () => {
-      passwordCtrl()?.setValue('PIZZA123'); // 8 chars, mas sem minúscula
+      passwordCtrl()?.setValue('PIZZA123');
       expect(passwordCtrl()?.errors?.['requiresLowercase']).toBeTruthy();
       expect(component.hasLowercase()).toBe(false);
       expect(component.isPasswordValid()).toBe(false);
     });
 
     it('deve rejeitar senha sem números', () => {
-      passwordCtrl()?.setValue('PizzaTop'); // 8 chars, maiúscula e minúscula, mas sem número
+      passwordCtrl()?.setValue('PizzaTop');
       expect(passwordCtrl()?.errors?.['requiresNumber']).toBeTruthy();
       expect(component.hasNumber()).toBe(false);
       expect(component.isPasswordValid()).toBe(false);
     });
 
     it('deve aceitar senha válida com 8 a 10 caracteres contendo maiúscula, minúscula e número', () => {
-      passwordCtrl()?.setValue('Pizza123'); // 8 chars
+      passwordCtrl()?.setValue('Pizza123');
       expect(passwordCtrl()?.errors).toBeNull();
       expect(component.isPasswordValid()).toBe(true);
 
-      passwordCtrl()?.setValue('P0intPizza'); // 10 chars
+      passwordCtrl()?.setValue('P0intPizza');
       expect(passwordCtrl()?.errors).toBeNull();
       expect(component.isPasswordValid()).toBe(true);
     });
@@ -92,7 +100,9 @@ describe('Login', () => {
       expect(el.querySelector('.login__rules')).toBeNull();
 
       const errSpan = el.querySelector('.login__err');
-      expect(errSpan?.textContent).toContain('A senha não está completa: digite no mínimo 8 caracteres.');
+      expect(errSpan?.textContent).toContain(
+        'A senha não está completa: digite no mínimo 8 caracteres.'
+      );
     });
   });
 
@@ -119,7 +129,7 @@ describe('Login', () => {
 
       expect(emailCtrl?.validator).toBeNull();
 
-      phoneCtrl?.setValue('8599999'); // incompleto
+      phoneCtrl?.setValue('8599999');
       expect(phoneCtrl?.valid).toBe(false);
 
       phoneCtrl?.setValue('(85) 99999-9999');
@@ -141,7 +151,7 @@ describe('Login', () => {
     });
   });
 
-  describe('Submissão do Formulário', () => {
+  describe('Submissão do Formulário via AuthService', () => {
     it('deve marcar campos como tocados ao submeter formulário inválido', () => {
       component.onSubmit();
       expect(component.loginForm.get('email')?.touched).toBe(true);
@@ -149,43 +159,49 @@ describe('Login', () => {
       expect(component.isSubmitting()).toBe(false);
     });
 
-    it('deve processar login com sucesso quando formulário for válido', () => {
-      vi.useFakeTimers();
+    it('deve chamar AuthService.login e redirecionar para a home em caso de sucesso', () => {
+      const router = TestBed.inject(Router);
+      const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+      const loginSpy = vi.spyOn(authService, 'login').mockReturnValue(
+        of({
+          mensagem: 'Autenticação efetuada com sucesso para joao@pizzaria.com!',
+          usuario: criarUsuarioLogado({ email: 'joao@pizzaria.com' }),
+        })
+      );
+
       component.loginForm.patchValue({
         email: 'joao@pizzaria.com',
         password: 'Pizza123',
       });
 
       component.onSubmit();
-      expect(component.isSubmitting()).toBe(true);
 
-      vi.advanceTimersByTime(800);
-
+      expect(loginSpy).toHaveBeenCalledWith({
+        email: 'joao@pizzaria.com',
+        senha: 'Pizza123',
+        lembrarMe: false,
+      });
       expect(component.isSubmitting()).toBe(false);
       expect(component.submitSuccess()).toContain('joao@pizzaria.com');
+      expect(navSpy).toHaveBeenCalledWith(['/']);
     });
 
-    it('deve autenticar o login mockado pointdapizza@gmail.com com a senha John3472 e redirecionar para a home', () => {
-      vi.useFakeTimers();
-      const router = TestBed.inject(Router);
-      const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    it('deve exibir mensagem de ApiError quando o login falhar', () => {
+      const erroApi: ApiError = {
+        status: 401,
+        mensagem: 'E-mail ou senha inválidos.',
+      };
+      vi.spyOn(authService, 'login').mockReturnValue(throwError(() => erroApi));
 
       component.loginForm.patchValue({
-        email: 'pointdapizza@gmail.com',
-        password: 'John3472',
+        email: 'joao@pizzaria.com',
+        password: 'Pizza123',
       });
 
-      expect(component.loginForm.valid).toBe(true);
-
       component.onSubmit();
-      expect(component.isSubmitting()).toBe(true);
-
-      vi.advanceTimersByTime(800);
 
       expect(component.isSubmitting()).toBe(false);
-      expect(component.submitSuccess()).toContain('pointdapizza@gmail.com');
-      expect(navSpy).toHaveBeenCalledWith(['/']);
+      expect(component.submitError()).toBe('E-mail ou senha inválidos.');
     });
   });
 });
-

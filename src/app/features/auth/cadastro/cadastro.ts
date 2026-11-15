@@ -18,10 +18,11 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { isApiError } from '../../../core/api';
 import { PdpPhoneMask } from '../../../shared/directives';
 import { CadastroPayload } from '../../../shared/models';
 import { PdpCard, PdpPhotoUpload } from '../../../shared/ui';
-import { CadastroServerError, CadastroService } from './cadastro.service';
+import { CadastroErrorField, CadastroServerError, CadastroService } from './cadastro.service';
 import {
   cadastroPasswordValidator,
   contactGroupValidator,
@@ -274,15 +275,37 @@ export class Cadastro {
           this.submitSuccess.set(response.mensagem);
           void this.router.navigate(['/login']);
         },
-        error: (err: CadastroServerError) => {
+        error: (err: unknown) => {
           this.isSubmitting.set(false);
-          if (err?.field && err.field in this.cadastroForm.controls) {
-            const targetCtrl = this.cadastroForm.controls[err.field];
-            targetCtrl.setErrors({
-              ...(targetCtrl.errors ?? {}),
-              serverError: err.message,
-            });
-            targetCtrl.markAsTouched();
+          let aplicouErroCampo = false;
+
+          if (isApiError(err) && err.campos?.length) {
+            for (const item of err.campos) {
+              const campo = item.campo as CadastroErrorField;
+              if (campo in this.cadastroForm.controls) {
+                const targetCtrl = this.cadastroForm.controls[campo];
+                targetCtrl.setErrors({
+                  ...(targetCtrl.errors ?? {}),
+                  serverError: item.mensagem,
+                });
+                targetCtrl.markAsTouched();
+                aplicouErroCampo = true;
+              }
+            }
+          } else {
+            const legado = err as CadastroServerError | null;
+            if (legado?.field && legado.field in this.cadastroForm.controls) {
+              const targetCtrl = this.cadastroForm.controls[legado.field];
+              targetCtrl.setErrors({
+                ...(targetCtrl.errors ?? {}),
+                serverError: legado.message,
+              });
+              targetCtrl.markAsTouched();
+              aplicouErroCampo = true;
+            }
+          }
+
+          if (aplicouErroCampo) {
             this.hasAttemptedSubmit.set(true);
             this.showErrorSummary.set(true);
             this.focusFirstInvalidField();

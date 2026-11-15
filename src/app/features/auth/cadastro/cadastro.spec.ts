@@ -1,7 +1,10 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
+import { ApiError } from '../../../core/api';
 import { MAX_PHOTO_SIZE_BYTES } from '../../../shared/ui/photo-upload';
 import { Cadastro } from './cadastro';
 import { CadastroService } from './cadastro.service';
@@ -15,7 +18,7 @@ describe('Cadastro', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Cadastro],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Cadastro);
@@ -224,16 +227,21 @@ describe('Cadastro', () => {
       expect(navSpy).toHaveBeenCalledWith(['/login']);
     });
 
-    it('deve exibir erro de servidor simulado no campo correspondente via setErrors', () => {
-      vi.spyOn(cadastroService, 'criarConta').mockReturnValue(
-        throwError(() => ({
-          field: 'email' as const,
-          message: 'Este e-mail já está cadastrado',
-        }))
-      );
+    it('deve exibir erro de campo retornado pela API (ApiError.campos) no controle correspondente via setErrors', () => {
+      const apiError: ApiError = {
+        status: 409,
+        mensagem: 'Conflito no cadastro',
+        campos: [
+          {
+            campo: 'email',
+            mensagem: 'Este e-mail já está cadastrado',
+          },
+        ],
+      };
+      vi.spyOn(cadastroService, 'criarConta').mockReturnValue(throwError(() => apiError));
 
       component.cadastroForm.controls.nome.setValue('Maria Souza');
-      component.cadastroForm.controls.email.setValue('jaexiste@pointdapizza.com');
+      component.cadastroForm.controls.email.setValue('conflito@dominio.com');
       component.cadastroForm.controls.senha.setValue('abc12345');
       component.cadastroForm.controls.confirmarSenha.setValue('abc12345');
 

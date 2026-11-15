@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Produto } from '../../../../shared/models';
-import { PRODUTOS_MOCK } from '../../data/cardapio.mock';
+import { criarBebida, criarPizzaComOpcoes } from '../../../../testing';
 import { PdpProdutoItem } from './produto-item';
 
 describe('PdpProdutoItem', () => {
   let fixture: ComponentFixture<PdpProdutoItem>;
 
-  const pizza = PRODUTOS_MOCK.find((p) => p.id === 'prod-trad-1')!;
-  const bebida = PRODUTOS_MOCK.find((p) => p.id === 'prod-beb-1')!;
+  const pizza = criarPizzaComOpcoes();
+  const bebida = criarBebida();
 
   function criar(produto: Produto): HTMLElement {
     fixture = TestBed.createComponent(PdpProdutoItem);

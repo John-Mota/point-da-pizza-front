@@ -14,10 +14,13 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { isApiError } from '../../../core/api';
 import { AuthService } from '../../../core/auth';
+import { gerarIdempotencyKey } from '../../../core/pedidos';
 import { PdpPhoneMask } from '../../../shared/directives';
 import { DadosFinalizacaoPedido, Pedido, TipoEntrega } from '../../../shared/models';
 import { PdpCurrencyPipe } from '../../../shared/pipes';
@@ -69,12 +72,14 @@ export class PdpCarrinhoDrawer {
   readonly formaPagamento = signal<string>('Pix');
   readonly trocoPara = signal<string>('');
   readonly erroValidacao = signal<string | null>(null);
+  readonly enviando = signal<boolean>(false);
   readonly ultimoPedido = signal<Pedido | null>(null);
 
   private readonly tituloRef = viewChild<ElementRef<HTMLElement>>('tituloEl');
 
   private bodyOverflowAnterior = '';
   private scrollTravado = false;
+  private idempotencyKeyAtual: string | null = null;
 
   readonly formasPagamentoEfetivas = computed<readonly string[]>(() => {
     const lista = this.formasPagamento();
@@ -103,6 +108,7 @@ export class PdpCarrinhoDrawer {
         if (aberto) {
           this.etapa.set('sacola');
           this.erroValidacao.set(null);
+          this.idempotencyKeyAtual = null;
           if (this.authService.estaOnline()) {
             this.preencherCamposUsuarioOnline();
           }
@@ -126,14 +132,17 @@ export class PdpCarrinhoDrawer {
   }
 
   alterarQuantidade(itemId: string, novaQtd: number): void {
+    this.idempotencyKeyAtual = null;
     this.carrinhoService.alterarQuantidade(itemId, novaQtd);
   }
 
   removerItem(itemId: string): void {
+    this.idempotencyKeyAtual = null;
     this.carrinhoService.remover(itemId);
   }
 
   limparSacola(): void {
+    this.idempotencyKeyAtual = null;
     this.carrinhoService.limpar();
   }
 
@@ -144,6 +153,7 @@ export class PdpCarrinhoDrawer {
     if (this.authService.estaOnline()) {
       this.preencherCamposUsuarioOnline();
     }
+    this.idempotencyKeyAtual = gerarIdempotencyKey();
     this.erroValidacao.set(null);
     this.etapa.set('checkout');
   }
@@ -163,10 +173,7 @@ export class PdpCarrinhoDrawer {
     this.erroValidacao.set(null);
   }
 
-  aoDigitarCampo(
-    sinal: typeof this.clienteNome,
-    event: Event
-  ): void {
+  aoDigitarCampo(sinal: typeof this.clienteNome, event: Event): void {
     const alvo = event.target as HTMLInputElement | null;
     sinal.set(alvo?.value ?? '');
     if (this.erroValidacao()) {
@@ -175,7 +182,7 @@ export class PdpCarrinhoDrawer {
   }
 
   confirmarPedido(): void {
-    if (this.carrinhoService.vazio()) {
+    if (this.carrinhoService.vazio() || this.enviando()) {
       return;
     }
 
@@ -222,14 +229,36 @@ export class PdpCarrinhoDrawer {
       });
     }
 
-    const { pedido, whatsappUrl } = this.carrinhoService.finalizarPedido(dados);
-    this.ultimoPedido.set(pedido);
-    this.etapa.set('concluido');
-    this.pedidoFinalizado.emit(pedido);
+    const chave = this.idempotencyKeyAtual ?? gerarIdempotencyKey();
+    this.idempotencyKeyAtual = chave;
+    this.enviando.set(true);
+    this.erroValidacao.set(null);
 
-    if (this.isBrowser && whatsappUrl) {
-      this.document.defaultView?.open?.(whatsappUrl, '_blank', 'noopener,noreferrer');
-    }
+    this.carrinhoService
+      .finalizarPedido(dados, chave)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ pedido, whatsappUrl }) => {
+          this.enviando.set(false);
+          this.idempotencyKeyAtual = null;
+          this.ultimoPedido.set(pedido);
+          this.etapa.set('concluido');
+          this.pedidoFinalizado.emit(pedido);
+
+          if (this.isBrowser && whatsappUrl) {
+            this.document.defaultView?.open?.(whatsappUrl, '_blank', 'noopener,noreferrer');
+          }
+        },
+        error: (err: unknown) => {
+          this.enviando.set(false);
+          if (isApiError(err)) {
+            const msgCampo = err.campos?.[0]?.mensagem;
+            this.erroValidacao.set(msgCampo || err.mensagem);
+          } else {
+            this.erroValidacao.set('Não foi possível registrar seu pedido. Tente novamente.');
+          }
+        },
+      });
   }
 
   aoTeclarDialog(event: KeyboardEvent): void {

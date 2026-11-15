@@ -50,6 +50,7 @@ const ORDEM_DIAS_SEMANA: readonly DiaSemana[] = [1, 2, 3, 4, 5, 6, 0];
 })
 export class PdpLojaTopo implements OnInit {
   readonly loja = input<Loja | null>(null);
+  readonly erroLoja = input<string | null>(null);
   readonly usuarioFotoUrl = input<string | null>(null);
   readonly usuarioNome = input<string>('Cliente');
 
@@ -70,9 +71,11 @@ export class PdpLojaTopo implements OnInit {
   readonly erroFotoUsuario = signal<boolean>(false);
   readonly agora = signal<Date>(this.clockService.now());
 
+  readonly temHorarios = computed<boolean>(() => (this.loja()?.horarios?.length ?? 0) > 0);
+
   readonly statusLoja = computed<StatusLojaResult>(() => {
     const dados = this.loja();
-    if (!dados) {
+    if (!dados || !dados.horarios || dados.horarios.length === 0) {
       return { aberta: false };
     }
     return calcularStatusLoja(dados.horarios, this.agora());

@@ -89,6 +89,31 @@ export interface DadosFinalizacaoPedido {
   trocoPara?: number;
 }
 
+export interface ItemPedidoNovo {
+  produtoId: string;
+  nome: string;
+  quantidade: number;
+  tamanhoId?: string;
+  tamanhoNome?: string;
+  bordaId?: string;
+  bordaNome?: string;
+  observacao?: string;
+  precoUnitario: number;
+  total: number;
+}
+
+export interface PedidoNovo {
+  clienteNome: string;
+  clienteTelefone: string;
+  tipoEntrega: TipoEntrega;
+  endereco?: string;
+  complemento?: string;
+  formaPagamento: string;
+  trocoPara?: number;
+  itens: ItemPedidoNovo[];
+  total: number;
+}
+
 export interface Combo {
   id: string;
   titulo: string;
@@ -129,6 +154,8 @@ export interface Pedido {
   criadoEm: Date;
 }
 
+export type PedidoCriado = Pedido;
+
 export interface CadastroPayload {
   nome: string;
   telefone?: string;
@@ -149,3 +176,15 @@ export interface UsuarioLogado {
   fotoUrl?: string;
 }
 
+export interface LoginPayload {
+  email?: string;
+  telefone?: string;
+  senha: string;
+  lembrarMe?: boolean;
+}
+
+export interface LoginResponse {
+  mensagem: string;
+  usuario?: UsuarioLogado;
+  token?: string;
+}

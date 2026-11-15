@@ -1,66 +1,71 @@
 @let dados = loja();
 
 <header class="pdp-loja-header" data-area="loja-header" aria-label="Cabeçalho da loja">
-  @if (dados) {
-    <div class="pdp-loja-header__bar">
-      <div class="pdp-loja-header__inner">
-        <!-- Canto esquerdo: Mesma logo do login (/img/logo.png) -->
-        <div class="pdp-loja-header__left">
-          <div class="pdp-loja-header__logo-wrap">
-            @if (dados.logoUrl && !erroLogo()) {
-              <img
-                [src]="dados.logoUrl"
-                alt="Point da Pizza"
-                class="pdp-loja-header__logo-img"
-                width="56"
-                height="49"
-                (error)="erroLogo.set(true)"
-              />
-            } @else {
-              <img
-                src="/img/logo.png"
-                alt="Point da Pizza"
-                class="pdp-loja-header__logo-img pdp-loja-header__logo-fallback"
-                width="56"
-                height="49"
-              />
-            }
-          </div>
-        </div>
-
-        <!-- Ao centro: Imagem logo-entregador-point-da-pizza.png -->
-        <div class="pdp-loja-header__center">
-          <h1 class="pdp-loja-header__title">
+  <div class="pdp-loja-header__bar">
+    <div class="pdp-loja-header__inner">
+      <!-- Canto esquerdo: Mesma logo do login (/img/logo.png) -->
+      <div class="pdp-loja-header__left">
+        <div class="pdp-loja-header__logo-wrap">
+          @if (dados?.logoUrl && !erroLogo()) {
             <img
-              src="/img/logo-entregador-point-da-pizza.png"
-              [alt]="dados.nome"
-              class="pdp-loja-header__center-img"
-              height="52"
+              [src]="dados!.logoUrl"
+              alt="Point da Pizza"
+              class="pdp-loja-header__logo-img"
+              width="56"
+              height="49"
+              (error)="erroLogo.set(true)"
             />
-          </h1>
-        </div>
-
-        <!-- Canto direito: Ícone WhatsApp, Informações da pizzaria (PopUp) e Usuário -->
-        <div class="pdp-loja-header__right">
-          <!-- 1. Ícone do WhatsApp (PrimeNG pButton), exibido apenas quando disponível -->
-          @if (whatsappDisponivel()) {
-            <a
-              pButton
-              pRipple
-              [rounded]="true"
-              severity="success"
-              [href]="whatsappUrl()"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="pdp-loja-header__icon-btn pdp-loja-header__whatsapp-btn"
-              aria-label="Falar no WhatsApp"
-              title="Falar no WhatsApp"
-            >
-              <i class="pi pi-whatsapp" aria-hidden="true"></i>
-            </a>
+          } @else {
+            <img
+              src="/img/logo.png"
+              alt="Point da Pizza"
+              class="pdp-loja-header__logo-img pdp-loja-header__logo-fallback"
+              width="56"
+              height="49"
+            />
           }
+        </div>
+      </div>
 
-          <!-- 2. Ícone de Informações da Pizzaria (PrimeNG pButton abre PopUp) -->
+      <!-- Ao centro: Imagem logo-entregador-point-da-pizza.png ou aviso enxuto se a loja falhar -->
+      <div class="pdp-loja-header__center">
+        <h1 class="pdp-loja-header__title">
+          <img
+            src="/img/logo-entregador-point-da-pizza.png"
+            [alt]="dados?.nome ?? 'Point da Pizza'"
+            class="pdp-loja-header__center-img"
+            height="52"
+          />
+        </h1>
+        @if (!dados && erroLoja()) {
+          <span class="pdp-loja-header__erro-aviso" role="status">
+            {{ erroLoja() }}
+          </span>
+        }
+      </div>
+
+      <!-- Canto direito: Ícone WhatsApp, Informações da pizzaria (PopUp) e Usuário -->
+      <div class="pdp-loja-header__right">
+        <!-- 1. Ícone do WhatsApp (PrimeNG pButton), exibido apenas quando disponível -->
+        @if (whatsappDisponivel()) {
+          <a
+            pButton
+            pRipple
+            [rounded]="true"
+            severity="success"
+            [href]="whatsappUrl()"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="pdp-loja-header__icon-btn pdp-loja-header__whatsapp-btn"
+            aria-label="Falar no WhatsApp"
+            title="Falar no WhatsApp"
+          >
+            <i class="pi pi-whatsapp" aria-hidden="true"></i>
+          </a>
+        }
+
+        <!-- 2. Ícone de Informações da Pizzaria (PrimeNG pButton abre PopUp quando dados da loja existem) -->
+        @if (dados) {
           <button
             pButton
             pRipple
@@ -79,101 +84,103 @@
           >
             <i class="pi pi-info-circle" aria-hidden="true"></i>
           </button>
+        }
 
-          <!-- 3. Ícone de Usuário (foto caso tenha + menu Configurar e Sair) -->
-          <div class="pdp-loja-header__user-wrap">
+        <!-- 3. Ícone de Usuário (foto caso tenha + menu Configurar e Sair) -->
+        <div class="pdp-loja-header__user-wrap">
+          <button
+            pButton
+            pRipple
+            type="button"
+            [rounded]="true"
+            severity="secondary"
+            [outlined]="!menuUsuarioAberto()"
+            class="pdp-loja-header__icon-btn pdp-loja-header__user-btn"
+            [class.pdp-loja-header__icon-btn--active]="menuUsuarioAberto()"
+            (click)="alternarMenuUsuario()"
+            [attr.aria-expanded]="menuUsuarioAberto()"
+            aria-haspopup="menu"
+            aria-controls="pdp-user-menu"
+            aria-label="Menu do usuário"
+            title="Menu do usuário"
+          >
+            @if (usuarioFotoUrl() && !erroFotoUsuario()) {
+              <img
+                [src]="usuarioFotoUrl()"
+                alt=""
+                class="pdp-loja-header__user-img"
+                width="40"
+                height="40"
+                (error)="erroFotoUsuario.set(true)"
+              />
+            } @else {
+              <i class="pi pi-user" aria-hidden="true"></i>
+            }
+          </button>
+
+          <div
+            id="pdp-user-menu"
+            class="pdp-loja-header__user-menu"
+            role="menu"
+            [hidden]="!menuUsuarioAberto()"
+            aria-label="Opções do usuário"
+          >
             <button
               pButton
               pRipple
               type="button"
-              [rounded]="true"
+              [text]="true"
               severity="secondary"
-              [outlined]="!menuUsuarioAberto()"
-              class="pdp-loja-header__icon-btn pdp-loja-header__user-btn"
-              [class.pdp-loja-header__icon-btn--active]="menuUsuarioAberto()"
-              (click)="alternarMenuUsuario()"
-              [attr.aria-expanded]="menuUsuarioAberto()"
-              aria-haspopup="menu"
-              aria-controls="pdp-user-menu"
-              aria-label="Menu do usuário"
-              title="Menu do usuário"
+              role="menuitem"
+              class="pdp-loja-header__user-item"
+              (click)="aoClicarConfigurar()"
             >
-              @if (usuarioFotoUrl() && !erroFotoUsuario()) {
-                <img
-                  [src]="usuarioFotoUrl()"
-                  alt=""
-                  class="pdp-loja-header__user-img"
-                  width="40"
-                  height="40"
-                  (error)="erroFotoUsuario.set(true)"
-                />
-              } @else {
-                <i class="pi pi-user" aria-hidden="true"></i>
-              }
+              <i class="pi pi-cog" aria-hidden="true"></i>
+              <span>Configurar</span>
             </button>
 
-            <div
-              id="pdp-user-menu"
-              class="pdp-loja-header__user-menu"
-              role="menu"
-              [hidden]="!menuUsuarioAberto()"
-              aria-label="Opções do usuário"
+            <button
+              pButton
+              pRipple
+              type="button"
+              [text]="true"
+              severity="secondary"
+              role="menuitem"
+              class="pdp-loja-header__user-item"
+              (click)="alternarTema()"
             >
-              <button
-                pButton
-                pRipple
-                type="button"
-                [text]="true"
-                severity="secondary"
-                role="menuitem"
-                class="pdp-loja-header__user-item"
-                (click)="aoClicarConfigurar()"
-              >
-                <i class="pi pi-cog" aria-hidden="true"></i>
-                <span>Configurar</span>
-              </button>
+              <i
+                class="pi"
+                [class.pi-sun]="themeService.isDark()"
+                [class.pi-moon]="!themeService.isDark()"
+                aria-hidden="true"
+              ></i>
+              <span>{{ themeService.isDark() ? 'Tema claro' : 'Tema escuro' }}</span>
+            </button>
 
-              <button
-                pButton
-                pRipple
-                type="button"
-                [text]="true"
-                severity="secondary"
-                role="menuitem"
-                class="pdp-loja-header__user-item"
-                (click)="alternarTema()"
-              >
-                <i
-                  class="pi"
-                  [class.pi-sun]="themeService.isDark()"
-                  [class.pi-moon]="!themeService.isDark()"
-                  aria-hidden="true"
-                ></i>
-                <span>{{ themeService.isDark() ? 'Tema claro' : 'Tema escuro' }}</span>
-              </button>
+            <div class="pdp-loja-header__user-divider" role="separator"></div>
 
-              <div class="pdp-loja-header__user-divider" role="separator"></div>
-
-              <button
-                pButton
-                pRipple
-                type="button"
-                [text]="true"
-                severity="danger"
-                role="menuitem"
-                class="pdp-loja-header__user-item pdp-loja-header__user-item--logout"
-                (click)="aoClicarSair()"
-              >
-                <i class="pi pi-sign-out" aria-hidden="true"></i>
-                <span>Sair</span>
-              </button>
-            </div>
+            <button
+              pButton
+              pRipple
+              type="button"
+              [text]="true"
+              severity="danger"
+              role="menuitem"
+              class="pdp-loja-header__user-item pdp-loja-header__user-item--logout"
+              (click)="aoClicarSair()"
+            >
+              <i class="pi pi-sign-out" aria-hidden="true"></i>
+              <span>Sair</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- PopUp (Modal) de Informações da Pizzaria -->
+  <!-- PopUp (Modal) de Informações da Pizzaria -->
+  @if (dados) {
     <div
       id="pdp-loja-info-painel"
       class="pdp-loja-header__modal-backdrop"
@@ -190,28 +197,30 @@
               <h2 id="pdp-loja-modal-titulo" class="pdp-loja-header__modal-title">
                 {{ dados.nome }}
               </h2>
-              <div class="pdp-loja-header__status-group">
-                @if (statusLoja().aberta) {
-                  <p-tag
-                    severity="success"
-                    [rounded]="true"
-                    value="Aberto agora"
-                    class="pdp-loja-header__badge pdp-loja-header__badge--open"
-                  ></p-tag>
-                } @else {
-                  <p-tag
-                    severity="danger"
-                    [rounded]="true"
-                    value="Fechado"
-                    class="pdp-loja-header__badge pdp-loja-header__badge--closed"
-                  ></p-tag>
-                  @if (textoProximaAbertura()) {
-                    <span class="pdp-loja-header__next-open">
-                      {{ textoProximaAbertura() }}
-                    </span>
+              @if (temHorarios()) {
+                <div class="pdp-loja-header__status-group">
+                  @if (statusLoja().aberta) {
+                    <p-tag
+                      severity="success"
+                      [rounded]="true"
+                      value="Aberto agora"
+                      class="pdp-loja-header__badge pdp-loja-header__badge--open"
+                    ></p-tag>
+                  } @else {
+                    <p-tag
+                      severity="danger"
+                      [rounded]="true"
+                      value="Fechado"
+                      class="pdp-loja-header__badge pdp-loja-header__badge--closed"
+                    ></p-tag>
+                    @if (textoProximaAbertura()) {
+                      <span class="pdp-loja-header__next-open">
+                        {{ textoProximaAbertura() }}
+                      </span>
+                    }
                   }
-                }
-              </div>
+                </div>
+              }
             </div>
             <p class="pdp-loja-header__slogan">{{ dados.slogan }}</p>
           </div>
@@ -243,43 +252,47 @@
               </p>
             }
 
-            <h3 class="pdp-loja-header__panel-title pdp-loja-header__panel-title--spaced">
-              Formas de pagamento
-            </h3>
-            <ul class="pdp-loja-header__payments" aria-label="Formas de pagamento aceitas">
-              @for (forma of dados.formasPagamento; track forma) {
-                <li class="pdp-loja-header__payment-chip">
-                  <p-tag severity="secondary" [rounded]="true" [value]="forma"></p-tag>
-                </li>
-              }
-            </ul>
+            @if (dados.formasPagamento.length > 0) {
+              <h3 class="pdp-loja-header__panel-title pdp-loja-header__panel-title--spaced">
+                Formas de pagamento
+              </h3>
+              <ul class="pdp-loja-header__payments" aria-label="Formas de pagamento aceitas">
+                @for (forma of dados.formasPagamento; track forma) {
+                  <li class="pdp-loja-header__payment-chip">
+                    <p-tag severity="secondary" [rounded]="true" [value]="forma"></p-tag>
+                  </li>
+                }
+              </ul>
+            }
           </div>
 
-          <div class="pdp-loja-header__panel-block">
-            <h3 class="pdp-loja-header__panel-title">Horários de funcionamento</h3>
-            <ul class="pdp-loja-header__schedule">
-              @for (item of horariosSemana(); track item.dia) {
-                <li
-                  class="pdp-loja-header__schedule-row"
-                  [class.pdp-loja-header__schedule-row--today]="item.hoje"
-                  [attr.aria-current]="item.hoje ? 'date' : null"
-                >
-                  <span class="pdp-loja-header__schedule-day">
-                    {{ item.nomeDia }}
-                    @if (item.hoje) {
-                      <span class="pdp-loja-header__today-tag">Hoje</span>
-                    }
-                  </span>
-                  <span
-                    class="pdp-loja-header__schedule-hours"
-                    [class.pdp-loja-header__schedule-hours--closed]="!item.abertoNoDia"
+          @if (temHorarios()) {
+            <div class="pdp-loja-header__panel-block">
+              <h3 class="pdp-loja-header__panel-title">Horários de funcionamento</h3>
+              <ul class="pdp-loja-header__schedule">
+                @for (item of horariosSemana(); track item.dia) {
+                  <li
+                    class="pdp-loja-header__schedule-row"
+                    [class.pdp-loja-header__schedule-row--today]="item.hoje"
+                    [attr.aria-current]="item.hoje ? 'date' : null"
                   >
-                    {{ item.descricaoHorario }}
-                  </span>
-                </li>
-              }
-            </ul>
-          </div>
+                    <span class="pdp-loja-header__schedule-day">
+                      {{ item.nomeDia }}
+                      @if (item.hoje) {
+                        <span class="pdp-loja-header__today-tag">Hoje</span>
+                      }
+                    </span>
+                    <span
+                      class="pdp-loja-header__schedule-hours"
+                      [class.pdp-loja-header__schedule-hours--closed]="!item.abertoNoDia"
+                    >
+                      {{ item.descricaoHorario }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
         </div>
       </div>
     </div>

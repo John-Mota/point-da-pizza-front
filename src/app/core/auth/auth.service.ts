@@ -1,23 +1,20 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { DestroyRef, Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { CadastroPayload, UsuarioLogado } from '../../shared/models';
+import { Observable, tap } from 'rxjs';
+import { LoginPayload, LoginResponse, UsuarioLogado } from '../../shared/models';
+import { API_BASE_URL, construirUrlApi } from '../api';
 import { formatarTelefoneBr } from '../whatsapp/whatsapp.service';
 
 export const USUARIO_LOGADO_STORAGE_KEY = 'pdp-usuario-logado';
-export const USUARIOS_CADASTRADOS_STORAGE_KEY = 'pdp-usuarios-cadastrados';
-export const AUTH_STATUS_STORAGE_KEY = 'pdp-auth-status';
-
-export const MOCK_USUARIO_ONLINE: UsuarioLogado = {
-  nome: 'Point da Pizza',
-  telefone: '(85) 99999-9999',
-  email: 'pointdapizza@gmail.com',
-  endereco: 'Rua da Pizzaria, 123 - Centro',
-};
+export const AUTH_TOKEN_STORAGE_KEY = 'pdp-auth-token';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
@@ -25,8 +22,9 @@ export class AuthService {
 
   readonly redeOnline = signal<boolean>(this.lerRedeOnlineInicial());
   readonly usuario = signal<UsuarioLogado | null>(this.carregarUsuarioInicial());
+  readonly token = signal<string | null>(this.carregarTokenInicial());
 
-  /** Indica se o cliente está online (conectado e com sessão ativa). */
+  /** Indica se o cliente está online (conectado e com sessão autenticada). */
   readonly estaOnline = computed<boolean>(() => this.redeOnline() && this.usuario() !== null);
 
   constructor() {
@@ -45,63 +43,54 @@ export class AuthService {
     }
   }
 
-  registrarUsuario(payload: CadastroPayload): UsuarioLogado {
-    const telefoneFormatado = payload.telefone
-      ? formatarTelefoneBr(payload.telefone) || payload.telefone
-      : MOCK_USUARIO_ONLINE.telefone;
-
-    const novoUsuario: UsuarioLogado = {
-      nome: payload.nome.trim(),
-      telefone: telefoneFormatado,
-      email: payload.email?.trim().toLowerCase(),
-      endereco: payload.endereco?.trim() || MOCK_USUARIO_ONLINE.endereco,
-      complemento: payload.complemento?.trim(),
-    };
-
-    const lista = this.carregarUsuariosCadastrados();
-    const filtrada = lista.filter(
-      (u) =>
-        (novoUsuario.email ? u.email !== novoUsuario.email : true) &&
-        u.telefone.replace(/\D/g, '') !== novoUsuario.telefone.replace(/\D/g, '')
+  login(payload: LoginPayload): Observable<LoginResponse> {
+    const url = construirUrlApi(this.apiBaseUrl, '/auth/login');
+    return this.http.post<LoginResponse>(url, payload).pipe(
+      tap((resposta) => {
+        if (resposta.usuario) {
+          this.definirSessao(resposta.usuario, resposta.token);
+        } else if (resposta.token) {
+          this.definirToken(resposta.token);
+        }
+      })
     );
-    this.salvarUsuariosCadastrados([novoUsuario, ...filtrada]);
-    return novoUsuario;
   }
 
-  entrar(credenciais: {
-    email?: string;
-    telefone?: string;
-    nome?: string;
-    endereco?: string;
-    complemento?: string;
-  }): UsuarioLogado {
-    const emailLimpo = credenciais.email?.trim().toLowerCase();
-    const telDigitos = (credenciais.telefone ?? '').replace(/\D/g, '');
-    const cadastrados = this.carregarUsuariosCadastrados();
+  obterToken(): string {
+    return this.token() ?? '';
+  }
 
-    const encontrado = cadastrados.find(
-      (u) =>
-        (emailLimpo && u.email?.toLowerCase() === emailLimpo) ||
-        (telDigitos && u.telefone.replace(/\D/g, '') === telDigitos)
-    );
+  definirToken(token: string | null | undefined): void {
+    const limpo = token?.trim() || null;
+    this.token.set(limpo);
+    if (!this.isBrowser) {
+      return;
+    }
+    try {
+      if (limpo) {
+        localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, limpo);
+      } else {
+        localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+      }
+    } catch {
+      // Ignora falhas de localStorage
+    }
+  }
 
-    const usuarioAtivo: UsuarioLogado = encontrado ?? {
-      nome:
-        credenciais.nome?.trim() ||
-        (emailLimpo && emailLimpo !== MOCK_USUARIO_ONLINE.email
-          ? this.extrairNomeDeEmail(emailLimpo)
-          : MOCK_USUARIO_ONLINE.nome),
-      telefone: telDigitos
-        ? formatarTelefoneBr(telDigitos) || credenciais.telefone!.trim()
-        : MOCK_USUARIO_ONLINE.telefone,
-      email: emailLimpo || MOCK_USUARIO_ONLINE.email,
-      endereco: credenciais.endereco?.trim() || MOCK_USUARIO_ONLINE.endereco,
-      complemento: credenciais.complemento?.trim(),
+  definirSessao(usuario: UsuarioLogado, token?: string): void {
+    const normalizado: UsuarioLogado = {
+      nome: usuario.nome.trim(),
+      telefone: formatarTelefoneBr(usuario.telefone) || usuario.telefone.trim(),
+      email: usuario.email?.trim().toLowerCase(),
+      endereco: usuario.endereco.trim(),
+      complemento: usuario.complemento?.trim(),
+      fotoUrl: usuario.fotoUrl,
     };
-
-    this.usuario.set(usuarioAtivo);
-    this.salvarSessao(usuarioAtivo);
-    return usuarioAtivo;
+    this.usuario.set(normalizado);
+    this.salvarSessao(normalizado);
+    if (token !== undefined) {
+      this.definirToken(token);
+    }
   }
 
   atualizarPerfil(dados: Partial<UsuarioLogado>): void {
@@ -115,7 +104,9 @@ export class AuthService {
       ...(dados.nome?.trim() ? { nome: dados.nome.trim() } : {}),
       ...(dados.telefone?.trim() ? { telefone: dados.telefone.trim() } : {}),
       ...(dados.endereco?.trim() ? { endereco: dados.endereco.trim() } : {}),
-      ...(dados.complemento !== undefined ? { complemento: dados.complemento.trim() || undefined } : {}),
+      ...(dados.complemento !== undefined
+        ? { complemento: dados.complemento.trim() || undefined }
+        : {}),
     };
 
     this.usuario.set(atualizado);
@@ -124,12 +115,13 @@ export class AuthService {
 
   sair(): void {
     this.usuario.set(null);
+    this.token.set(null);
     if (!this.isBrowser) {
       return;
     }
     try {
-      localStorage.setItem(AUTH_STATUS_STORAGE_KEY, 'offline');
       localStorage.removeItem(USUARIO_LOGADO_STORAGE_KEY);
+      localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
     } catch {
       // Ignora falhas de localStorage
     }
@@ -145,32 +137,39 @@ export class AuthService {
 
   private carregarUsuarioInicial(): UsuarioLogado | null {
     if (!this.isBrowser) {
-      return MOCK_USUARIO_ONLINE;
+      return null;
     }
     try {
-      const status = localStorage.getItem(AUTH_STATUS_STORAGE_KEY);
-      if (status === 'offline') {
+      const bruto = localStorage.getItem(USUARIO_LOGADO_STORAGE_KEY);
+      if (!bruto) {
         return null;
       }
-
-      const bruto = localStorage.getItem(USUARIO_LOGADO_STORAGE_KEY);
-      if (bruto) {
-        const lido = JSON.parse(bruto) as Partial<UsuarioLogado>;
-        if (lido && typeof lido.nome === 'string' && lido.nome.trim()) {
-          return {
-            nome: lido.nome.trim(),
-            telefone: lido.telefone?.trim() || MOCK_USUARIO_ONLINE.telefone,
-            email: lido.email,
-            endereco: lido.endereco?.trim() || MOCK_USUARIO_ONLINE.endereco,
-            complemento: lido.complemento,
-            fotoUrl: lido.fotoUrl,
-          };
-        }
+      const lido = JSON.parse(bruto) as Partial<UsuarioLogado>;
+      if (lido && typeof lido.nome === 'string' && lido.nome.trim()) {
+        return {
+          nome: lido.nome.trim(),
+          telefone: lido.telefone?.trim() ?? '',
+          email: lido.email,
+          endereco: lido.endereco?.trim() ?? '',
+          complemento: lido.complemento,
+          fotoUrl: lido.fotoUrl,
+        };
       }
-
-      return MOCK_USUARIO_ONLINE;
+      return null;
     } catch {
-      return MOCK_USUARIO_ONLINE;
+      return null;
+    }
+  }
+
+  private carregarTokenInicial(): string | null {
+    if (!this.isBrowser) {
+      return null;
+    }
+    try {
+      const lido = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+      return lido?.trim() || null;
+    } catch {
+      return null;
     }
   }
 
@@ -179,50 +178,9 @@ export class AuthService {
       return;
     }
     try {
-      localStorage.setItem(AUTH_STATUS_STORAGE_KEY, 'online');
       localStorage.setItem(USUARIO_LOGADO_STORAGE_KEY, JSON.stringify(usuario));
     } catch {
       // Ignora falhas de localStorage
     }
-  }
-
-  private carregarUsuariosCadastrados(): UsuarioLogado[] {
-    if (!this.isBrowser) {
-      return [];
-    }
-    try {
-      const bruto = localStorage.getItem(USUARIOS_CADASTRADOS_STORAGE_KEY);
-      if (!bruto) {
-        return [];
-      }
-      const lista = JSON.parse(bruto);
-      return Array.isArray(lista) ? (lista as UsuarioLogado[]) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private salvarUsuariosCadastrados(lista: UsuarioLogado[]): void {
-    if (!this.isBrowser) {
-      return;
-    }
-    try {
-      localStorage.setItem(USUARIOS_CADASTRADOS_STORAGE_KEY, JSON.stringify(lista));
-    } catch {
-      // Ignora falhas de localStorage
-    }
-  }
-
-  private extrairNomeDeEmail(email: string): string {
-    const local = email.split('@')[0] ?? '';
-    const partes = local
-      .replace(/[._-]+/g, ' ')
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
-    if (partes.length === 0) {
-      return MOCK_USUARIO_ONLINE.nome;
-    }
-    return partes.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
   }
 }

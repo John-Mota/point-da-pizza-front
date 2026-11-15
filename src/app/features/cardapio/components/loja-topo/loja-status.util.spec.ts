@@ -1,9 +1,9 @@
 import { HorarioFuncionamento } from '../../../../shared/models';
-import { HORARIOS_LOJA_MOCK } from '../../data/cardapio.mock';
+import { criarHorariosPadrao } from '../../../../testing';
 import { calcularStatusLoja, formatarProximaAbertura } from './loja-status.util';
 
 describe('calcularStatusLoja (America/Fortaleza UTC-3)', () => {
-  const horariosPadrao: HorarioFuncionamento[] = HORARIOS_LOJA_MOCK;
+  const horariosPadrao: HorarioFuncionamento[] = criarHorariosPadrao();
 
   it('deve retornar aberta=true às 19:00 de terça-feira no fuso de Fortaleza', () => {
     // 2026-10-20 é uma terça-feira. 19:00 em Fortaleza (-03:00) = 22:00 UTC

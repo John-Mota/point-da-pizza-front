@@ -1,38 +1,32 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { of, Subject, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
-import {
-  CATEGORIAS_MOCK,
-  COMBOS_MOCK,
-  LOJA_MOCK,
-  PRODUTOS_MOCK,
-  PROMOCOES_MOCK,
-} from '../data/cardapio.mock';
-import { CardapioDados, CardapioService, montarCardapio } from '../data/cardapio.service';
+import { Loja, SecaoCardapio } from '../../../shared/models';
+import { criarLoja, criarSecoesCardapioPadrao } from '../../../testing';
+import { CardapioService } from '../data/cardapio.service';
+import { LojaService } from '../data/loja.service';
 import { PdpCardapioPage } from './cardapio-page';
 
 describe('PdpCardapioPage', () => {
   let fixture: ComponentFixture<PdpCardapioPage>;
   let component: PdpCardapioPage;
   let cardapioService: CardapioService;
+  let lojaService: LojaService;
 
-  const mockDados: CardapioDados = {
-    loja: LOJA_MOCK,
-    categorias: CATEGORIAS_MOCK,
-    produtos: PRODUTOS_MOCK,
-    promocoes: PROMOCOES_MOCK,
-    combos: COMBOS_MOCK,
-    cardapio: montarCardapio(CATEGORIAS_MOCK, PRODUTOS_MOCK),
-  };
+  const lojaFixture: Loja = criarLoja();
+  const secoesFixture: SecaoCardapio[] = criarSecoesCardapioPadrao();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PdpCardapioPage],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     cardapioService = TestBed.inject(CardapioService);
+    lojaService = TestBed.inject(LojaService);
   });
 
   afterEach(() => {
@@ -40,8 +34,9 @@ describe('PdpCardapioPage', () => {
   });
 
   it('deve mostrar estado de carregando primeiro e depois exibir as 5 áreas nomeadas', () => {
-    const resposta$ = new Subject<CardapioDados>();
-    vi.spyOn(cardapioService, 'carregarCardapio').mockReturnValue(resposta$.asObservable());
+    const cardapio$ = new Subject<SecaoCardapio[]>();
+    vi.spyOn(lojaService, 'obterLoja').mockReturnValue(of(lojaFixture));
+    vi.spyOn(cardapioService, 'listarCardapio').mockReturnValue(cardapio$.asObservable());
 
     fixture = TestBed.createComponent(PdpCardapioPage);
     component = fixture.componentInstance;
@@ -54,9 +49,8 @@ describe('PdpCardapioPage', () => {
     expect(hostEl.querySelectorAll('.pdp-produtos-lista__sk-item').length).toBe(6);
     expect(hostEl.querySelector('.pdp-home__areas')).toBeNull();
 
-    // Emite os dados e conclui o carregamento
-    resposta$.next(mockDados);
-    resposta$.complete();
+    cardapio$.next(secoesFixture);
+    cardapio$.complete();
     fixture.detectChanges();
 
     expect(component.carregando()).toBe(false);
@@ -76,13 +70,15 @@ describe('PdpCardapioPage', () => {
   });
 
   it('a barra de categorias e a lista mostram exatamente as mesmas categorias (mais a pílula Destaque)', () => {
-    vi.spyOn(cardapioService, 'carregarCardapio').mockReturnValue(of(mockDados));
+    vi.spyOn(lojaService, 'obterLoja').mockReturnValue(of(lojaFixture));
+    vi.spyOn(cardapioService, 'listarCardapio').mockReturnValue(of(secoesFixture));
+
     fixture = TestBed.createComponent(PdpCardapioPage);
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
-    const pilulas = Array.from(hostEl.querySelectorAll('.pdp-cat-nav__pill')).map(
-      (b) => b.getAttribute('data-cat-id')
+    const pilulas = Array.from(hostEl.querySelectorAll('.pdp-cat-nav__pill')).map((b) =>
+      b.getAttribute('data-cat-id')
     );
     const secoes = Array.from(hostEl.querySelectorAll('pdp-produtos-lista section')).map((s) =>
       s.id.replace(/^cat-/, '')
@@ -94,14 +90,15 @@ describe('PdpCardapioPage', () => {
   });
 
   it('abrir pelo "Pedir" da lista e do carrossel mostra o mesmo detalhe com o produto certo', () => {
-    vi.spyOn(cardapioService, 'carregarCardapio').mockReturnValue(of(mockDados));
+    vi.spyOn(lojaService, 'obterLoja').mockReturnValue(of(lojaFixture));
+    vi.spyOn(cardapioService, 'listarCardapio').mockReturnValue(of(secoesFixture));
+
     fixture = TestBed.createComponent(PdpCardapioPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
 
-    // 1. Clica em "Pedir" no primeiro card do carrossel de destaques
     const btnDestaque = hostEl.querySelector<HTMLButtonElement>('.pdp-destaque-card__cta')!;
     btnDestaque.click();
     fixture.detectChanges();
@@ -109,12 +106,10 @@ describe('PdpCardapioPage', () => {
     const tituloModal1 = hostEl.querySelector('#pdp-detalhe-titulo')?.textContent?.trim();
     expect(tituloModal1).toBe(component.destaques()[0].nome);
 
-    // Fecha o modal
     hostEl.querySelector<HTMLButtonElement>('.pdp-detalhe__fechar')!.click();
     fixture.detectChanges();
     expect(hostEl.querySelector('#pdp-detalhe-titulo')).toBeNull();
 
-    // 2. Clica em "Pedir" no primeiro item da lista de produtos
     const btnLista = hostEl.querySelector<HTMLButtonElement>('.pdp-produto-item__cta')!;
     btnLista.click();
     fixture.detectChanges();
@@ -122,7 +117,6 @@ describe('PdpCardapioPage', () => {
     const tituloModal2 = hostEl.querySelector('#pdp-detalhe-titulo')?.textContent?.trim();
     expect(tituloModal2).toBe(component.cardapio()[0].produtos[0].nome);
 
-    // 3. Escolhe tamanho e adiciona ao pedido -> entra na sacola e exibe a barra do carrinho
     const radiosTamanho = hostEl.querySelectorAll<HTMLButtonElement>(
       '[aria-labelledby="pdp-detalhe-label-tamanho"] [role="radio"]'
     );
@@ -137,10 +131,11 @@ describe('PdpCardapioPage', () => {
   });
 
   it('deve exibir o estado de erro e botão "Tentar de novo" quando o serviço falhar, e recarregar ao clicar', () => {
+    vi.spyOn(lojaService, 'obterLoja').mockReturnValue(of(lojaFixture));
     const spy = vi
-      .spyOn(cardapioService, 'carregarCardapio')
+      .spyOn(cardapioService, 'listarCardapio')
       .mockReturnValueOnce(throwError(() => new Error('Falha de rede')))
-      .mockReturnValueOnce(of(mockDados));
+      .mockReturnValueOnce(of(secoesFixture));
 
     fixture = TestBed.createComponent(PdpCardapioPage);
     component = fixture.componentInstance;
@@ -162,4 +157,3 @@ describe('PdpCardapioPage', () => {
     expect(hostEl.querySelector('[data-area="loja-header"]')).toBeTruthy();
   });
 });
-

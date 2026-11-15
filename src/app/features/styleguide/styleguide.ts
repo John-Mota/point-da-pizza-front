@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { ThemeService } from '../../core/theme';
-import { Combo, Pedido, Produto, Promocao } from '../../shared/models';
 import {
   PdpCard,
   PdpCartSummaryCard,
@@ -13,6 +12,18 @@ import {
   PdpProductCard,
   PdpPromoCard,
 } from '../../shared/ui/cards';
+import {
+  EXEMPLO_COMBO_COM_DESCONTO,
+  EXEMPLO_COMBO_SEM_DESCONTO,
+  EXEMPLO_PEDIDO_A_CAMINHO,
+  EXEMPLO_PEDIDO_CANCELADO,
+  EXEMPLO_PEDIDO_EM_PRODUCAO,
+  EXEMPLO_PEDIDO_ENTREGUE,
+  EXEMPLO_PEDIDO_RECEBIDO,
+  EXEMPLO_PRODUTO_COM_IMAGEM,
+  EXEMPLO_PRODUTO_SEM_IMAGEM,
+  EXEMPLO_PROMOCAO,
+} from './styleguide.demo-data';
 
 @Component({
   selector: 'app-styleguide',
@@ -38,107 +49,16 @@ export class Styleguide {
 
   readonly lastAction = signal<string>('Nenhuma ação realizada');
 
-  // Mocks para Produto
-  readonly mockProdutoComImagem: Produto = {
-    id: 'prod-1',
-    categoriaId: 'cat-tradicionais',
-    nome: 'Pizza Calabresa Nobre',
-    descricao: 'Calabresa artesanal defumada, fatias finas de cebola roxa, azeitonas pretas e orégano fresco.',
-    preco: 44.9,
-    imagemUrl: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=500&auto=format&fit=crop&q=80',
-    categoria: 'Pizzas Salgadas',
-    disponivel: true,
-  };
-
-  readonly mockProdutoSemImagem: Produto = {
-    id: 'prod-2',
-    categoriaId: 'cat-tradicionais',
-    nome: 'Pizza Frango com Catupiry',
-    descricao: 'Peito de frango desfiado temperado com ervas finas e legítimo Catupiry cremoso.',
-    preco: 48.0,
-    categoria: 'Pizzas Salgadas',
-    disponivel: true,
-  };
-
-  // Mock para Promoção
-  readonly mockPromocao: Promocao = {
-    id: 'promo-1',
-    titulo: 'Quinta em Dobro Point',
-    descricao: 'Compre uma pizza grande salgada e receba uma pizza média doce com borda vulcão de cortesia.',
-    preco: 69.9,
-    selo: 'Mais Pedida',
-    diasValidos: 'Terças e Quintas',
-  };
-
-  // Mock para Combo
-  readonly mockComboComDesconto: Combo = {
-    id: 'combo-1',
-    titulo: 'Super Combo Galera',
-    itens: ['2 Pizzas Grandes Tradicionais', '1 Refrigerante 2 Litros gelado', '1 Borda Recheada de Cheddar'],
-    preco: 89.9,
-    precoOriginal: 114.9,
-  };
-
-  readonly mockComboSemDesconto: Combo = {
-    id: 'combo-2',
-    titulo: 'Combo Casal Perfeito',
-    itens: ['1 Pizza Média Especial', '2 Bebidas em Lata 350ml'],
-    preco: 52.0,
-  };
-
-  // Mocks para Pedidos (cada status)
-  readonly mockPedidoRecebido: Pedido = {
-    id: 'ped-201',
-    numero: '201',
-    cliente: 'Carlos Eduardo',
-    itens: [
-      { nome: 'Pizza 4 Queijos G', quantidade: 1, opcoes: ['Massa Fina'] },
-      { nome: 'Refrigerante 2L', quantidade: 1 },
-    ],
-    total: 72.5,
-    status: 'recebido',
-    criadoEm: new Date(Date.now() - 1000 * 60 * 5),
-  };
-
-  readonly mockPedidoEmProducao: Pedido = {
-    id: 'ped-202',
-    numero: '202',
-    cliente: 'Fernanda Lima',
-    itens: [{ nome: 'Pizza Margherita G', quantidade: 1 }],
-    total: 46.0,
-    status: 'em-producao',
-    criadoEm: new Date(Date.now() - 1000 * 60 * 22),
-  };
-
-  readonly mockPedidoACaminho: Pedido = {
-    id: 'ped-203',
-    numero: '203',
-    cliente: 'Lucas Silveira',
-    itens: [{ nome: 'Pizza Pepperoni G', quantidade: 2 }],
-    total: 98.0,
-    status: 'a-caminho',
-    criadoEm: new Date(Date.now() - 1000 * 60 * 40),
-  };
-
-  readonly mockPedidoEntregue: Pedido = {
-    id: 'ped-204',
-    numero: '204',
-    cliente: 'Juliana Costa',
-    itens: [{ nome: 'Pizza Brigadeiro M', quantidade: 1 }],
-    total: 38.0,
-    status: 'entregue',
-    criadoEm: new Date(Date.now() - 1000 * 60 * 95),
-  };
-
-  readonly mockPedidoCancelado: Pedido = {
-    id: 'ped-205',
-    numero: '205',
-    cliente: 'Marcos Souza',
-    itens: [{ nome: 'Pizza Portuguesa G', quantidade: 1 }],
-    total: 54.0,
-    status: 'cancelado',
-    criadoEm: new Date(Date.now() - 1000 * 60 * 180),
-  };
+  readonly exemploProdutoComImagem = EXEMPLO_PRODUTO_COM_IMAGEM;
+  readonly exemploProdutoSemImagem = EXEMPLO_PRODUTO_SEM_IMAGEM;
+  readonly exemploPromocao = EXEMPLO_PROMOCAO;
+  readonly exemploComboComDesconto = EXEMPLO_COMBO_COM_DESCONTO;
+  readonly exemploComboSemDesconto = EXEMPLO_COMBO_SEM_DESCONTO;
+  readonly exemploPedidoRecebido = EXEMPLO_PEDIDO_RECEBIDO;
+  readonly exemploPedidoEmProducao = EXEMPLO_PEDIDO_EM_PRODUCAO;
+  readonly exemploPedidoACaminho = EXEMPLO_PEDIDO_A_CAMINHO;
+  readonly exemploPedidoEntregue = EXEMPLO_PEDIDO_ENTREGUE;
+  readonly exemploPedidoCancelado = EXEMPLO_PEDIDO_CANCELADO;
 
   onActionTriggered(descricao: string): void {
     this.lastAction.set(descricao);

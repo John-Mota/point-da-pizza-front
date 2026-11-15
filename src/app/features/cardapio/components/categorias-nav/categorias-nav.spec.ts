@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { CATEGORIAS_MOCK } from '../../data/cardapio.mock';
+import { criarCategoriasPadrao } from '../../../../testing';
 import { obterIconeCategoria } from '../../data/categorias-icons.map';
 import { PdpCategoriasNav } from './categorias-nav';
 
 type ObserverCallback = IntersectionObserverCallback;
 
 describe('PdpCategoriasNav', () => {
+  const categoriasFixture = criarCategoriasPadrao();
   let fixture: ComponentFixture<PdpCategoriasNav>;
   let component: PdpCategoriasNav;
   let observerCallback: ObserverCallback | null = null;
@@ -58,14 +59,14 @@ describe('PdpCategoriasNav', () => {
   });
 
   it('deve renderizar uma pílula por categoria e marcar a ativa com aria-current="true"', () => {
-    fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
+    fixture.componentRef.setInput('categorias', categoriasFixture);
     fixture.componentRef.setInput('ativaId', 'pizzas');
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
     const botoes = Array.from(hostEl.querySelectorAll<HTMLButtonElement>('.pdp-cat-nav__pill'));
 
-    expect(botoes.length).toBe(CATEGORIAS_MOCK.length);
+    expect(botoes.length).toBe(categoriasFixture.length);
 
     const ativa = botoes.find((btn) => btn.getAttribute('aria-current') === 'true');
     expect(ativa).toBeTruthy();
@@ -78,8 +79,8 @@ describe('PdpCategoriasNav', () => {
   });
 
   it('deve emitir (selecionar) e atualizar a ativa ao clicar em uma pílula', () => {
-    fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
-    fixture.componentRef.setInput('ativaId', CATEGORIAS_MOCK[0].id);
+    fixture.componentRef.setInput('categorias', categoriasFixture);
+    fixture.componentRef.setInput('ativaId', categoriasFixture[0].id);
     fixture.detectChanges();
 
     const selecionadas: string[] = [];
@@ -99,7 +100,7 @@ describe('PdpCategoriasNav', () => {
   });
 
   it('deve mover o foco entre as pílulas com as setas esquerda/direita e Home/End', () => {
-    fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
+    fixture.componentRef.setInput('categorias', categoriasFixture);
     fixture.detectChanges();
 
     const hostEl = fixture.nativeElement as HTMLElement;
@@ -143,7 +144,7 @@ describe('PdpCategoriasNav', () => {
     document.body.appendChild(secaoBebidas);
 
     try {
-      fixture.componentRef.setInput('categorias', CATEGORIAS_MOCK);
+      fixture.componentRef.setInput('categorias', categoriasFixture);
       fixture.componentRef.setInput('ativaId', 'pizzas');
       fixture.detectChanges();
 

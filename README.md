@@ -12,6 +12,12 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## Integração com a API (Quarkus) e CORS
+
+- **Desenvolvimento (`ng serve`)**: O arquivo `proxy.conf.json` (configurado no `angular.json`) encaminha automaticamente todas as requisições de `/api` para `http://localhost:8080/api` (porta padrão do Quarkus), evitando problemas de CORS durante o desenvolvimento local.
+- **SSR (Servidor Node)**: Em renderização no servidor (`src/app/app.config.server.ts`), o token `API_BASE_URL` lê a variável de ambiente `process.env.API_URL` (com padrão `http://localhost:8080/api`), pois URLs relativas não funcionam fora do navegador.
+- **Produção**: Em ambiente de produção, o front-end e a API devem ficar sob o mesmo domínio através de um proxy reverso (ex.: Nginx encaminhando `/api` para o Quarkus) ou o back-end Quarkus deve liberar explicitamente as origens permitidas via configuração de CORS (`quarkus.http.cors=true`).
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:

@@ -1,3 +1,4 @@
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
@@ -11,6 +12,7 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { PRIME_NG_CONFIG, PrimeNG, PrimeNGConfigType } from 'primeng/config';
 import { routes } from './app.routes';
+import { authInterceptor, errorInterceptor } from './core/api';
 
 const PointDaPizzaPreset = definePreset(Aura, {
   semantic: {
@@ -44,6 +46,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
     provideClientHydration(),
     makeEnvironmentProviders([
       { provide: PRIME_NG_CONFIG, useValue: primeNgConfig },

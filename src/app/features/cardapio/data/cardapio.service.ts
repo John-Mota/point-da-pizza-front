@@ -1,25 +1,11 @@
-import { Injectable } from '@angular/core';
-import { delay, forkJoin, Observable, of } from 'rxjs';
-import { Categoria, Combo, Loja, Produto, Promocao, SecaoCardapio } from '../../../shared/models';
-import {
-  CATEGORIAS_MOCK,
-  COMBOS_MOCK,
-  LOJA_MOCK,
-  PRODUTOS_MOCK,
-  PROMOCOES_MOCK,
-} from './cardapio.mock';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map, shareReplay } from 'rxjs';
+import { API_BASE_URL, construirUrlApi } from '../../../core/api';
+import { Categoria, Loja, Produto, SecaoCardapio } from '../../../shared/models';
+import { LojaService } from './loja.service';
 
 export type { SecaoCardapio } from '../../../shared/models';
-
-export interface CardapioDados {
-  loja: Loja;
-  categorias: Categoria[];
-  produtos: Produto[];
-  promocoes: Promocao[];
-  combos: Combo[];
-  /** Categorias com produtos, já agrupadas (fonte única para barra e lista). */
-  cardapio: SecaoCardapio[];
-}
 
 /**
  * Agrupa os produtos por categoria, na ordem das categorias e na ordem original
@@ -38,51 +24,73 @@ export function montarCardapio(
     .filter((secao) => secao.produtos.length > 0);
 }
 
+/**
+ * Ordena e filtra seções vindas da API garantindo apenas categorias com produtos.
+ */
+export function normalizarSecoesCardapio(secoes: readonly SecaoCardapio[]): SecaoCardapio[] {
+  return [...(secoes ?? [])]
+    .filter((secao) => Boolean(secao?.categoria) && Array.isArray(secao?.produtos))
+    .map((secao) => ({
+      categoria: secao.categoria,
+      produtos: secao.produtos,
+    }))
+    .filter((secao) => secao.produtos.length > 0)
+    .sort((a, b) => a.categoria.ordem - b.categoria.ordem);
+}
+
+/**
+ * Extrai os produtos em destaque disponíveis ordenados por `ordemDestaque`.
+ */
+export function extrairDestaques(secoes: readonly SecaoCardapio[]): Produto[] {
+  const todosProdutos = secoes.flatMap((secao) => secao.produtos);
+  return todosProdutos
+    .filter((produto) => Boolean(produto.destaque) && produto.disponivel)
+    .sort(
+      (a, b) =>
+        (a.ordemDestaque ?? Number.MAX_SAFE_INTEGER) -
+        (b.ordemDestaque ?? Number.MAX_SAFE_INTEGER)
+    );
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class CardapioService {
-  private readonly delayMs = 120;
+  private readonly http = inject(HttpClient);
+  private readonly apiBaseUrl = inject(API_BASE_URL);
+  private readonly lojaService = inject(LojaService);
+
+  private cacheCardapio$?: Observable<SecaoCardapio[]>;
 
   obterLoja(): Observable<Loja> {
-    return of(LOJA_MOCK).pipe(delay(this.delayMs));
-  }
-
-  obterCategorias(): Observable<Categoria[]> {
-    const ordenadas = [...CATEGORIAS_MOCK].sort((a, b) => a.ordem - b.ordem);
-    return of(ordenadas).pipe(delay(this.delayMs));
-  }
-
-  obterProdutos(): Observable<Produto[]> {
-    return of(PRODUTOS_MOCK).pipe(delay(this.delayMs));
-  }
-
-  listarDestaques(): Observable<Produto[]> {
-    const destaques = PRODUTOS_MOCK.filter((produto) => produto.destaque && produto.disponivel);
-    return of(destaques).pipe(delay(this.delayMs));
+    return this.lojaService.obterLoja();
   }
 
   listarCardapio(): Observable<SecaoCardapio[]> {
-    return of(montarCardapio(CATEGORIAS_MOCK, PRODUTOS_MOCK)).pipe(delay(this.delayMs));
+    if (!this.cacheCardapio$) {
+      const url = construirUrlApi(this.apiBaseUrl, '/cardapio');
+      this.cacheCardapio$ = this.http.get<SecaoCardapio[]>(url).pipe(
+        map((secoes) => normalizarSecoesCardapio(secoes)),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+    return this.cacheCardapio$;
   }
 
-  obterPromocoes(): Observable<Promocao[]> {
-    return of(PROMOCOES_MOCK).pipe(delay(this.delayMs));
+  listarDestaques(): Observable<Produto[]> {
+    return this.listarCardapio().pipe(map((secoes) => extrairDestaques(secoes)));
   }
 
-  obterCombos(): Observable<Combo[]> {
-    return of(COMBOS_MOCK).pipe(delay(this.delayMs));
+  obterCategorias(): Observable<Categoria[]> {
+    return this.listarCardapio().pipe(map((secoes) => secoes.map((s) => s.categoria)));
   }
 
-  carregarCardapio(): Observable<CardapioDados> {
-    return forkJoin({
-      loja: this.obterLoja(),
-      categorias: this.obterCategorias(),
-      produtos: this.obterProdutos(),
-      promocoes: this.obterPromocoes(),
-      combos: this.obterCombos(),
-      cardapio: this.listarCardapio(),
-    });
+  obterProdutos(): Observable<Produto[]> {
+    return this.listarCardapio().pipe(map((secoes) => secoes.flatMap((s) => s.produtos)));
+  }
+
+  invalidarCache(): void {
+    this.cacheCardapio$ = undefined;
+    this.lojaService.invalidarCache();
   }
 }
-

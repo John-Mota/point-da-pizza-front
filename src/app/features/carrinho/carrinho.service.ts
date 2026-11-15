@@ -1,12 +1,13 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { PedidosService } from '../../core/pedidos';
+import { Observable, map } from 'rxjs';
+import { PedidoService, montarPedidoNovo } from '../../core/pedidos';
 import { WhatsappService } from '../../core/whatsapp/whatsapp.service';
 import {
   DadosFinalizacaoPedido,
   ItemCarrinho,
   ItemConfigurado,
-  Pedido,
+  PedidoCriado,
 } from '../../shared/models';
 
 export const CARRINHO_STORAGE_KEY = 'pdp-carrinho';
@@ -26,7 +27,7 @@ export function formatarMoedaBr(valor: number): string {
 export class CarrinhoService {
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly pedidosService = inject(PedidosService);
+  private readonly pedidoService = inject(PedidoService);
   private readonly whatsappService = inject(WhatsappService);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -153,12 +154,17 @@ export class CarrinhoService {
     }
   }
 
-  gerarMensagemWhatsapp(dados: DadosFinalizacaoPedido, numeroPedido?: string): string {
+  gerarMensagemWhatsapp(
+    dados: DadosFinalizacaoPedido,
+    numeroPedido?: string,
+    itensSnapshot: readonly ItemCarrinho[] = this.listaItens(),
+    totalPedido: number = this.total()
+  ): string {
     const cabecalho = numeroPedido
       ? `*Novo Pedido ${numeroPedido} - Point da Pizza*`
       : '*Novo Pedido - Point da Pizza*';
 
-    const linhasItens = this.listaItens().map((item) => {
+    const linhasItens = itensSnapshot.map((item) => {
       const detalhes: string[] = [];
       if (item.tamanhoNome) {
         detalhes.push(`Tam: ${item.tamanhoNome}`);
@@ -194,19 +200,32 @@ export class CarrinhoService {
       '',
       `*Modalidade:* ${linhaEntrega}`,
       `*Pagamento:* ${dados.formaPagamento}${linhaTroco}`,
-      `*Total:* ${formatarMoedaBr(this.total())}`,
+      `*Total:* ${formatarMoedaBr(totalPedido)}`,
     ].join('\n');
   }
 
-  finalizarPedido(dados: DadosFinalizacaoPedido): { pedido: Pedido; whatsappUrl: string } {
-    const itensAtuais = this.listaItens();
+  finalizarPedido(
+    dados: DadosFinalizacaoPedido,
+    idempotencyKey?: string
+  ): Observable<{ pedido: PedidoCriado; whatsappUrl: string }> {
+    const itensAtuais = [...this.listaItens()];
     const valorTotal = this.total();
-    const pedido = this.pedidosService.registrarPedido(itensAtuais, dados, valorTotal);
-    const mensagem = this.gerarMensagemWhatsapp(dados, pedido.numero);
-    const whatsappUrl = this.whatsappService.link(mensagem);
+    const pedidoNovo = montarPedidoNovo(itensAtuais, dados, valorTotal);
 
-    this.limpar();
-    return { pedido, whatsappUrl };
+    return this.pedidoService.criarPedido(pedidoNovo, idempotencyKey).pipe(
+      map((pedido) => {
+        const totalConfirmado = typeof pedido.total === 'number' ? pedido.total : valorTotal;
+        const mensagem = this.gerarMensagemWhatsapp(
+          dados,
+          pedido.numero,
+          itensAtuais,
+          totalConfirmado
+        );
+        const whatsappUrl = this.whatsappService.link(mensagem);
+        this.limpar();
+        return { pedido, whatsappUrl };
+      })
+    );
   }
 
   private atualizarLista(novaLista: ItemCarrinho[]): void {

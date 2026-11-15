@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ItemConfigurado, Produto } from '../../../../shared/models';
-import { PRODUTOS_MOCK } from '../../data/cardapio.mock';
+import { criarBebida, criarPizzaComOpcoes } from '../../../../testing';
 import { PdpProdutoDetalhe } from './produto-detalhe';
 import { ProdutoDetalheService } from './produto-detalhe.service';
 
@@ -9,8 +9,7 @@ describe('PdpProdutoDetalhe & ProdutoDetalheService', () => {
   let component: PdpProdutoDetalhe;
   let service: ProdutoDetalheService;
 
-  const pizzaComOpcoes: Produto = {
-    ...PRODUTOS_MOCK.find((p) => p.id === 'prod-trad-1')!,
+  const pizzaComOpcoes: Produto = criarPizzaComOpcoes({
     tamanhos: [
       { id: 'P', nome: 'Pequena (P)', preco: 29.9 },
       { id: 'G', nome: 'Grande (G)', preco: 39.9 },
@@ -19,13 +18,12 @@ describe('PdpProdutoDetalhe & ProdutoDetalheService', () => {
       { id: 'requeijao', nome: 'Requeijão', acrescimo: 0 },
       { id: 'cheddar', nome: 'Cheddar', acrescimo: 6.0 },
     ],
-  };
+  });
 
-  const bebidaSemOpcoes: Produto = {
-    ...PRODUTOS_MOCK.find((p) => p.id === 'prod-beb-1')!,
+  const bebidaSemOpcoes: Produto = criarBebida({
     tamanhos: undefined,
     bordas: undefined,
-  };
+  });
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

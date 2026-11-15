@@ -85,7 +85,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Normal (Com imagem)</span>
           <pdp-product-card
-            [produto]="mockProdutoComImagem"
+            [produto]="exemploProdutoComImagem"
             (add)="onActionTriggered('Adicionou ao carrinho: ' + $event.nome)"
           />
         </div>
@@ -93,7 +93,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Sem imagem (Placeholder da marca)</span>
           <pdp-product-card
-            [produto]="mockProdutoSemImagem"
+            [produto]="exemploProdutoSemImagem"
             (add)="onActionTriggered('Adicionou ao carrinho: ' + $event.nome)"
           />
         </div>
@@ -101,7 +101,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Indisponível (Esmaecido e bloqueado)</span>
           <pdp-product-card
-            [produto]="mockProdutoComImagem"
+            [produto]="exemploProdutoComImagem"
             [indisponivel]="true"
             (add)="onActionTriggered('Falha ao adicionar indisponível')"
           />
@@ -110,7 +110,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Carregando (Skeleton Shimmer)</span>
           <pdp-product-card
-            [produto]="mockProdutoComImagem"
+            [produto]="exemploProdutoComImagem"
             [loading]="true"
           />
         </div>
@@ -128,7 +128,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Promoção Ativa</span>
           <pdp-promo-card
-            [promocao]="mockPromocao"
+            [promocao]="exemploPromocao"
             (order)="onActionTriggered('Pediu promoção: ' + $event.titulo)"
           />
         </div>
@@ -136,7 +136,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
           <pdp-promo-card
-            [promocao]="mockPromocao"
+            [promocao]="exemploPromocao"
             [loading]="true"
           />
         </div>
@@ -154,7 +154,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Com desconto e economia calculada</span>
           <pdp-combo-card
-            [combo]="mockComboComDesconto"
+            [combo]="exemploComboComDesconto"
             (choose)="onActionTriggered('Escolheu combo: ' + $event.titulo)"
           />
         </div>
@@ -162,7 +162,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Preço único regular</span>
           <pdp-combo-card
-            [combo]="mockComboSemDesconto"
+            [combo]="exemploComboSemDesconto"
             (choose)="onActionTriggered('Escolheu combo: ' + $event.titulo)"
           />
         </div>
@@ -170,7 +170,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
           <pdp-combo-card
-            [combo]="mockComboComDesconto"
+            [combo]="exemploComboComDesconto"
             [loading]="true"
           />
         </div>
@@ -188,7 +188,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Status: Recebido</span>
           <pdp-order-card
-            [pedido]="mockPedidoRecebido"
+            [pedido]="exemploPedidoRecebido"
             (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
             (advance)="onActionTriggered('Avançou pedido #' + $event.numero + ' para Em Produção')"
           />
@@ -197,7 +197,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Status: Em Produção</span>
           <pdp-order-card
-            [pedido]="mockPedidoEmProducao"
+            [pedido]="exemploPedidoEmProducao"
             (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
             (advance)="onActionTriggered('Avançou pedido #' + $event.numero + ' para A Caminho')"
           />
@@ -206,7 +206,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Status: A Caminho</span>
           <pdp-order-card
-            [pedido]="mockPedidoACaminho"
+            [pedido]="exemploPedidoACaminho"
             (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
             (advance)="onActionTriggered('Concluiu entrega do pedido #' + $event.numero)"
           />
@@ -215,7 +215,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Status: Entregue (Sem botão avançar)</span>
           <pdp-order-card
-            [pedido]="mockPedidoEntregue"
+            [pedido]="exemploPedidoEntregue"
             (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
           />
         </div>
@@ -223,7 +223,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Status: Cancelado</span>
           <pdp-order-card
-            [pedido]="mockPedidoCancelado"
+            [pedido]="exemploPedidoCancelado"
             (details)="onActionTriggered('Detalhes do pedido #' + $event.numero)"
           />
         </div>
@@ -231,7 +231,7 @@
         <div class="styleguide__col">
           <span class="styleguide__variant-tag">Carregando (Skeleton)</span>
           <pdp-order-card
-            [pedido]="mockPedidoRecebido"
+            [pedido]="exemploPedidoRecebido"
             [loading]="true"
           />
         </div>

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { Produto } from '../../../../shared/models';
-import { PRODUTOS_MOCK } from '../../data/cardapio.mock';
+import { criarProduto } from '../../../../testing';
 import {
   AUTOPLAY_INTERVAL_MS,
   PdpDestaquesSection,
@@ -12,13 +12,15 @@ describe('PdpDestaquesSection', () => {
   let fixture: ComponentFixture<PdpDestaquesSection>;
   let component: PdpDestaquesSection;
 
-  const cincoDestaques: Produto[] = PRODUTOS_MOCK.slice(0, 5).map((p, idx) => ({
-    ...p,
-    id: `dest-${idx + 1}`,
-    nome: `Destaque ${idx + 1}`,
-    destaque: true,
-    disponivel: true,
-  }));
+  const cincoDestaques: Produto[] = [1, 2, 3, 4, 5].map((idx) =>
+    criarProduto({
+      id: `dest-${idx}`,
+      nome: `Destaque ${idx}`,
+      destaque: true,
+      ordemDestaque: idx,
+      disponivel: true,
+    })
+  );
 
   beforeEach(async () => {
     vi.useFakeTimers();
