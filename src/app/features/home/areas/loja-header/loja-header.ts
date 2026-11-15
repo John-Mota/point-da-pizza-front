@@ -17,6 +17,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { TagModule } from 'primeng/tag';
+import { AuthService } from '../../../../core/auth';
 import { ClockService } from '../../../../core/clock';
 import { ThemeService } from '../../../../core/theme';
 import { WhatsappService, formatarTelefoneBr } from '../../../../core/whatsapp';
@@ -57,6 +58,7 @@ export class PdpLojaHeader implements OnInit {
 
   protected readonly themeService = inject(ThemeService);
   protected readonly whatsappService = inject(WhatsappService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly clockService = inject(ClockService);
   private readonly destroyRef = inject(DestroyRef);
@@ -176,6 +178,7 @@ export class PdpLojaHeader implements OnInit {
 
   aoClicarSair(): void {
     this.menuUsuarioAberto.set(false);
+    this.authService.sair();
     this.sair.emit();
     void this.router.navigate(['/login']);
   }

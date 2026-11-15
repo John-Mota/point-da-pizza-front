@@ -128,6 +128,18 @@ export interface CadastroPayload {
   telefone?: string;
   telefoneWhatsapp: boolean;
   email?: string;
+  endereco?: string;
+  complemento?: string;
   senha: string;
   foto?: File;
 }
+
+export interface UsuarioLogado {
+  nome: string;
+  telefone: string;
+  email?: string;
+  endereco: string;
+  complemento?: string;
+  fotoUrl?: string;
+}
+

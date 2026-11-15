@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { delay, Observable, of, throwError } from 'rxjs';
+import { AuthService } from '../../../core/auth';
 import { CadastroPayload } from '../../../shared/models';
 
 export type CadastroErrorField = 'nome' | 'telefone' | 'email' | 'senha' | 'confirmarSenha' | 'foto';
@@ -17,6 +18,7 @@ export interface CadastroResponse {
   providedIn: 'root',
 })
 export class CadastroService {
+  private readonly authService = inject(AuthService);
   private simulatedError: CadastroServerError | null = null;
 
   /**
@@ -39,6 +41,8 @@ export class CadastroService {
       };
       return throwError(() => err).pipe(delay(800));
     }
+
+    this.authService.registrarUsuario(payload);
 
     return of({
       mensagem: `Conta criada com sucesso para ${payload.nome}!`,

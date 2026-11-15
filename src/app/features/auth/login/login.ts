@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { AuthService } from '../../../core/auth';
 import { PdpCard } from '../../../shared/ui/cards';
 
 export type LoginType = 'email' | 'phone';
@@ -46,6 +47,7 @@ export function passwordValidator(control: AbstractControl): ValidationErrors | 
 export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   readonly loginType = signal<LoginType>('email');
   readonly showPassword = signal<boolean>(false);
@@ -161,6 +163,11 @@ export class Login {
         return;
       }
 
+      this.authService.entrar(
+        this.loginType() === 'email'
+          ? { email: emailInput }
+          : { telefone: String(this.loginForm.value.phone ?? '') }
+      );
       this.submitSuccess.set(`Autenticação efetuada com sucesso para ${identifier}!`);
       void this.router.navigate(['/']);
     }, 700);
