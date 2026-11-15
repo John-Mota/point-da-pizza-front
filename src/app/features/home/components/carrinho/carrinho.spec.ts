@@ -1,5 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+import {
+  AUTH_STATUS_STORAGE_KEY,
+  AuthService,
+  MOCK_USUARIO_ONLINE,
+  USUARIO_LOGADO_STORAGE_KEY,
+} from '../../../../core/auth';
 import { PEDIDOS_STORAGE_KEY, PedidosService } from '../../../../core/pedidos';
 import { WHATSAPP_RAW_NUMBER } from '../../../../core/whatsapp';
 import { ItemConfigurado, Produto } from '../../../../shared/models';
@@ -11,6 +17,7 @@ import { CARRINHO_STORAGE_KEY, CarrinhoService } from './carrinho.service';
 describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer', () => {
   let carrinhoService: CarrinhoService;
   let pedidosService: PedidosService;
+  let authService: AuthService;
   let drawerFixture: ComponentFixture<PdpCarrinhoDrawer>;
   let barraFixture: ComponentFixture<PdpCarrinhoBarra>;
 
@@ -37,6 +44,8 @@ describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer'
   beforeEach(async () => {
     localStorage.removeItem(CARRINHO_STORAGE_KEY);
     localStorage.removeItem(PEDIDOS_STORAGE_KEY);
+    localStorage.removeItem(USUARIO_LOGADO_STORAGE_KEY);
+    localStorage.removeItem(AUTH_STATUS_STORAGE_KEY);
 
     await TestBed.configureTestingModule({
       imports: [PdpCarrinhoDrawer, PdpCarrinhoBarra],
@@ -45,6 +54,7 @@ describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer'
 
     carrinhoService = TestBed.inject(CarrinhoService);
     pedidosService = TestBed.inject(PedidosService);
+    authService = TestBed.inject(AuthService);
     carrinhoService.limpar();
     pedidosService.limpar();
 
@@ -58,6 +68,8 @@ describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer'
     carrinhoService.fechar();
     carrinhoService.limpar();
     pedidosService.limpar();
+    localStorage.removeItem(USUARIO_LOGADO_STORAGE_KEY);
+    localStorage.removeItem(AUTH_STATUS_STORAGE_KEY);
     vi.restoreAllMocks();
   });
 
@@ -110,8 +122,27 @@ describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer'
     expect(carrinhoService.vazio()).toBe(true);
   });
 
-  it('deve validar os campos obrigatórios no checkout e, ao confirmar, registrar o pedido no PedidosService, abrir o link do WhatsApp e limpar a sacola', () => {
+  it('deve preencher automaticamente nome, telefone e endereço no checkout quando o usuário estiver online', () => {
+    expect(authService.estaOnline()).toBe(true);
+
+    carrinhoService.adicionar(itemPizzaG);
+    carrinhoService.abrir();
+    drawerFixture.detectChanges();
+
+    const hostEl = drawerFixture.nativeElement as HTMLElement;
+    hostEl.querySelector<HTMLButtonElement>('.pdp-carrinho__cta')!.click();
+    drawerFixture.detectChanges();
+
+    expect(drawerFixture.componentInstance.etapa()).toBe('checkout');
+    expect(drawerFixture.componentInstance.clienteNome()).toBe(MOCK_USUARIO_ONLINE.nome);
+    expect(drawerFixture.componentInstance.clienteTelefone()).toBe(MOCK_USUARIO_ONLINE.telefone);
+    expect(drawerFixture.componentInstance.endereco()).toBe(MOCK_USUARIO_ONLINE.endereco);
+  });
+
+  it('deve validar os campos obrigatórios no checkout quando offline e, ao confirmar, registrar o pedido no PedidosService, abrir o link do WhatsApp e limpar a sacola', () => {
     const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    authService.sair();
+    drawerFixture.detectChanges();
 
     carrinhoService.adicionar(itemPizzaG);
     carrinhoService.abrir();
@@ -124,7 +155,7 @@ describe('CarrinhoService, PedidosService, PdpCarrinhoBarra & PdpCarrinhoDrawer'
     drawerFixture.detectChanges();
     expect(drawerFixture.componentInstance.etapa()).toBe('checkout');
 
-    // Tenta enviar sem preencher nome
+    // Tenta enviar sem preencher nome (usuário offline começa com campos vazios)
     hostEl.querySelector<HTMLButtonElement>('.pdp-carrinho__cta--whatsapp')!.click();
     drawerFixture.detectChanges();
     expect(hostEl.querySelector('#pdp-checkout-erro')?.textContent).toContain('Informe seu nome');

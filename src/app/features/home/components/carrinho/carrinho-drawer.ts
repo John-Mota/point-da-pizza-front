@@ -17,6 +17,7 @@ import {
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RippleModule } from 'primeng/ripple';
+import { AuthService } from '../../../../core/auth';
 import { PdpPhoneMask } from '../../../../shared/directives';
 import { DadosFinalizacaoPedido, Pedido, TipoEntrega } from '../../../../shared/models';
 import { PdpCurrencyPipe } from '../../../../shared/pipes';
@@ -50,6 +51,7 @@ const FORMAS_PAGAMENTO_PADRAO: readonly string[] = [
 })
 export class PdpCarrinhoDrawer {
   protected readonly carrinhoService = inject(CarrinhoService);
+  protected readonly authService = inject(AuthService);
   private readonly document = inject(DOCUMENT);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly destroyRef = inject(DestroyRef);
@@ -81,11 +83,29 @@ export class PdpCarrinhoDrawer {
 
   constructor() {
     effect(() => {
+      const online = this.authService.estaOnline();
+      const usuario = this.authService.usuario();
+      untracked(() => {
+        if (online && usuario) {
+          this.preencherCamposUsuarioOnline();
+        } else {
+          this.clienteNome.set('');
+          this.clienteTelefone.set('');
+          this.endereco.set('');
+          this.complemento.set('');
+        }
+      });
+    });
+
+    effect(() => {
       const aberto = this.carrinhoService.aberto();
       untracked(() => {
         if (aberto) {
           this.etapa.set('sacola');
           this.erroValidacao.set(null);
+          if (this.authService.estaOnline()) {
+            this.preencherCamposUsuarioOnline();
+          }
           const primeiraForma = this.formasPagamentoEfetivas()[0] ?? 'Pix';
           if (!this.formaPagamento()) {
             this.formaPagamento.set(primeiraForma);
@@ -120,6 +140,9 @@ export class PdpCarrinhoDrawer {
   irParaCheckout(): void {
     if (this.carrinhoService.vazio()) {
       return;
+    }
+    if (this.authService.estaOnline()) {
+      this.preencherCamposUsuarioOnline();
     }
     this.erroValidacao.set(null);
     this.etapa.set('checkout');
@@ -190,6 +213,15 @@ export class PdpCarrinhoDrawer {
           : undefined,
     };
 
+    if (this.authService.estaOnline()) {
+      this.authService.atualizarPerfil({
+        nome,
+        telefone: this.clienteTelefone().trim(),
+        ...(this.tipoEntrega() === 'entrega' ? { endereco: this.endereco().trim() } : {}),
+        ...(this.tipoEntrega() === 'entrega' ? { complemento: this.complemento().trim() } : {}),
+      });
+    }
+
     const { pedido, whatsappUrl } = this.carrinhoService.finalizarPedido(dados);
     this.ultimoPedido.set(pedido);
     this.etapa.set('concluido');
@@ -210,6 +242,25 @@ export class PdpCarrinhoDrawer {
 
   fechar(): void {
     this.carrinhoService.fechar();
+  }
+
+  private preencherCamposUsuarioOnline(): void {
+    const usuario = this.authService.usuario();
+    if (!usuario) {
+      return;
+    }
+    if (!this.clienteNome().trim() && usuario.nome) {
+      this.clienteNome.set(usuario.nome);
+    }
+    if (!this.clienteTelefone().trim() && usuario.telefone) {
+      this.clienteTelefone.set(usuario.telefone);
+    }
+    if (!this.endereco().trim() && usuario.endereco) {
+      this.endereco.set(usuario.endereco);
+    }
+    if (!this.complemento().trim() && usuario.complemento) {
+      this.complemento.set(usuario.complemento);
+    }
   }
 
   private travarScrollBody(): void {
