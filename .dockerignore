@@ -1,0 +1,24 @@
+# Dependências e artefatos de build
+node_modules
+dist
+.angular
+coverage
+tmp
+out-tsc
+
+# Variáveis de ambiente locais (nunca devem entrar na imagem Docker)
+.env
+.env.*
+
+# Controle de versão e editores
+.git
+.gitignore
+.vscode
+.idea
+.editorconfig
+.prettierrc
+
+# Logs e documentação
+*.log
+npm-debug.log*
+README.md
