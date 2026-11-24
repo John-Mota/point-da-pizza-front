@@ -83,6 +83,7 @@ export class Cadastro {
   readonly hasAttemptedSubmit = signal<boolean>(false);
   readonly showErrorSummary = signal<boolean>(false);
   readonly submitSuccess = signal<string | null>(null);
+  readonly submitError = signal<string | null>(null);
 
   readonly nomeValue = signal<string>('');
   readonly telefoneValue = signal<string>('');
@@ -227,6 +228,7 @@ export class Cadastro {
     }
 
     this.submitSuccess.set(null);
+    this.submitError.set(null);
 
     const nomeCtrl = this.cadastroForm.controls.nome;
     const normalizedNome = normalizeFullName(nomeCtrl.value);
@@ -279,18 +281,23 @@ export class Cadastro {
           this.isSubmitting.set(false);
           let aplicouErroCampo = false;
 
-          if (isApiError(err) && err.campos?.length) {
-            for (const item of err.campos) {
-              const campo = item.campo as CadastroErrorField;
-              if (campo in this.cadastroForm.controls) {
-                const targetCtrl = this.cadastroForm.controls[campo];
-                targetCtrl.setErrors({
-                  ...(targetCtrl.errors ?? {}),
-                  serverError: item.mensagem,
-                });
-                targetCtrl.markAsTouched();
-                aplicouErroCampo = true;
+          if (isApiError(err)) {
+            if (err.campos?.length) {
+              for (const item of err.campos) {
+                const campo = item.campo as CadastroErrorField;
+                if (campo in this.cadastroForm.controls) {
+                  const targetCtrl = this.cadastroForm.controls[campo];
+                  targetCtrl.setErrors({
+                    ...(targetCtrl.errors ?? {}),
+                    serverError: item.mensagem,
+                  });
+                  targetCtrl.markAsTouched();
+                  aplicouErroCampo = true;
+                }
               }
+            }
+            if (!aplicouErroCampo) {
+              this.submitError.set(err.mensagem || 'Não foi possível concluir o cadastro.');
             }
           } else {
             const legado = err as CadastroServerError | null;
@@ -302,6 +309,8 @@ export class Cadastro {
               });
               targetCtrl.markAsTouched();
               aplicouErroCampo = true;
+            } else {
+              this.submitError.set(legado?.message || 'Não foi possível concluir o cadastro.');
             }
           }
 

@@ -1,17 +1,21 @@
+import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnInit,
+  PLATFORM_ID,
   computed,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { catchError, forkJoin, of } from 'rxjs';
 import { isApiError } from '../../../core/api';
+import { AuthService } from '../../../core/auth';
 import { Categoria, ItemConfigurado, Loja, Produto, SecaoCardapio } from '../../../shared/models';
 import { PdpCard } from '../../../shared/ui/cards';
 import { CarrinhoService, PdpCarrinhoBarra, PdpCarrinhoDrawer } from '../../carrinho';
@@ -53,7 +57,10 @@ export class PdpCardapioPage implements OnInit {
   private readonly lojaService = inject(LojaService);
   private readonly produtoDetalheService = inject(ProdutoDetalheService);
   protected readonly carrinhoService = inject(CarrinhoService);
+  protected readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly carregando = signal<boolean>(true);
   readonly erro = signal<string | null>(null);
@@ -77,7 +84,9 @@ export class PdpCardapioPage implements OnInit {
   ]);
 
   ngOnInit(): void {
-    this.carregarCardapio(false);
+    if (isPlatformBrowser(this.platformId)) {
+      this.carregarCardapio(false);
+    }
   }
 
   aoSelecionarCategoria(categoriaId: string): void {
@@ -131,6 +140,11 @@ export class PdpCardapioPage implements OnInit {
         },
         error: (err: unknown) => {
           this.carregando.set(false);
+          if (isApiError(err) && err.status === 401) {
+            this.authService.sair();
+            void this.router.navigate(['/login']);
+            return;
+          }
           const mensagem = isApiError(err)
             ? err.mensagem
             : 'Não foi possível carregar o cardápio agora. Verifique sua conexão e tente novamente.';

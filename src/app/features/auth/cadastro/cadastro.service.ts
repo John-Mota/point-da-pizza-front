@@ -36,9 +36,10 @@ export class CadastroService {
       const formData = new FormData();
       formData.append(
         'dados',
-        new Blob([JSON.stringify(dados)], { type: 'application/json' })
+        new Blob([JSON.stringify(dados)], { type: 'application/json' }),
+        'dados.json'
       );
-      formData.append('foto', foto);
+      formData.append('foto', foto, foto.name);
       return this.http.post<CadastroResponse>(url, formData);
     }
 

@@ -104,9 +104,9 @@
             aria-label="Menu do usuário"
             title="Menu do usuário"
           >
-            @if (usuarioFotoUrl() && !erroFotoUsuario()) {
+            @if (fotoUsuarioEfetiva() && !erroFotoUsuario()) {
               <img
-                [src]="usuarioFotoUrl()"
+                [src]="fotoUsuarioEfetiva()"
                 alt=""
                 class="pdp-loja-header__user-img"
                 width="40"

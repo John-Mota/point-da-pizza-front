@@ -45,4 +45,3 @@ Thumbs.db
 
 # env
 .env
-src/environments/environment.generated.ts

@@ -38,6 +38,13 @@ p, span, label, input, textarea, select, button {
   font-family: var(--font-body);
 }
 
+.pi,
+.pi::before {
+  font-family: 'primeicons' !important;
+  font-style: normal;
+  font-weight: normal;
+}
+
 a {
   color: var(--brand-strong);
   text-decoration: none;

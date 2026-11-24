@@ -1,13 +1,13 @@
 import { Injectable, InjectionToken, inject, isDevMode } from '@angular/core';
-import { environment } from '../../../environments/environment.generated';
+import { environment } from '../../../environments/environment';
 
 /**
- * Token de injeção para o número bruto do WhatsApp (vindo do environment.generated.ts).
+ * Token de injeção para o número bruto do WhatsApp (vindo de environment.WHATS_APP).
  * Permite sobrescrever facilmente em testes unitários.
  */
 export const WHATSAPP_RAW_NUMBER = new InjectionToken<string>('WHATSAPP_RAW_NUMBER', {
   providedIn: 'root',
-  factory: () => environment.whatsapp ?? '',
+  factory: () => environment.WHATS_APP ?? '',
 });
 
 /**

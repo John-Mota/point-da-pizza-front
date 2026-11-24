@@ -71,6 +71,10 @@ export class PdpLojaTopo implements OnInit {
   readonly erroFotoUsuario = signal<boolean>(false);
   readonly agora = signal<Date>(this.clockService.now());
 
+  readonly fotoUsuarioEfetiva = computed<string | null>(
+    () => this.usuarioFotoUrl() ?? this.authService.usuario()?.fotoUrl ?? null
+  );
+
   readonly temHorarios = computed<boolean>(() => (this.loja()?.horarios?.length ?? 0) > 0);
 
   readonly statusLoja = computed<StatusLojaResult>(() => {

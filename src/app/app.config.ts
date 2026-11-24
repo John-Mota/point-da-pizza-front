@@ -6,13 +6,14 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideClientHydration, withNoHttpTransferCache } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { PRIME_NG_CONFIG, PrimeNG, PrimeNGConfigType } from 'primeng/config';
+import { environment } from '../environments/environment';
 import { routes } from './app.routes';
-import { authInterceptor, errorInterceptor } from './core/api';
+import { API_BASE_URL, authInterceptor, errorInterceptor } from './core/api';
 
 const PointDaPizzaPreset = definePreset(Aura, {
   semantic: {
@@ -46,8 +47,9 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    { provide: API_BASE_URL, useFactory: () => environment.API_BASE_URL },
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
-    provideClientHydration(),
+    provideClientHydration(withNoHttpTransferCache()),
     makeEnvironmentProviders([
       { provide: PRIME_NG_CONFIG, useValue: primeNgConfig },
       provideAppInitializer(() => {

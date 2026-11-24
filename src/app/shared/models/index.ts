@@ -170,10 +170,10 @@ export interface CadastroPayload {
 export interface UsuarioLogado {
   nome: string;
   telefone: string;
-  email?: string;
+  email?: string | null;
   endereco: string;
-  complemento?: string;
-  fotoUrl?: string;
+  complemento?: string | null;
+  fotoUrl?: string | null;
 }
 
 export interface LoginPayload {

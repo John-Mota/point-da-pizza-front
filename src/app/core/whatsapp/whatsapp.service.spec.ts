@@ -1,32 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { parseEnv } from '../../../../scripts/gerar-env.mjs';
 import { WHATSAPP_RAW_NUMBER, WhatsappService } from './whatsapp.service';
-
-describe('gerar-env parser (parseEnv)', () => {
-  it('deve ignorar comentários, linhas vazias, espaços e remover aspas', () => {
-    const conteudo = `
-      # Comentário inicial
-      
-      WHATS_APP = "11999990000"
-      OUTRA_CHAVE = 'valor com espaco'
-      COM_COMENTARIO = 11988887777 # comentário inline
-      LINHA_INVALIDA_SEM_IGUAL
-    `;
-
-    const parsed = parseEnv(conteudo);
-    expect(parsed).toEqual({
-      WHATS_APP: '11999990000',
-      OUTRA_CHAVE: 'valor com espaco',
-      COM_COMENTARIO: '11988887777',
-    });
-  });
-
-  it('deve retornar objeto sem WHATS_APP quando a variável estiver ausente ou vazia', () => {
-    expect(parseEnv('# apenas comentário\n\n')).toEqual({});
-    expect(parseEnv('WHATS_APP=   ')).toEqual({ WHATS_APP: '' });
-  });
-});
 
 describe('WhatsappService', () => {
   function criarServico(valorBruto: string): WhatsappService {
@@ -76,9 +50,8 @@ describe('WhatsappService', () => {
     expect(warnSpy).toHaveBeenCalled();
 
     warnSpy.mockClear();
-    const longo = criarServico('5511987654321'); // 13 dígitos (já com 55, fora da regra de 10-11 dígitos)
+    const longo = criarServico('5511987654321');
     expect(longo.disponivel).toBe(false);
     expect(warnSpy).toHaveBeenCalled();
   });
 });
-

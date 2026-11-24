@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { criarPizzaComOpcoes } from '../../testing';
-import { API_RETRY_DELAY_MS, ApiError, errorInterceptor } from '../api';
+import { API_BASE_URL, API_RETRY_DELAY_MS, ApiError, errorInterceptor } from '../api';
 import { PedidoService, montarPedidoNovo } from './pedidos.service';
 
 describe('PedidoService', () => {
@@ -15,6 +15,7 @@ describe('PedidoService', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: '/api' },
         { provide: API_RETRY_DELAY_MS, useValue: 1 },
       ],
     });

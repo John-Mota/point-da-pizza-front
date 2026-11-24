@@ -1,6 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { TimeoutError, catchError, retry, throwError, timeout, timer } from 'rxjs';
+import { TimeoutError, catchError, retry, tap, throwError, timeout, timer } from 'rxjs';
+import { AuthService } from '../auth';
 import { ApiCampoErro, ApiError, isApiError } from './api-error.model';
 import { API_RETRY_DELAY_MS, API_TIMEOUT_MS } from './api.config';
 
@@ -89,9 +90,20 @@ function extrairCamposErro(corpo: unknown): ApiCampoErro[] | undefined {
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const timeoutMs = inject(API_TIMEOUT_MS);
   const retryDelayMs = inject(API_RETRY_DELAY_MS);
+  const authService = inject(AuthService);
   const ehGetIdempotente = req.method.toUpperCase() === 'GET';
+  const ehLogin = req.url.endsWith('/auth/login') || req.url.includes('/auth/login?');
 
-  const fluxo$ = next(req).pipe(timeout(timeoutMs));
+  const fluxo$ = next(req).pipe(
+    timeout(timeoutMs),
+    tap({
+      error: (erro: unknown) => {
+        if (!ehLogin && erro instanceof HttpErrorResponse && erro.status === 401) {
+          authService.sair();
+        }
+      },
+    })
+  );
 
   const comRetry$ = ehGetIdempotente
     ? fluxo$.pipe(

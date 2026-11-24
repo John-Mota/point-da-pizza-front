@@ -14,6 +14,12 @@
           </div>
         }
 
+        @if (submitError()) {
+          <div class="cadastro__alert cadastro__alert--err" role="alert">
+            <span>✖ {{ submitError() }}</span>
+          </div>
+        }
+
         <form [formGroup]="cadastroForm" (ngSubmit)="submit()" class="cadastro__form" novalidate>
           <!-- Foto de perfil (opcional) -->
           <div class="cadastro__field">

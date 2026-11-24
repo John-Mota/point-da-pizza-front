@@ -50,6 +50,51 @@ describe('authInterceptor & errorInterceptor', () => {
     req.flush({ nome: 'Point da Pizza' });
   });
 
+  it('não deve adicionar Authorization nas rotas públicas /auth/login e /auth/cadastro mesmo com token salvo', () => {
+    authService.definirToken('token-antigo-123');
+
+    http.post('/api/auth/login', { email: 'a@b.com', senha: '123' }).subscribe();
+    const reqLogin = httpMock.expectOne('/api/auth/login');
+    expect(reqLogin.request.headers.has('Authorization')).toBe(false);
+    reqLogin.flush({ mensagem: 'ok' });
+
+    http.post('/api/auth/cadastro', { nome: 'Teste' }).subscribe();
+    const reqCadastro = httpMock.expectOne('/api/auth/cadastro');
+    expect(reqCadastro.request.headers.has('Authorization')).toBe(false);
+    reqCadastro.flush({ mensagem: 'ok' });
+  });
+
+  it('deve persistir sessão em localStorage quando lembrarMe=true e em sessionStorage quando lembrarMe=false, suportando fotoUrl do Cloudinary e campos nulos', () => {
+    authService
+      .login({
+        email: 'maria@exemplo.com',
+        senha: 'Pizza123',
+        lembrarMe: false,
+      })
+      .subscribe();
+
+    const req = httpMock.expectOne((r) => r.url.endsWith('/auth/login'));
+    req.flush({
+      mensagem: 'Login realizado com sucesso!',
+      token: 'jwt-token-sessao',
+      usuario: {
+        nome: 'Maria Silva',
+        telefone: null as unknown as string,
+        email: 'maria@exemplo.com',
+        endereco: null as unknown as string,
+        complemento: null,
+        fotoUrl: 'https://res.cloudinary.com/demo/image/upload/point-da-pizza/usuarios/maria.jpg',
+      },
+    });
+
+    expect(authService.estaAutenticado()).toBe(true);
+    expect(authService.usuario()?.fotoUrl).toBe(
+      'https://res.cloudinary.com/demo/image/upload/point-da-pizza/usuarios/maria.jpg'
+    );
+    expect(sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY)).toBe('jwt-token-sessao');
+    expect(localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)).toBeNull();
+  });
+
   it('deve mapear erro 400/409 com mensagem e lista de campos em ApiError', async () => {
     const promessa = firstValueFrom(http.post('/api/auth/cadastro', { email: 'duplicado@teste.com' }));
 

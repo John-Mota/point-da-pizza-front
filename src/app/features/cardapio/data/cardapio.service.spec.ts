@@ -2,7 +2,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { API_RETRY_DELAY_MS, ApiError, errorInterceptor } from '../../../core/api';
+import { API_BASE_URL, API_RETRY_DELAY_MS, ApiError, errorInterceptor } from '../../../core/api';
 import { Categoria } from '../../../shared/models';
 import { criarLoja, criarProduto, criarSecoesCardapioPadrao } from '../../../testing';
 import { CardapioService, montarCardapio } from './cardapio.service';
@@ -18,6 +18,7 @@ describe('LojaService & CardapioService', () => {
       providers: [
         provideHttpClient(withInterceptors([errorInterceptor])),
         provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: '/api' },
         { provide: API_RETRY_DELAY_MS, useValue: 1 },
       ],
     });
@@ -119,5 +120,21 @@ describe('LojaService & CardapioService', () => {
 
     const resultado = montarCardapio(categorias, produtos);
     expect(resultado.map((s) => s.categoria.id)).toEqual(['a', 'b']);
+  });
+
+  it('deve limpar o cache quando GET /api/cardapio falhar, permitindo nova tentativa com sucesso', async () => {
+    const secoes = criarSecoesCardapioPadrao();
+
+    const pFalha = firstValueFrom(cardapioService.listarCardapio());
+    httpMock.expectOne('/api/cardapio').error(new ProgressEvent('error'));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    httpMock.expectOne('/api/cardapio').error(new ProgressEvent('error'));
+    await expect(pFalha).rejects.toMatchObject({ status: 0 });
+
+    const pSucesso = firstValueFrom(cardapioService.listarCardapio());
+    const reqNova = httpMock.expectOne('/api/cardapio');
+    reqNova.flush(secoes);
+    const resultado = await pSucesso;
+    expect(resultado.length).toBe(3);
   });
 });

@@ -113,7 +113,8 @@
   font-weight: 600;
   color: var(--text-muted);
 }
-.pdp-loja-header__icon-btn {
+.pdp-loja-header__icon-btn,
+.pdp-loja-header__icon-btn.p-button {
   width: 42px;
   height: 42px;
   border-radius: var(--radius-full);
@@ -129,20 +130,33 @@
   overflow: hidden;
   transition:
     background-color var(--transition-fast),
-    border-color var(--transition-fast);
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+.pdp-loja-header__icon-btn .pi {
+  font-size: 1.15rem;
+  line-height: 1;
+  color: inherit;
 }
 .pdp-loja-header__icon-btn:hover,
-.pdp-loja-header__icon-btn--active {
+.pdp-loja-header__icon-btn.p-button:hover,
+.pdp-loja-header__icon-btn--active,
+.pdp-loja-header__icon-btn--active.p-button {
   background: var(--surface-hover);
   border-color: var(--brand);
+  color: var(--text);
 }
-.pdp-loja-header__whatsapp-btn {
+.pdp-loja-header__whatsapp-btn,
+.pdp-loja-header__whatsapp-btn.p-button {
   background: var(--success);
   color: var(--success-contrast);
   border-color: var(--success);
 }
-.pdp-loja-header__whatsapp-btn:hover {
+.pdp-loja-header__whatsapp-btn:hover,
+.pdp-loja-header__whatsapp-btn.p-button:hover {
   background: var(--success);
+  color: var(--success-contrast);
+  border-color: var(--success);
   filter: brightness(1.08);
 }
 .pdp-loja-header__user-wrap {
