@@ -1,0 +1,30 @@
+<div class="pdp-qty-stepper" role="group" [attr.aria-label]="rotulo()">
+  <button
+    pButton
+    pRipple
+    type="button"
+    class="pdp-qty-stepper__btn pdp-qty-stepper__btn--minus"
+    [disabled]="!podeDiminuir()"
+    aria-label="Diminuir quantidade"
+    (click)="diminuir()"
+  >
+    <i class="pi pi-minus" aria-hidden="true"></i>
+  </button>
+
+  <output class="pdp-qty-stepper__value" aria-live="polite">
+    {{ valor() }}
+  </output>
+
+  <button
+    pButton
+    pRipple
+    type="button"
+    class="pdp-qty-stepper__btn pdp-qty-stepper__btn--plus"
+    [disabled]="!podeAumentar()"
+    aria-label="Aumentar quantidade"
+    (click)="aumentar()"
+  >
+    <i class="pi pi-plus" aria-hidden="true"></i>
+  </button>
+</div>
+

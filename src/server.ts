@@ -7,22 +7,28 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
+try {
+  process.loadEnvFile?.();
+} catch {
+  // Em produção na plataforma, as variáveis já vêm em process.env
+}
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: ['localhost', '127.0.0.1'],
+});
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+app.get('/env.js', (_req, res) => {
+  const vars = {
+    API_BASE_URL: process.env['API_BASE_URL'] ?? '',
+    WHATS_APP: process.env['WHATS_APP'] ?? '',
+  };
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-store');
+  res.send(`window.process = { env: ${JSON.stringify(vars)} };`);
+});
 
 /**
  * Serve static files from /browser

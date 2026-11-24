@@ -1,0 +1,127 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.pdp-cart-summary {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-20, var(--space-16));
+    gap: var(--space-16);
+  }
+
+  &__header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-12);
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    line-height: 1.15;
+    color: var(--text);
+    margin: 0;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text);
+
+    &--discount {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    &--total {
+      border-top: 1px dashed var(--border);
+      padding-top: var(--space-12);
+      margin-top: var(--space-4);
+      align-items: baseline;
+    }
+  }
+
+  &__label {
+    color: var(--text-muted);
+  }
+
+  &__value {
+    font-weight: 500;
+  }
+
+  &__label-total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  &__value-total {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    line-height: 1.15;
+    color: var(--brand-strong);
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    width: 100%;
+    padding: var(--space-12) var(--space-20);
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--brand);
+    color: var(--brand-contrast);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background-color: var(--brand-strong);
+      color: var(--brand-strong-contrast);
+      transform: translateY(-2px);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: var(--border);
+      color: var(--text-muted);
+    }
+  }
+
+  &__skeleton-title {
+    height: 28px;
+    width: 60%;
+    margin-bottom: var(--space-8);
+  }
+
+  &__skeleton-row {
+    height: 20px;
+    width: 100%;
+    margin-bottom: var(--space-4);
+  }
+
+  &__skeleton-btn {
+    height: 48px;
+    width: 100%;
+    border-radius: var(--radius-md);
+    margin-top: var(--space-8);
+  }
+}

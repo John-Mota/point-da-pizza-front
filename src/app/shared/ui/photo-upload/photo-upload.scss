@@ -1,0 +1,141 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pdp-photo-upload {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-12) var(--space-16);
+  background: var(--surface-subtle);
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+
+  &--dragging {
+    border-color: var(--brand);
+    background: var(--surface-hover);
+  }
+
+  &--error {
+    border-color: var(--accent);
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+  }
+
+  &__avatar {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--brand-strong);
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__initials {
+    letter-spacing: 0.03em;
+    user-select: none;
+  }
+
+  &__icon {
+    color: var(--text-muted);
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  &__btn {
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    &--choose {
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+
+      &:hover:not(:disabled) {
+        background: var(--surface-hover);
+        border-color: var(--brand);
+      }
+    }
+
+    &--remove {
+      background: transparent;
+      color: var(--accent);
+      border: 1.5px solid transparent;
+
+      &:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--accent) 10%, transparent);
+      }
+    }
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  &__err {
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+}
+

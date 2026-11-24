@@ -1,0 +1,40 @@
+:host {
+  display: inline-block;
+}
+
+.pdp-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4) var(--space-12);
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: #FFFFFF;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-fast);
+
+  &.status-recebido {
+    background-color: var(--status-received);
+  }
+
+  &.status-em-producao {
+    background-color: var(--status-production);
+  }
+
+  &.status-a-caminho {
+    background-color: var(--status-delivery);
+  }
+
+  &.status-entregue {
+    background-color: var(--status-delivered);
+  }
+
+  &.status-cancelado {
+    background-color: var(--status-canceled);
+  }
+}

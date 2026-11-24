@@ -1,0 +1,63 @@
+<div class="pdp-home">
+  @if (carregando()) {
+    <div class="pdp-skeleton pdp-home__skeleton-header"></div>
+    <main class="pdp-home__container">
+      <section
+        class="pdp-home__loading"
+        aria-busy="true"
+        aria-label="Carregando cardápio"
+      >
+        <div class="pdp-skeleton pdp-home__skeleton-nav"></div>
+        <div class="pdp-skeleton pdp-home__skeleton-promos"></div>
+        <pdp-produtos-lista [carregando]="true"></pdp-produtos-lista>
+        <div class="pdp-skeleton pdp-home__skeleton-footer"></div>
+      </section>
+    </main>
+  } @else if (erro()) {
+    <main class="pdp-home__container pdp-home__container--spaced">
+      <pdp-card class="pdp-home__error-card">
+        <div class="pdp-home__error" role="alert">
+          <p class="pdp-home__error-msg">{{ erro() }}</p>
+          <button
+            pButton
+            pRipple
+            type="button"
+            class="pdp-home__retry-btn"
+            (click)="carregarCardapio()"
+          >
+            Tentar de novo
+          </button>
+        </div>
+      </pdp-card>
+    </main>
+  } @else {
+    <pdp-loja-topo
+      [loja]="loja()"
+      [erroLoja]="erroLoja()"
+      [usuarioFotoUrl]="authService.usuario()?.fotoUrl ?? null"
+      [usuarioNome]="authService.usuario()?.nome ?? 'Cliente'"
+    ></pdp-loja-topo>
+    <main class="pdp-home__container">
+      <div class="pdp-home__areas">
+        <pdp-categorias-nav
+          [categorias]="categorias()"
+          [(ativaId)]="categoriaAtivaId"
+          (selecionar)="aoSelecionarCategoria($event)"
+        ></pdp-categorias-nav>
+        <pdp-destaques-section
+          [destaques]="destaques()"
+          (pedir)="aoPedirDestaque($event)"
+        ></pdp-destaques-section>
+        <pdp-produtos-lista
+          [secoes]="cardapio()"
+          (pedir)="aoPedirProduto($event)"
+        ></pdp-produtos-lista>
+        <pdp-rodape [loja]="loja()"></pdp-rodape>
+      </div>
+    </main>
+    <pdp-produto-detalhe (adicionar)="aoAdicionarItem($event)"></pdp-produto-detalhe>
+    <pdp-carrinho-barra></pdp-carrinho-barra>
+    <pdp-carrinho-drawer [formasPagamento]="loja()?.formasPagamento ?? []"></pdp-carrinho-drawer>
+  }
+</div>
+

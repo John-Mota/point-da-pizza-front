@@ -1,0 +1,26 @@
+<article
+  class="pdp-card"
+  [class.pdp-card--default]="variant() === 'default'"
+  [class.pdp-card--promo]="variant() === 'promo'"
+  [class.pdp-card--outlined]="variant() === 'outlined'"
+  [class.pdp-card--interactive]="interactive()"
+  [class.pdp-card--pad-md]="padding() === 'md'"
+  [class.pdp-card--pad-none]="padding() === 'none'"
+  [attr.tabindex]="interactive() ? 0 : null"
+>
+  <div class="pdp-card__media">
+    <ng-content select="[card-media]" />
+  </div>
+
+  <div class="pdp-card__header">
+    <ng-content select="[card-header]" />
+  </div>
+
+  <div class="pdp-card__body">
+    <ng-content />
+  </div>
+
+  <div class="pdp-card__footer">
+    <ng-content select="[card-footer]" />
+  </div>
+</article>

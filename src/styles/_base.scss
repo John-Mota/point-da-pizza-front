@@ -38,6 +38,13 @@ p, span, label, input, textarea, select, button {
   font-family: var(--font-body);
 }
 
+.pi,
+.pi::before {
+  font-family: 'primeicons' !important;
+  font-style: normal;
+  font-weight: normal;
+}
+
 a {
   color: var(--brand-strong);
   text-decoration: none;
@@ -122,3 +129,29 @@ img, svg, video, canvas {
     page-break-inside: avoid;
   }
 }
+
+/* Skeleton Loading Shimmer */
+@keyframes pdp-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.pdp-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: pdp-shimmer 1.8s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+}
+

@@ -1,0 +1,47 @@
+<pdp-card padding="none">
+  <div class="pdp-cart-summary__container">
+    @if (loading()) {
+      <div class="pdp-skeleton pdp-cart-summary__skeleton-title"></div>
+      <div class="pdp-skeleton pdp-cart-summary__skeleton-row"></div>
+      <div class="pdp-skeleton pdp-cart-summary__skeleton-row"></div>
+      <div class="pdp-skeleton pdp-cart-summary__skeleton-row"></div>
+      <div class="pdp-skeleton pdp-cart-summary__skeleton-btn"></div>
+    } @else {
+      <div class="pdp-cart-summary__header">
+        <h3 class="pdp-cart-summary__title">Resumo do pedido</h3>
+      </div>
+
+      <div class="pdp-cart-summary__rows">
+        <div class="pdp-cart-summary__row">
+          <span class="pdp-cart-summary__label">Subtotal</span>
+          <span class="pdp-cart-summary__value">{{ subtotal() | pdpCurrency }}</span>
+        </div>
+
+        @if (temDesconto()) {
+          <div class="pdp-cart-summary__row pdp-cart-summary__row--discount">
+            <span class="pdp-cart-summary__label">Desconto</span>
+            <span class="pdp-cart-summary__value">- {{ desconto() | pdpCurrency }}</span>
+          </div>
+        }
+
+        <div class="pdp-cart-summary__row pdp-cart-summary__row--total">
+          <span class="pdp-cart-summary__label-total">Total a pagar</span>
+          <strong class="pdp-cart-summary__value-total">{{ total() | pdpCurrency }}</strong>
+        </div>
+      </div>
+
+      <button
+        pButton
+        pRipple
+        type="button"
+        class="pdp-cart-summary__btn"
+        [disabled]="desabilitado()"
+        [attr.aria-label]="ctaLabel()"
+        (click)="onCheckoutClick()"
+      >
+        <span>{{ ctaLabel() }}</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+      </button>
+    }
+  </div>
+</pdp-card>
